@@ -7,5 +7,6 @@ Server.middleware.register([
 ])
 
 Server.middleware.registerNamed({
+  guest: async () => import('App/Middleware/Guest'),
   auth: async () => import('App/Middleware/Auth'),
 })
