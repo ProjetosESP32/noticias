@@ -48,8 +48,8 @@ const databaseConfig: DatabaseConfig = {
         naturalSort: true,
       },
       useNullAsDefault: true,
-      healthCheck: false,
-      debug: false,
+      healthCheck: true,
+      debug: Application.inDev,
     },
   },
 }
