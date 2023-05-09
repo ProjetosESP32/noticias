@@ -13,7 +13,15 @@
     "Database": "database",
     "Contracts": "contracts"
   },
-  "preloads": ["./start/routes", "./start/kernel", "./start/events"],
+  "preloads": [
+    "./start/routes",
+    "./start/kernel",
+    "./start/events",
+    {
+      "file": "./start/jobs",
+      "environment": ["web"]
+    }
+  ],
   "providers": [
     "./providers/AppProvider",
     "@adonisjs/core",
