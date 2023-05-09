@@ -1,0 +1,118 @@
+@layout('layouts/main')
+
+@set('news', [...newsSession.news, ...portalNews])
+
+@section('body')
+<main
+  x-data="{ pIdx: 0 }"
+  x-init="
+  $nextTick(() => {
+    const length = {{ news.length }}
+
+    if (length === 0) return;
+
+    setInterval(() => {
+      if (pIdx >= length) {
+        pIdx = 0
+      } else {
+        pIdx++
+      }
+    }, 30000)
+  })"
+  x-cloak
+  class="block w-full h-screen overflow-hidden bg-green-700">
+  <audio hidden autoplay>
+    <source src="https://sv13.hdradios.net:6990/live">
+  </audio>
+  <div class="block mx-auto h-[calc(100%-4.5rem)] p-6">
+    @each((newsFile, idx) in newsSession.newsFiles)
+      @set('file', newsFile.file.data)
+
+      @if(file.mimeType.includes('image'))
+        <img
+          class="w-full max-h-full object-contain hidden"
+          data-index="{{ idx }}"
+          src="{{ file.url }}"
+          alt="{{ file.name }}">
+      @elseif(file.mimeType.includes('video'))
+        <video
+          class="w-full h-full bg-black hidden"
+          data-index="{{ idx }}"
+          preload="auto"
+          {{ newsFile.audioEnabled ? '' : 'muted' }}>
+          <source src="{{ file.url }}" type="{{ file.mimeType }}">
+        </video>
+      @end
+    @end
+  </div>
+  @each((ns, idx) in news)
+    <p
+      :class="{ hidden: pIdx !== {{ idx }} }"
+      class="w-fit text-6xl uppercase text-white whitespace-nowrap animate-[slideX_30s_linear_infinite]">
+      {{ ns.description }}
+    </p>
+  @end
+</main>
+<script>
+  const audio = document.querySelector('audio');
+  const imgs = document.querySelectorAll('img');
+  const videos = document.querySelectorAll('video');
+  const items = [...imgs, ...videos].sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index));
+
+  function makeNextGetter(arr) {
+    let lastIdx = 0;
+
+    return () => {
+      if (lastIdx >= arr.length) lastIdx = 0;
+
+      return arr[lastIdx++];
+    };
+  }
+
+  const nextItem = makeNextGetter(items);
+  let activeItem = null;
+
+  function hiddenOld() {
+    if (activeItem) activeItem.setAttribute('hidden', '');
+  }
+
+  function doChange() {
+    hiddenOld();
+    change();
+  }
+
+  function change() {
+    let isVideo = false;
+
+    activeItem = nextItem();
+
+    if (!activeItem) return;
+
+    activeItem.removeAttribute('hidden');
+
+    if (activeItem.tagName === 'VIDEO') {
+      isVideo = true;
+      
+      if (!activeItem.muted) {
+        audio.muted = true;
+      }
+
+      activeItem.play();
+      activeItem.onended = () => {
+        audio.muted = false;
+        activeItem.onended = null;
+        doChange();
+      }
+    }
+
+    if (!isVideo) {
+      const timeoutId = setTimeout(() => {
+        doChange();
+        clearTimeout(timeoutId);
+      }, 30000);
+    }
+  }
+
+  change();
+</script>
+@end

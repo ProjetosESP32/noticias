@@ -1,0 +1,42 @@
+@layout('layouts/main')
+
+@section('body')
+<main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 flex flex-col gap-y-4">
+  <h1 class="text-4xl font-bold">Notícias</h1>
+  <p class="text-xl">Selecione uma notícia</p>
+
+  <div class="overflow-x-auto rounded-lg border border-gray-200">
+    <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+      <thead>
+        <tr>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-right">
+            ID
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
+            Nome
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
+            Ações
+          </th>
+        </tr>
+      </thead>
+  
+      <tbody class="divide-y divide-gray-200">
+        @each(ns in newsSessions)
+          <tr>
+            <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900">{{ ns.id }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ ns.name }}</td>
+            <td class="flex justify-center items-center py-3">
+              @!link({ text: 'Abrir', href: route('NewsController.show', [ns.id]) })
+            </td>
+          </tr>
+        @else
+          <tr>
+            <td colspan="3" class="text-center px-4 py-2 font-medium">Sem sessões de notícia</td>
+          </tr>
+        @end
+      </tbody>
+    </table>
+  </div>
+</main>
+@end

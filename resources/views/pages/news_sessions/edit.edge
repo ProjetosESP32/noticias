@@ -1,0 +1,175 @@
+@layout('layouts/dashboard')
+
+@section('body')
+<main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+  @!homeLink()
+
+  <div class="mx-auto max-w-lg text-center">
+    <h1 class="text-2xl font-bold sm:text-3xl">Edição da sessão de notícia #{{ newsSession.id }}!</h1>
+
+    <p class="mt-4 text-gray-500">
+      Atualize os dados da sessão de notícia.
+    </p>
+  </div>
+
+  <form
+    class="block mx-auto mb-0 mt-8 space-y-4"
+    method="POST"
+    action="{{ route('NewsSessionsController.update', [newsSession.id], { qs: { _method: 'PUT' } }) }}">
+
+    {{ csrfField() }}
+
+    @!input({
+      label: 'Nome da sessão',
+      hint: 'O nome da sessão é para fim de fácil identificação',
+      name: 'name',
+      type: 'text',
+      autofocus: true,
+      maxlength: 25,
+      required: true,
+      value: newsSession.name
+    })
+
+    @!checkbox({
+      label: 'Habilitar notícias do portal',
+      name: 'isPortalNewsActive',
+      checked: !!newsSession.isPortalNewsActive
+    })
+
+    @!checkbox({
+      label: 'Habilitar postagens do Instagram',
+      name: 'isInstagramFilesActive',
+      checked: !!newsSession.isInstagramFilesActive
+    })
+
+    <div class="flex justify-end">
+      @!button({ text: 'Atualizar', type: 'submit' })
+    </div>
+  </form>
+
+  <article class="mx-auto mt-4">
+    <h2 class="text-xl font-semibold">Notícias personalizadas</h2>
+
+    @component('components/modal')
+      @slot('trigger', scope)
+        <div class="flex justify-end">
+          @!button({ text: 'Adicionar notícia', type: 'button', ...scope })
+        </div>
+      @end
+      
+      <form class="p-6" method="POST" action="{{ route('NewsController.store', [newsSession.id]) }}">
+        <h3>Adicionar notícia</h3>
+
+        {{ csrfField() }}
+
+        @!textarea({
+          label: 'Notícia',
+          placeholder: 'Digite a notícia',
+          name: 'description',
+          type: 'text',
+          maxlength: 100,
+          required: true,
+          class: 'resize-none',
+          rows: 3,
+          cols: 35
+        })
+
+        @!button({ text: 'Enviar', type: 'submit', class: 'mt-2 w-full' })
+      </form>
+    @end
+    
+    <div class="overflow-x-auto rounded-lg border border-gray-200 mt-2">
+      <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm border">
+        <thead>
+          <tr>
+            <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-right">
+              ID
+            </th>
+            <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
+              Texto da notícia
+            </th>
+            <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
+              Ações
+            </th>
+          </tr>
+        </thead>
+    
+        <tbody class="divide-y divide-gray-200">
+          @each(news in newsSession.news)
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900 text-right">{{ news.id }}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ news.description }}</td>
+              <td class="flex justify-center items-center py-3">
+                <form method="POST" action="{{ route('NewsController.destroy', [newsSession.id, news.id], { qs: { _method: 'DELETE' } }) }}">
+                  {{ csrfField() }}
+                  @!button({ text: 'Deletar', type: 'submit', class: 'bg-red-600' })
+                </form>
+              </td>
+            </tr>
+          @else
+            <tr>
+              <td colspan="3" class="text-center px-4 py-2 font-medium">Sem notícias personalizadas</td>
+            </tr>
+          @end
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="mx-auto mt-4">
+    <h2 class="text-xl font-semibold">Arquivos personalizados</h2>
+
+    @component('components/modal')
+      @slot('trigger', scope)
+        <div class="flex justify-end">
+          @!button({ text: 'Adicionar arquivo', type: 'button', ...scope })
+        </div>
+      @end
+      
+      <form class="p-6 flex flex-col gap-y-2" method="POST" action="{{ route('NewsFilesController.store', [newsSession.id]) }}" enctype="multipart/form-data">
+        {{ csrfField() }}
+
+        @!fileInput({
+          name: 'file',
+          accept: 'image/png, image/jpg, image/jpeg, video/mp4'
+        })
+
+        @!checkbox({
+          name: 'audioEnabled',
+          label: 'Se é video, terá áudio?',
+        })
+
+        @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })
+      </form>
+    @end
+
+    <div class="grid grid-cols-3 gap-2.5 mt-4">
+      @each(newsFile in newsSession.newsFiles)
+        @set('file', newsFile.file.data)
+
+        @if(file.mimeType.includes('image'))
+          <form class="relative" method="POST" action="{{ route('NewsFilesController.destroy', [newsSession.id, newsFile.id], { qs: { _method: 'DELETE' } }) }}">
+            {{ csrfField() }}
+            <img class="w-full object-cover object-center aspect-square border-2 border-indigo-500" src="{{ file.url }}" alt="{{ file.name }}">
+            <button class="absolute -top-2 -right-2 bg-red-200 hover:bg-red-300 text-red-600 border border-red-700 rounded-full p-1.5 z-10" type="submit">
+              @!icons.trash({ size: 18 })
+            </button>
+          </form>
+        @elseif(file.mimeType.includes('video'))
+          <form class="relative" method="POST" action="{{ route('NewsFilesController.destroy', [newsSession.id, newsFile.id], { qs: { _method: 'DELETE' } }) }}">
+            {{ csrfField() }}
+            <video class="w-full aspect-square border-2 border-indigo-500 bg-black" controls {{ newsFile.audioEnabled ? '' : 'muted' }}>
+              <source src="{{ file.url }}" type="{{ file.mimeType }}">
+            </video>
+            <button class="absolute -top-2 -right-2 bg-red-200 hover:bg-red-300 text-red-600 border border-red-700 rounded-full p-1.5 z-10" type="submit">
+              @!icons.trash({ size: 18 })
+            </button>
+          </form>
+        @end
+      @else
+        <span>Sem arquivos personalizados</span>
+      @end
+    </div>
+  </article>
+</main>
+@end

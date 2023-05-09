@@ -1,0 +1,51 @@
+@layout('layouts/dashboard')
+
+@section('body')
+<main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+  @!homeLink()
+
+  <h1 class="mt-2 text-2xl font-bold sm:text-3xl">Sessão de notícia #{{ newsSession.id }}!</h1>
+  
+  <article class="mt-4">
+    <h2 class="text-xl font-semibold">{{ newsSession.name }}</h2>
+    
+    <p>Sessão habilitada a carregar notícias do portal?</p>
+    <p class="text-gray-700">&emsp;{{ !!newsSession.isPortalNewsActive ? 'Sim' : 'Não' }}</p>
+
+    <p>Sessão habilitada a carregar postagens do Instagram?</p>
+    <p class="text-gray-700">&emsp;{{ !!newsSession.isInstagramFilesActive ? 'Sim' : 'Não' }}</p>
+  </article>
+
+  <article class="mt-4">
+    <h2 class="text-xl font-semibold">Notícias personalizadas</h2>
+
+    <ul>
+      @each(news in newsSession.news)
+        <li class="list-disc">#{{ news.id }}: {{ news.description }}</li>
+      @else
+        <li>Sem notícias personalizadas</li>
+      @end
+    </ul>
+  </article>
+  
+  <article class="mt-4">
+    <h2 class="text-xl font-semibold">Arquivos personalizados</h2>
+
+    <div class="grid grid-cols-3 gap-1 p-2">
+      @each(newsFile in newsSession.newsFiles)
+        @set('file', newsFile.file.data)
+
+        @if(file.mimeType.includes('image'))
+          <img class="w-full object-contain object-center aspect-square border-2 border-indigo-500 bg-black" src="{{ file.url }}" alt="{{ file.name }}">
+        @elseif(file.mimeType.includes('video'))
+          <video class="w-full aspect-square border-2 border-indigo-500 bg-black" controls {{ newsFile.audioEnabled ? '' : 'muted' }}>
+            <source src="{{ file.url }}" type="{{ file.mimeType }}">
+          </video>
+        @end
+      @else
+        <span>Sem arquivos personalizados</span>
+      @end
+    </div>
+  </article>
+</main>
+@end

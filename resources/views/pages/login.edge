@@ -1,0 +1,30 @@
+@layout('layouts/main')
+
+@section('body')
+<main class="w-full h-screen grid place-items-center">
+  <form class="w-fit flex flex-col gap-y-2 rounded-lg p-2" method="POST" action="{{ route('LoginController.store') }}">
+    <h1 class="text-3xl font-bold text-center">Login para a Dashboard</h1>
+
+    {{ csrfField() }}
+
+    @!input({
+      label: 'Nome de usuário',
+      name: 'username',
+      type: 'text',
+      autofocus: true,
+      required: true,
+    })
+
+    @!input({
+      label: 'Senha',
+      name: 'password',
+      type: 'password',
+      required: true,
+    })
+
+    @!button({ text: 'Enviar', type: 'submit' })
+
+    <p class="text-center">Não é isso que deseja? <a class="text-sky-600" href="{{ route('NewsController.index') }}">Selecionar sessão de notícia</a></p>
+  </form>
+</main>
+@end
