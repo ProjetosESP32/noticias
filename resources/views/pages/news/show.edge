@@ -30,13 +30,13 @@
 
       @if(file.mimeType.includes('image'))
         <img
-          class="w-full max-h-full object-contain hidden"
+          class="w-full h-full object-contain hidden"
           data-index="{{ idx }}"
           src="{{ file.url }}"
           alt="{{ file.name }}">
       @elseif(file.mimeType.includes('video'))
         <video
-          class="w-full h-full bg-black hidden"
+          class="w-full h-full hidden"
           data-index="{{ idx }}"
           preload="auto"
           {{ newsFile.audioEnabled ? '' : 'muted' }}>
@@ -73,7 +73,7 @@
   let activeItem = null;
 
   function hiddenOld() {
-    if (activeItem) activeItem.setAttribute('hidden', '');
+    if (activeItem) activeItem.classList.add('hidden')
   }
 
   function doChange() {
@@ -88,7 +88,7 @@
 
     if (!activeItem) return;
 
-    activeItem.removeAttribute('hidden');
+    activeItem.classList.remove('hidden');
 
     if (activeItem.tagName === 'VIDEO') {
       isVideo = true;

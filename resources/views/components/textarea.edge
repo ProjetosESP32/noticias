@@ -8,9 +8,7 @@
   <textarea
     id="{{ id }}"
     {{ $props.serializeExcept(['id', 'label'], { className: 'mt-1 w-full border rounded p-1 focus:border-indigo-600 focus:outline-none focus:ring-0 sm:text-sm' }) }}
-  >
-    {{ flashMessages.has(name) ? flashMessages.get(name) : '' }}
-  </textarea>
+  >{{ flashMessages.has(name) ? flashMessages.get(name) : '' }}</textarea>
 </div>
 
 @if(flashMessages.has(`errors.${name}`))
