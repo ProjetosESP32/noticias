@@ -30,7 +30,7 @@ export default class NewsSessionsController {
     const newsSession = await NewsSession.query()
       .where('id', params.id)
       .preload('news')
-      .preload('newsFiles')
+      .preload('postFiles')
       .firstOrFail()
 
     return view.render('pages/news_sessions/show', { newsSession })
@@ -40,7 +40,7 @@ export default class NewsSessionsController {
     const newsSession = await NewsSession.query()
       .where('id', params.id)
       .preload('news')
-      .preload('newsFiles')
+      .preload('postFiles')
       .firstOrFail()
 
     return view.render('pages/news_sessions/edit', { newsSession })

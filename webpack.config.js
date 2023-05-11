@@ -8,6 +8,7 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 Encore.setOutputPath('./public/assets')
 Encore.setPublicPath('/assets')
 Encore.addEntry('app', './resources/js/app.js')
+Encore.addEntry('news', './resources/js/news.js')
 
 Encore.enablePostCssLoader()
 

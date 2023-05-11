@@ -32,7 +32,7 @@
     <h2 class="text-xl font-semibold">Arquivos personalizados</h2>
 
     <div class="grid grid-cols-3 gap-1 p-2">
-      @each(newsFile in newsSession.newsFiles)
+      @each(newsFile in newsSession.postFiles)
         @set('file', newsFile.file.data)
 
         @if(file.mimeType.includes('image'))

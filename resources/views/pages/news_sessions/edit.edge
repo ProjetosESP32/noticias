@@ -126,7 +126,7 @@
         </div>
       @end
       
-      <form class="p-6 flex flex-col gap-y-2" method="POST" action="{{ route('NewsFilesController.store', [newsSession.id]) }}" enctype="multipart/form-data">
+      <form class="p-6 flex flex-col gap-y-2" method="POST" action="{{ route('PostFilesController.store', [newsSession.id]) }}" enctype="multipart/form-data">
         {{ csrfField() }}
 
         @!fileInput({
@@ -144,19 +144,19 @@
     @end
 
     <div class="grid grid-cols-3 gap-2.5 mt-4">
-      @each(newsFile in newsSession.newsFiles)
+      @each(newsFile in newsSession.postFiles)
         @set('file', newsFile.file.data)
 
         @if(file.mimeType.includes('image'))
-          <form class="relative" method="POST" action="{{ route('NewsFilesController.destroy', [newsSession.id, newsFile.id], { qs: { _method: 'DELETE' } }) }}">
+          <form class="relative" method="POST" action="{{ route('PostFilesController.destroy', [newsSession.id, newsFile.id], { qs: { _method: 'DELETE' } }) }}">
             {{ csrfField() }}
-            <img class="w-full object-cover object-center aspect-square border-2 border-indigo-500" src="{{ file.url }}" alt="{{ file.name }}">
+            <img class="w-full object-contain object-center aspect-square border-2 border-indigo-500 bg-black" src="{{ file.url }}" alt="{{ file.name }}">
             <button class="absolute -top-2 -right-2 bg-red-200 hover:bg-red-300 text-red-600 border border-red-700 rounded-full p-1.5 z-10" type="submit">
               @!icons.trash({ size: 18 })
             </button>
           </form>
         @elseif(file.mimeType.includes('video'))
-          <form class="relative" method="POST" action="{{ route('NewsFilesController.destroy', [newsSession.id, newsFile.id], { qs: { _method: 'DELETE' } }) }}">
+          <form class="relative" method="POST" action="{{ route('PostFilesController.destroy', [newsSession.id, newsFile.id], { qs: { _method: 'DELETE' } }) }}">
             {{ csrfField() }}
             <video class="w-full aspect-square border-2 border-indigo-500 bg-black" controls {{ newsFile.audioEnabled ? '' : 'muted' }}>
               <source src="{{ file.url }}" type="{{ file.mimeType }}">

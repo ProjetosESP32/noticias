@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, HasMany, beforeDelete, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import News from './News'
-import NewsFile from './NewsFile'
+import PostFile from './PostFile'
 
 export default class NewsSession extends BaseModel {
   @column({ isPrimary: true })
@@ -25,14 +25,14 @@ export default class NewsSession extends BaseModel {
   @hasMany(() => News)
   public news: HasMany<typeof News>
 
-  @hasMany(() => NewsFile)
-  public newsFiles: HasMany<typeof NewsFile>
+  @hasMany(() => PostFile)
+  public postFiles: HasMany<typeof PostFile>
 
   @beforeDelete()
-  static async deleteItens(newsSession: NewsSession) {
+  protected static async deleteItens(newsSession: NewsSession) {
     await newsSession.load('news')
-    await newsSession.load('newsFiles')
+    await newsSession.load('postFiles')
     await Promise.all(newsSession.news.map(async news => news.delete()))
-    await Promise.all(newsSession.newsFiles.map(async file => file.delete()))
+    await Promise.all(newsSession.postFiles.map(async file => file.delete()))
   }
 }

@@ -1,5 +1,17 @@
 {
   "commands": {
+    "preload:data": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/PreloadData",
+      "commandName": "preload:data",
+      "description": "This command preload instagram posts and news from portal",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
     "dump:rcfile": {
       "settings": {},
       "commandPath": "@adonisjs/core/build/commands/DumpRc",

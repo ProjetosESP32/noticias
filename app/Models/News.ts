@@ -7,7 +7,7 @@ export default class News extends BaseModel {
   public id: number
 
   @column()
-  public newsSessionId: number
+  public newsSessionId?: number | null
 
   @column()
   public description: string

@@ -1,118 +1,66 @@
 @layout('layouts/main')
 
 @set('news', [...newsSession.news, ...portalNews])
+@set('files', [...newsSession.postFiles, ...instagramPosts])
+
+@section('head')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+@entryPointScripts('news')
+@end
 
 @section('body')
 <main
   x-data="{ pIdx: 0 }"
   x-init="
   $nextTick(() => {
-    const length = {{ news.length }}
+    const length = {{ news.length }};
 
     if (length === 0) return;
 
     setInterval(() => {
       if (pIdx >= length) {
-        pIdx = 0
+        pIdx = 0;
       } else {
-        pIdx++
+        pIdx++;
       }
-    }, 30000)
+    }, 20000);
   })"
   x-cloak
   class="block w-full h-screen overflow-hidden bg-green-700">
   <audio hidden autoplay>
     <source src="https://sv13.hdradios.net:6990/live">
   </audio>
-  <div class="block mx-auto h-[calc(100%-4.5rem)] p-6">
-    @each((newsFile, idx) in newsSession.newsFiles)
-      @set('file', newsFile.file.data)
+  <div class="w-full h-[calc(100%-5rem)] grid grid-cols-2 p-4 gap-x-4">
+    @each((f, idx) in files)
+      @set('file', f.file.data)
 
       @if(file.mimeType.includes('image'))
         <img
-          class="w-full h-full object-contain hidden"
+          class="w-full h-[calc(100vh-7rem)] object-center object-contain hidden"
           data-index="{{ idx }}"
           src="{{ file.url }}"
           alt="{{ file.name }}">
       @elseif(file.mimeType.includes('video'))
         <video
-          class="w-full h-full hidden"
+          class="w-full h-[calc(100vh-7rem)] object-center hidden"
           data-index="{{ idx }}"
           preload="auto"
-          {{ newsFile.audioEnabled ? '' : 'muted' }}>
+          {{ f.audioEnabled ? '' : 'muted' }}>
           <source src="{{ file.url }}" type="{{ file.mimeType }}">
         </video>
       @end
     @end
   </div>
-  @each((ns, idx) in news)
-    <p
-      :class="{ hidden: pIdx !== {{ idx }} }"
-      class="w-fit text-6xl uppercase text-white whitespace-nowrap animate-[slideX_30s_linear_infinite]">
-      {{ ns.description }}
-    </p>
-  @end
+  <div class="w-full h-20 bg-green-800">
+    <div class="w-fit text-7xl uppercase text-white whitespace-nowrap animate-[slideX_20s_linear_infinite] font-[Outfit]">
+      @each((ns, idx) in news)
+        <p :class="{ hidden: pIdx !== {{ idx }} }">
+          {{ ns.description }}
+        </p>
+      @end
+    </div>
+  </div>
 </main>
-<script>
-  const audio = document.querySelector('audio');
-  const imgs = document.querySelectorAll('img');
-  const videos = document.querySelectorAll('video');
-  const items = [...imgs, ...videos].sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index));
-
-  function makeNextGetter(arr) {
-    let lastIdx = 0;
-
-    return () => {
-      if (lastIdx >= arr.length) lastIdx = 0;
-
-      return arr[lastIdx++];
-    };
-  }
-
-  const nextItem = makeNextGetter(items);
-  let activeItem = null;
-
-  function hiddenOld() {
-    if (activeItem) activeItem.classList.add('hidden')
-  }
-
-  function doChange() {
-    hiddenOld();
-    change();
-  }
-
-  function change() {
-    let isVideo = false;
-
-    activeItem = nextItem();
-
-    if (!activeItem) return;
-
-    activeItem.classList.remove('hidden');
-
-    if (activeItem.tagName === 'VIDEO') {
-      isVideo = true;
-      
-      if (!activeItem.muted) {
-        audio.muted = true;
-      }
-
-      activeItem.play();
-      activeItem.onended = () => {
-        audio.muted = false;
-        activeItem.onended = null;
-        doChange();
-      }
-    }
-
-    if (!isVideo) {
-      const timeoutId = setTimeout(() => {
-        doChange();
-        clearTimeout(timeoutId);
-      }, 30000);
-    }
-  }
-
-  change();
-</script>
 @end

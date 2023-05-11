@@ -1,18 +1,18 @@
 import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import File from 'App/Models/File'
-import NewsFile from 'App/Models/NewsFile'
 import NewsSession from 'App/Models/NewsSession'
-import CreateNewsFileValidator from 'App/Validators/CreateNewsFileValidator'
+import PostFile from 'App/Models/PostFile'
+import CreateNewsFileValidator from 'App/Validators/CreatePostFileValidator'
 
-export default class NewsFilesController {
+export default class PostFilesController {
   public async store({ request, response, params, session }: HttpContextContract) {
     const newsSession = await NewsSession.findOrFail(params.session_id)
     const { file, audioEnabled } = await request.validate(CreateNewsFileValidator)
 
     const newFile = await File.create({ data: Attachment.fromFile(file) })
     const newsFile = await newsSession
-      .related('newsFiles')
+      .related('postFiles')
       .create({ audioEnabled: file.extname === 'mp4' ? audioEnabled : false })
     await newsFile.related('file').associate(newFile)
     session.flash('toast', { title: 'Sucesso!', description: 'Arquivo adicionado.', type: 'success' })
@@ -21,7 +21,7 @@ export default class NewsFilesController {
   }
 
   public async destroy({ params, response, session }: HttpContextContract) {
-    const file = await NewsFile.findOrFail(params.id)
+    const file = await PostFile.findOrFail(params.id)
 
     await file.delete()
     session.flash('toast', { title: 'Sucesso!', description: 'Arquivo removido.', type: 'success' })

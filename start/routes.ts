@@ -10,6 +10,6 @@ Route.group(() => {
   Route.delete('login', 'LoginController.destroy')
   Route.get('/', 'NewsSessionsController.index').as('sessions.index')
   Route.resource('sessions', 'NewsSessionsController').except(['index'])
-  Route.resource('sessions.files', 'NewsFilesController').only(['store', 'destroy'])
+  Route.resource('sessions.files', 'PostFilesController').only(['store', 'destroy'])
   Route.resource('sessions.news', 'NewsController').only(['store', 'destroy'])
 }).middleware(['auth:web'])
