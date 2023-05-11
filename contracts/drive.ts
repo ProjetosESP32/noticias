@@ -9,5 +9,5 @@ import type { InferDisksFromConfig } from '@adonisjs/core/build/config'
 import type driveConfig from '../config/drive'
 
 declare module '@ioc:Adonis/Core/Drive' {
-  type DisksList = Record<string, unknown> & InferDisksFromConfig<typeof driveConfig>
+  interface DisksList extends Record<string, unknown>, InferDisksFromConfig<typeof driveConfig> {}
 }

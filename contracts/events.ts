@@ -25,7 +25,6 @@ declare module '@ioc:Adonis/Core/Event' {
   | an instance of the the UserModel only.
   |
   */
-  type EventsList = {
-    //
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface EventsList {}
 }

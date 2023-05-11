@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-interface */
 /**
  * Contract source: https://bit.ly/3DP1ypf
  *
@@ -8,11 +9,12 @@
 import '@japa/runner'
 
 declare module '@japa/runner' {
-  type TestContext = {
+  interface TestContext {
     // Extend context
   }
 
-  type Test<TestData> = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Test<TestData> {
     // Extend test
   }
 }

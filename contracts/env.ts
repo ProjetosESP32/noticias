@@ -4,6 +4,7 @@
  * Feel free to let us know via PR, if you find something broken in this contract
  * file.
  */
+import type Env from '../env'
 
 declare module '@ioc:Adonis/Core/Env' {
   /*
@@ -18,6 +19,7 @@ declare module '@ioc:Adonis/Core/Env' {
   |
   */
 
-  type CustomTypes = typeof import('../env').default
-  type EnvTypes = Record<string, unknown> & CustomTypes
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  type CustomTypes = typeof Env
+  interface EnvTypes extends Record<string, string>, CustomTypes {}
 }

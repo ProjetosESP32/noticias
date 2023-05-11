@@ -9,5 +9,5 @@ import type { InferListFromConfig } from '@adonisjs/core/build/config'
 import type hashConfig from '../config/hash'
 
 declare module '@ioc:Adonis/Core/Hash' {
-  type HashersList = Record<string, unknown> & InferListFromConfig<typeof hashConfig>
+  interface HashersList extends Record<string, unknown>, InferListFromConfig<typeof hashConfig> {}
 }
