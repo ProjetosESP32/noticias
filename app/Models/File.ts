@@ -1,12 +1,20 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 import { AttachmentContract, attachment } from '@ioc:Adonis/Addons/AttachmentLite'
+import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { DateTime } from 'luxon'
 
 export default class File extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @attachment({ preComputeUrl: true })
+  @attachment({
+    preComputeUrl: async (disk, attachment) => {
+      try {
+        return await disk.getUrl(attachment.name)
+      } catch (e) {
+        return ''
+      }
+    },
+  })
   public data: AttachmentContract
 
   @column.dateTime({ autoCreate: true })

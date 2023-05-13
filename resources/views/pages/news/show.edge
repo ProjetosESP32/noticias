@@ -11,24 +11,7 @@
 @end
 
 @section('body')
-<main
-  x-data="{ pIdx: 0 }"
-  x-init="
-  $nextTick(() => {
-    const length = {{ news.length }};
-
-    if (length === 0) return;
-
-    setInterval(() => {
-      if (pIdx >= length) {
-        pIdx = 0;
-      } else {
-        pIdx++;
-      }
-    }, 20000);
-  })"
-  x-cloak
-  class="block w-full h-screen overflow-hidden bg-green-700">
+<main class="block w-full h-screen overflow-hidden bg-green-700">
   <audio hidden autoplay>
     <source src="https://sv13.hdradios.net:6990/live">
   </audio>
@@ -38,13 +21,13 @@
 
       @if(file.mimeType.includes('image'))
         <img
-          class="w-full h-[calc(100vh-7rem)] object-center object-contain hidden"
+          class="w-full h-[calc(100vh-7rem)] object-center object-contain hidden transition-all"
           data-index="{{ idx }}"
           src="{{ file.url }}"
           alt="{{ file.name }}">
       @elseif(file.mimeType.includes('video'))
         <video
-          class="w-full h-[calc(100vh-7rem)] object-center hidden"
+          class="w-full h-[calc(100vh-7rem)] object-center hidden transition-all"
           data-index="{{ idx }}"
           preload="auto"
           {{ f.audioEnabled ? '' : 'muted' }}>
@@ -53,7 +36,24 @@
       @end
     @end
   </div>
-  <div class="w-full h-20 bg-green-800">
+  <div
+    x-data="{ pIdx: 0 }"
+    x-init="
+    $nextTick(() => {
+      const length = {{ news.length }};
+
+      if (length === 0) return;
+
+      setInterval(() => {
+        if (pIdx >= length) {
+          pIdx = 0;
+        } else {
+          pIdx++;
+        }
+      }, 20000);
+    })"
+    x-cloak
+    class="w-full h-20 bg-green-800">
     <div class="w-fit text-7xl uppercase text-white whitespace-nowrap animate-[slideX_20s_linear_infinite] font-[Outfit]">
       @each((ns, idx) in news)
         <p :class="{ hidden: pIdx !== {{ idx }} }">

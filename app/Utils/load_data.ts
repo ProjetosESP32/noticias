@@ -7,7 +7,7 @@ import axios from 'axios'
 import { JSDOM } from 'jsdom'
 import mime from 'mime-types'
 import { createReadStream } from 'node:fs'
-import { readdir, stat } from 'node:fs/promises'
+import { readdir, stat, rmdir } from 'node:fs/promises'
 import { extname, join } from 'node:path'
 import { spawnAsync } from './spawn_async'
 import PostFile from 'App/Models/PostFile'
@@ -32,7 +32,7 @@ const loadNews = async () => {
   const news = newsElements.map(el => el.textContent).filter(el => typeof el === 'string') as string[]
 
   await News.query().whereNull('news_session_id').delete()
-  await News.createMany(news.map(description => ({ description })))
+  await News.createMany(news.map(description => ({ description: description.trim() })))
 
   Logger.debug('Getting news complete')
 }
@@ -77,6 +77,8 @@ const loadInstagramPosts = async () => {
 
   const settled = await Promise.allSettled(promises)
   processAllSettled(settled)
+
+  await rmdir(baseDir)
 
   Logger.debug('Getting instagram posts complete')
 }
