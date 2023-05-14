@@ -7,13 +7,14 @@ import axios from 'axios'
 import { JSDOM } from 'jsdom'
 import mime from 'mime-types'
 import { createReadStream } from 'node:fs'
-import { readdir, stat, rmdir } from 'node:fs/promises'
+import { readdir, stat, rm } from 'node:fs/promises'
 import { extname, join } from 'node:path'
 import { spawnAsync } from './spawn_async'
 import PostFile from 'App/Models/PostFile'
 import News from 'App/Models/News'
+import { DateTime } from 'luxon'
 
-const processAllSettled = <T>(data: Array<PromiseSettledResult<T>>) => {
+const throwIfHasRejected = <T>(data: Array<PromiseSettledResult<T>>) => {
   const hasErrors = data.some(({ status }) => status === 'rejected')
 
   if (hasErrors) {
@@ -28,8 +29,26 @@ const loadNews = async () => {
   Logger.debug('Getting news')
   const { data } = await axios.get('https://cba.ifmt.edu.br/conteudo/noticias/')
   const dom = new JSDOM(data)
-  const newsElements = Array.from(dom.window.document.querySelectorAll('p.no-margin.espacamento-medio'))
-  const news = newsElements.map(el => el.textContent).filter(el => typeof el === 'string') as string[]
+  const dates = Array.from(dom.window.document.querySelectorAll('div.data-local')).map(el => el.textContent)
+  const newsContents = Array.from(dom.window.document.querySelectorAll('p.no-margin.espacamento-medio')).map(
+    el => el.textContent,
+  )
+  const news: string[] = []
+
+  for (let i = 0; i < dates.length; i++) {
+    const content = dates[i]
+    const newsContent = newsContents[i]
+
+    if (!content || !newsContent) continue
+
+    const [datePart] = content.split('-')
+    const trimmedDate = datePart.trim()
+    const pastDays = DateTime.fromFormat(trimmedDate, 'dd MMM', { locale: 'pt-br' }).diffNow().as('days')
+
+    if (pastDays >= -5) {
+      news.push(newsContent.trim())
+    }
+  }
 
   await News.query().whereNull('news_session_id').delete()
   await News.createMany(news.map(description => ({ description: description.trim() })))
@@ -76,9 +95,9 @@ const loadInstagramPosts = async () => {
     })
 
   const settled = await Promise.allSettled(promises)
-  processAllSettled(settled)
+  throwIfHasRejected(settled)
 
-  await rmdir(baseDir)
+  await rm(baseDir, { force: true, recursive: true })
 
   Logger.debug('Getting instagram posts complete')
 }
@@ -87,7 +106,7 @@ export const loadData = async () => {
   Logger.debug('Starting loading all data')
 
   const settled = await Promise.allSettled([loadNews(), loadInstagramPosts()])
-  processAllSettled(settled)
+  throwIfHasRejected(settled)
 
   Logger.debug('All data loaded')
 }
