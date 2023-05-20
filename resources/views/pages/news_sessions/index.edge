@@ -43,7 +43,7 @@
             <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ !!ns.isPortalNewsActive ? 'Sim' : 'Não' }}</td>
             <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ !!ns.isInstagramFilesActive ? 'Sim' : 'Não' }}</td>
             <td class="flex gap-x-1 justify-center items-center py-3">
-             @!link({
+              @!link({
                 text: 'Ver',
                 href: route('NewsSessionsController.show', [ns.id])
               })

@@ -7,7 +7,7 @@ export function getNextRestartMillis() {
   if (hourNow < 6) return getDifference(now, 6)
   if (hourNow < 12) return getDifference(now, 12)
   if (hourNow < 18) return getDifference(now, 18)
-  else return getDifference(now, 6, true)
+  return getDifference(now, 6, true)
 }
 
 function getDifference(now, hour, isNewDay = false) {
