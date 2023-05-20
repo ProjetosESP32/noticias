@@ -45,7 +45,12 @@ export const csp: ShieldConfig['csp'] = {
   |
   */
   directives: {
-    defaultSrc: ["'self'", '@nonce'],
+    defaultSrc: ["'self'"],
+    styleSrc: ["'self'", '@nonce', 'fonts.googleapis.com'],
+    fontSrc: ["'self'", 'fonts.gstatic.com'],
+    imgSrc: ["'self'", 'data:'],
+    scriptSrc: ["'self'", '@nonce', "'unsafe-eval'"],
+    mediaSrc: ["'self'", 'https://sv13.hdradios.net:6990'],
     frameAncestors: ["'none'"],
   },
 

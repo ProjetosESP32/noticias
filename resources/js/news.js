@@ -43,12 +43,10 @@ function changeVideo() {
 
   activeItem.classList.remove('hidden')
   activeItem.onplay = () => {
-    console.log('playing video', activeItem.dataset.index)
     audio.muted = !activeItem.muted
   }
 
   activeItem.onended = () => {
-    console.log('video ended', activeItem.dataset.index)
     audio.muted = false
     changeVideo()
   }
