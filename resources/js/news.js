@@ -5,26 +5,6 @@ import '../css/app.css'
 
 window.Alpine = Alpine
 
-Alpine.data('timer', (length = 0, timeout = 10000) => ({
-  index: 0,
-
-  init() {
-    if (length === 0) return
-
-    this.$nextTick(() => {
-      setInterval(() => {
-        if (this.index >= length - 1) {
-          this.index = 0
-        } else {
-          this.index++
-        }
-      }, timeout)
-    })
-  },
-}))
-
-Alpine.start()
-
 const audio = document.querySelector('audio')
 const items = Array.from(document.querySelectorAll('video')).sort(
   (a, b) => Number(a.dataset.index) - Number(b.dataset.index),
@@ -75,6 +55,26 @@ function changeVideo() {
 
   activeItem.play()
 }
+
+Alpine.data('timer', (length = 0, timeout = 10000) => ({
+  index: 0,
+
+  init() {
+    if (length === 0) return
+
+    this.$nextTick(() => {
+      setInterval(() => {
+        if (this.index >= length - 1) {
+          this.index = 0
+        } else {
+          this.index++
+        }
+      }, timeout)
+    })
+  },
+}))
+
+Alpine.start()
 
 changeVideo()
 
