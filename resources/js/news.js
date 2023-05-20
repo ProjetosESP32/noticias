@@ -1,79 +1,83 @@
-const audio = document.querySelector('audio')
-const imgs = document.querySelectorAll('img')
-const videos = document.querySelectorAll('video')
-const items = [...imgs, ...videos].sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index))
-const nextItem = makeNextGetter(items)
-let activeItems = []
+import Alpine from 'alpinejs'
+import { getNextRestartMillis } from './utils/time'
 
-function makeNextGetter(arr) {
+import '../css/app.css'
+
+window.Alpine = Alpine
+
+Alpine.data('timer', (length = 0, timeout = 10000) => ({
+  index: 0,
+
+  init() {
+    if (length === 0) return
+
+    this.$nextTick(() => {
+      setInterval(() => {
+        if (this.index >= length - 1) {
+          this.index = 0
+        } else {
+          this.index++
+        }
+      }, timeout)
+    })
+  },
+}))
+
+Alpine.start()
+
+const audio = document.querySelector('audio')
+const items = Array.from(document.querySelectorAll('video')).sort(
+  (a, b) => Number(a.dataset.index) - Number(b.dataset.index),
+)
+const generator = nextItem(items)
+let activeItem = null
+
+function* nextItem(arr) {
   let lastIdx = 0
 
-  return () => {
+  if (arr.length === 0) return
+
+  while (true) {
     if (lastIdx >= arr.length) lastIdx = 0
 
-    return arr[lastIdx++]
+    yield arr[lastIdx++]
   }
 }
 
 function hiddenOld() {
-  activeItems.forEach(item => {
-    item.classList.add('hidden')
-  })
+  if (!activeItem) return
+
+  activeItem.onplay = null
+  activeItem.onended = null
+  activeItem.classList.add('hidden')
 }
 
-function doChange() {
+function changeVideo() {
   hiddenOld()
-  change()
-}
 
-function isVideo(item) {
-  return item.tagName === 'VIDEO'
-}
+  const next = generator.next()
 
-function change() {
-  if (items.length === 0) return
+  if (next.done) return
 
-  activeItems = [nextItem(), nextItem()]
+  activeItem = next.value
 
-  const hasVideo = activeItems.some(isVideo)
-  const isTwoVideos = activeItems.every(isVideo)
-
-  activeItems.forEach((item, idx, arr) => {
-    item.classList.remove('hidden')
-
-    if (isVideo(item)) {
-      const isLastItem = idx === arr.length - 1
-
-      if (!(isTwoVideos && isLastItem)) {
-        item.play()
-      }
-
-      item.onplay = () => {
-        audio.muted = !item.muted
-        item.onplay = null
-      }
-
-      item.onended = () => {
-        if (isTwoVideos && !isLastItem) {
-          arr[idx + 1].play()
-        }
-
-        item.onended = null
-
-        if (!isTwoVideos || isLastItem) {
-          audio.muted = false
-          doChange()
-        }
-      }
-    }
-  })
-
-  if (!hasVideo) {
-    const timeoutId = setTimeout(() => {
-      doChange()
-      clearTimeout(timeoutId)
-    }, 30000)
+  activeItem.classList.remove('hidden')
+  activeItem.onplay = () => {
+    console.log('playing video', activeItem.dataset.index)
+    audio.muted = !activeItem.muted
   }
+
+  activeItem.onended = () => {
+    console.log('video ended', activeItem.dataset.index)
+    audio.muted = false
+    changeVideo()
+  }
+
+  activeItem.play()
 }
 
-change()
+changeVideo()
+
+setTimeout(() => {
+  location.reload()
+}, getNextRestartMillis())

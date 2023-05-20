@@ -1,13 +1,16 @@
-@layout('layouts/main')
+@layout('layouts/base')
 
-@set('news', [...newsSession.news, ...portalNews])
-@set('files', [...newsSession.postFiles, ...instagramPosts])
+@set('images', posts.filter(p => p.file.data.mimeType.includes('image')))
+@set('videos', posts.filter(p => p.file.data.mimeType.includes('video')))
+@set('hasVideos', videos.length > 0)
+@set('slicePos', Math.round(images.length / 2))
 
 @section('head')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
 @entryPointScripts('news')
+@entryPointStyles('news')
 @end
 
 @section('body')
@@ -15,48 +18,56 @@
   <audio hidden autoplay>
     <source src="https://sv13.hdradios.net:6990/live">
   </audio>
-  <div class="w-full h-[calc(100%-5rem)] grid grid-cols-2 p-4 gap-x-4">
-    @each((f, idx) in files)
-      @set('file', f.file.data)
+  <div class="w-full h-[calc(100vh-5rem)] grid grid-cols-2 p-4 gap-x-4">
+    @if (hasVideos)
+      <div>
+        @each((f, idx) in videos)
+          @set('file', f.file.data)
 
-      @if(file.mimeType.includes('image'))
+            <video
+              class="w-full h-[calc(100vh-7rem)] object-center hidden"
+              data-index="{{ idx }}"
+              preload="auto"
+              {{ f.audioEnabled ? '' : 'muted' }}>
+              <source src="{{ file.url }}" type="{{ file.mimeType }}">
+            </video>
+          @end
+      </div>
+    @else
+      @set('_images', images.slice(0, slicePos))
+
+      <div x-data="timer({{_images.length}}, 10000)" x-cloak>
+        @each((f, idx) in _images)
+          @set('file', f.file.data)
+
+          <img
+            x-show="index === {{ idx }}"
+            x-transition
+            class="w-full h-[calc(100vh-7rem)] object-center object-contain"
+            src="{{ file.url }}"
+            alt="{{ file.name }}">
+        @end
+      </div>
+    @end
+
+    @set('_images', hasVideos ? images : images.slice(slicePos))
+    <div x-data="timer({{_images.length}}, 10000)" x-cloak>
+      @each((f, idx) in _images)
+        @set('file', f.file.data)
+
         <img
-          class="w-full h-[calc(100vh-7rem)] object-center object-contain hidden transition-all"
-          data-index="{{ idx }}"
+          x-show="index === {{ idx }}"
+          x-transition
+          class="w-full h-[calc(100vh-7rem)] object-center object-contain"
           src="{{ file.url }}"
           alt="{{ file.name }}">
-      @elseif(file.mimeType.includes('video'))
-        <video
-          class="w-full h-[calc(100vh-7rem)] object-center hidden transition-all"
-          data-index="{{ idx }}"
-          preload="auto"
-          {{ f.audioEnabled ? '' : 'muted' }}>
-          <source src="{{ file.url }}" type="{{ file.mimeType }}">
-        </video>
       @end
-    @end
+    </div>
   </div>
-  <div
-    x-data="{ pIdx: 0 }"
-    x-init="
-    $nextTick(() => {
-      const length = {{ news.length }};
-
-      if (length === 0) return;
-
-      setInterval(() => {
-        if (pIdx >= length) {
-          pIdx = 0;
-        } else {
-          pIdx++;
-        }
-      }, 20000);
-    })"
-    x-cloak
-    class="w-full h-20 bg-green-800">
+  <div x-data="timer({{news.length}}, 20000)" x-cloak class="w-full h-20 bg-green-800">
     <div class="w-fit text-7xl uppercase text-white whitespace-nowrap animate-[slideX_20s_linear_infinite] font-[Outfit]">
       @each((ns, idx) in news)
-        <p :class="{ hidden: pIdx !== {{ idx }} }">
+        <p x-show="index === {{ idx }}" x-transition>
           {{ ns.description }}
         </p>
       @end
