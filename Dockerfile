@@ -25,7 +25,5 @@ ENV HOST=0.0.0.0
 COPY --chown=node:node ./package*.json ./
 RUN npm i --omit=dev
 COPY --chown=node:node --from=build /home/node/app/build .
-RUN node ace migration:run --force
-RUN node ace db:seed
 EXPOSE $PORT
 CMD [ "node", "server.js" ]

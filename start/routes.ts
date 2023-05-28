@@ -1,4 +1,12 @@
+import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
 import Route from '@ioc:Adonis/Core/Route'
+
+Route.get('health', async ({ response }) => {
+  const report = await HealthCheck.getReport()
+
+  if (report.healthy) response.ok(report)
+  else response.badRequest(report)
+})
 
 Route.group(() => {
   Route.resource('login', 'LoginController').only(['index', 'store'])
