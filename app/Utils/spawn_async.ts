@@ -8,12 +8,12 @@ export const spawnAsync = async (command: string, args: string[]) => {
       if (code === 0) {
         resolve()
       } else {
-        reject(new Error(`Rejected with code ${String(code)}`))
+        reject(new Error(`Spawn '${command} ${args.join(' ')}' rejected with code ${String(code)}`))
       }
     })
 
     spawnedProcess.on('error', code => {
-      reject(new Error(`Rejected with code ${String(code)}`))
+      reject(new Error(`Spawn '${command} ${args.join(' ')}' rejected with code ${String(code)}`))
     })
   })
 }
