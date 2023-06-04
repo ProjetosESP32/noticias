@@ -126,7 +126,12 @@
         </div>
       @end
       
-      <form class="p-6 flex flex-col gap-y-2" method="POST" action="{{ route('PostFilesController.store', [newsSession.id]) }}" enctype="multipart/form-data">
+      <form
+        x-data="{ isLoading: false }"
+        @submit="isLoading = true"
+        class="p-6 flex flex-col gap-y-2"
+        method="POST"
+        action="{{ route('PostFilesController.store', [newsSession.id]) }}" enctype="multipart/form-data">
         {{ csrfField() }}
 
         @!fileInput({
@@ -139,7 +144,7 @@
           label: 'Se é video, terá áudio?',
         })
 
-        @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })
+        @!button({ text: 'Enviar', type: 'submit', class: 'w-full', ':disabled': 'isLoading' })
       </form>
     @end
 

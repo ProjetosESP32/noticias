@@ -13,6 +13,9 @@ module.exports = {
           },
         },
       },
+      animation: {
+        slide: 'slideX 20s cubic-bezier(0, .4, 1, 1) infinite',
+      },
     },
   },
   plugins: [require('@tailwindcss/forms')],

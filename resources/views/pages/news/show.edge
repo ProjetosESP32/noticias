@@ -21,14 +21,14 @@
   <div class="w-full h-[calc(100vh-5rem)] grid grid-cols-2 p-4 gap-x-4">
     @if (hasVideos)
       <div>
-        @each((f, idx) in videos)
-          @set('file', f.file.data)
+        @each((video, idx) in videos)
+          @set('file', video.file.data)
 
             <video
               class="w-full h-[calc(100vh-7rem)] object-center hidden"
               data-index="{{ idx }}"
               preload="auto"
-              {{ f.audioEnabled ? '' : 'muted' }}>
+              {{ video.audioEnabled ? '' : 'muted' }}>
               <source src="{{ file.url }}" type="{{ file.mimeType }}">
             </video>
           @end
@@ -37,8 +37,8 @@
       @set('_images', images.slice(0, slicePos))
 
       <div x-data="timer({{_images.length}}, 10000)" x-cloak>
-        @each((f, idx) in _images)
-          @set('file', f.file.data)
+        @each((image, idx) in _images)
+          @set('file', image.file.data)
 
           <img
             x-show="index === {{ idx }}"
@@ -52,8 +52,8 @@
 
     @set('_images', hasVideos ? images : images.slice(slicePos))
     <div x-data="timer({{_images.length}}, 10000)" x-cloak>
-      @each((f, idx) in _images)
-        @set('file', f.file.data)
+      @each((image, idx) in _images)
+        @set('file', image.file.data)
 
         <img
           x-show="index === {{ idx }}"
@@ -65,9 +65,9 @@
     </div>
   </div>
   <div x-data="timer({{news.length}}, 20000)" x-cloak class="w-full h-20 bg-green-800">
-    <div class="w-fit text-7xl uppercase text-white whitespace-nowrap animate-[slideX_20s_linear_infinite] font-[Outfit]">
+    <div class="w-fit text-7xl uppercase text-white whitespace-nowrap animate-slide font-[Outfit]">
       @each((ns, idx) in news)
-        <p x-show="index === {{ idx }}" x-transition>
+        <p x-show="index === {{ idx }}">
           {{ ns.description }}
         </p>
       @end

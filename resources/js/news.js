@@ -58,7 +58,7 @@ Alpine.data('timer', (length = 0, timeout = 10000) => ({
   index: 0,
 
   init() {
-    if (length === 0) return
+    if (length <= 1) return
 
     this.$nextTick(() => {
       setInterval(() => {
