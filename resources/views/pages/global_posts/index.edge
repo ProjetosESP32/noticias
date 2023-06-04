@@ -1,11 +1,13 @@
-@layout('layouts/main')
+@layout('layouts/dashboard')
 
 @section('body')
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
   @!homeLink()
 
-  <h1 class="mt-2 text-2xl font-bold sm:text-3xl">Posts globais.</h1>
-  <p>Vídeos e imagens que aparecerão para qualquer sessão de notícia.</p>
+  <div class="mx-auto max-w-lg text-center">
+    <h1 class="mt-2 text-2xl font-bold sm:text-3xl">Posts globais.</h1>
+    <p class="mt-4 text-gray-500">Vídeos e imagens que aparecerão para qualquer sessão de notícia.</p>
+  </div>
 
   @component('components/modal')
     @slot('trigger', scope)
@@ -51,7 +53,7 @@
         </button>
       </form>
     @else
-      <span>Sem arquivos personalizados</span>
+      <span>Sem arquivos</span>
     @end
   </div>
 </main>
