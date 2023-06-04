@@ -4,7 +4,7 @@
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
   @!homeLink()
 
-  <h1 class="mt-2 text-2xl font-bold sm:text-3xl">Sessão de notícia #{{ newsSession.id }}!</h1>
+  <h1 class="mt-2 text-center text-2xl font-bold sm:text-3xl">Sessão de notícia #{{ newsSession.id }}!</h1>
   
   <article class="mt-4">
     <h2 class="text-xl font-semibold">{{ newsSession.name }}</h2>
@@ -12,7 +12,7 @@
     <p>Sessão habilitada a carregar notícias do portal?</p>
     <p class="text-gray-700">&emsp;{{ !!newsSession.isPortalNewsActive ? 'Sim' : 'Não' }}</p>
 
-    <p>Sessão habilitada a carregar postagens do Instagram?</p>
+    <p>Sessão habilitada a carregar itens globais?</p>
     <p class="text-gray-700">&emsp;{{ !!newsSession.isInstagramFilesActive ? 'Sim' : 'Não' }}</p>
   </article>
 
