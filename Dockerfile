@@ -13,7 +13,7 @@ FROM base AS dependencies
 COPY --chown=node:node ./package*.json ./
 RUN npm i
 COPY --chown=node:node . .
-RUN pip install instaloader
+RUN pip3 install instaloader
 
 FROM dependencies AS build
 RUN node ace build --production
