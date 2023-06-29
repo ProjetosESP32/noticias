@@ -3,7 +3,7 @@ RUN mkdir -p /home/node/app && chown node:node /home/node/app
 WORKDIR /home/node/app
 RUN apt-get update
 RUN apt-get install -y \
-  python3 \
+  python3-full \
   python3-pip \
   build-essential
 USER node
