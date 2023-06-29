@@ -1,0 +1,45 @@
+@layout('layouts/dashboard')
+
+@section('body')
+<main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+  @!homeLink()
+
+  <div class="mx-auto max-w-lg text-center">
+    <h1 class="text-2xl font-bold sm:text-3xl">Criação de usuário!</h1>
+
+    <p class="mt-4 text-gray-500">
+      Criação de usuário que usará os recursos do sistema.
+    </p>
+  </div>
+
+  <form
+    class="mx-auto mb-0 mt-8 w-96 space-y-4"
+    method="POST"
+    action="{{ route('UsersController.store') }}">
+
+    {{ csrfField() }}
+
+    @!input({
+      label: 'Nome de usuário',
+      hint: 'Sugestão: use diferentes usuários para diferentes departamentos',
+      name: 'username',
+      type: 'text',
+      autofocus: true,
+      maxlength: 255,
+      required: true
+    })
+
+    @!input({
+      label: 'Senha',
+      name: 'password',
+      type: 'text',
+      hint: 'Senha gerada automaticamente que não será mostrada novamente e não é possível alterar, então salve a senha!',
+      required: true,
+      readonly: true,
+      value: password
+    })
+
+    @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })
+  </form>
+</main>
+@end

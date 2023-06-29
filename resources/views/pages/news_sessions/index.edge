@@ -2,20 +2,26 @@
 
 @section('body')
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 flex flex-col gap-y-4">
-  <div class="w-full flex flex-row justify-end gap-x-2">
+  <nav class="w-full flex flex-row justify-end gap-x-2">
     @!link({
       text: 'Criar nova sessão de notícia',
       href: route('NewsSessionsController.create')
     })
-    @!link({
-      text: 'Itens globais',
-      href: route('GlobalPostsController.index')
-    })
+    @can('admin')
+      @!link({
+        text: 'Itens globais',
+        href: route('GlobalPostsController.index')
+      })
+      @!link({
+        text: 'Usuários',
+        href: route('UsersController.index')
+      })
+    @end
     @!link({
       text: 'Página de seleção de sessão',
       href: route('NewsController.index')
     })
-  </div>
+  </nav>
 
   <div class="overflow-x-auto rounded-lg border border-gray-200">
     <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
@@ -31,7 +37,7 @@
             Habilitado notícias do portal
           </th>
           <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
-            Habilitado postagens do Insta
+            Habilitado post globais
           </th>
           <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
             Ações

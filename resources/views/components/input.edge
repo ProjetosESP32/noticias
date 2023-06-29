@@ -19,7 +19,7 @@
 </label>
 
 @if(flashMessages.has(`errors.${name}`))
-  <span class="text-sm text-red-600">{{ flashMessages.get(`errors.${name}`) }}</span>
+  <span class="w-full text-sm text-red-600">{{ flashMessages.get(`errors.${name}`) }}</span>
 @elseif(hint)
-  <span class="text-sm text-cyan-600">{{ hint }}</span>
+  <span class="w-full text-sm text-cyan-600">{{ hint }}</span>
 @end

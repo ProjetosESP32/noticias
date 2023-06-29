@@ -16,6 +16,10 @@ Encore.splitEntryChunks()
 Encore.enableSingleRuntimeChunk()
 Encore.cleanupOutputBeforeBuild()
 
+Encore.enableBuildCache({
+  config: [__filename],
+})
+
 Encore.enableSourceMaps(!Encore.isProduction())
 Encore.enableVersioning(Encore.isProduction())
 

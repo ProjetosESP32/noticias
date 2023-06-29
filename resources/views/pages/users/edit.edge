@@ -1,0 +1,32 @@
+@layout('layouts/dashboard')
+
+@section('body')
+<main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+  @!homeLink()
+
+  <div class="mx-auto max-w-lg text-center">
+    <h1 class="text-2xl font-bold sm:text-3xl">Edição de usuário!</h1>
+  </div>
+
+  <form
+    class="mx-auto mb-0 mt-8 w-96 space-y-4"
+    method="POST"
+    action="{{ route('UsersController.update', [user.id], { qs: { _method: 'PATCH' } }) }}">
+
+    {{ csrfField() }}
+
+    @!input({
+      label: 'Nome de usuário',
+      hint: 'Sugestão: use diferentes usuários para diferentes departamentos',
+      name: 'username',
+      type: 'text',
+      autofocus: true,
+      maxlength: 255,
+      required: true,
+      value: user.username
+    })
+
+    @!button({ text: 'Enviar', type: 'submit' })
+  </form>
+</main>
+@end

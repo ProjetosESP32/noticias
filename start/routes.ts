@@ -21,4 +21,5 @@ Route.group(() => {
   Route.resource('sessions', 'NewsSessionsController').except(['index'])
   Route.resource('sessions.files', 'PostFilesController').only(['store', 'destroy'])
   Route.resource('sessions.news', 'NewsController').only(['store', 'destroy'])
+  Route.resource('users', 'UsersController').except(['show'])
 }).middleware(['auth:web'])

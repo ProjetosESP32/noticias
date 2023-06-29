@@ -1,0 +1,62 @@
+@layout('layouts/dashboard')
+
+@section('body')
+<main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+  @!homeLink()
+
+  <h1 class="mt-2 text-center text-2xl font-bold sm:text-3xl">Usuários!</h1>
+
+  <nav class="w-full flex flex-row justify-end gap-x-2">
+    @!link({
+      text: 'Criar usuário',
+      href: route('UsersController.create')
+    })
+  </nav>
+
+  <div class="overflow-x-auto rounded-lg border border-gray-200 mt-4">
+    <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+      <thead>
+        <tr>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-right">
+            ID
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
+            Nome de usuário
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
+            Ações
+          </th>
+        </tr>
+      </thead>
+  
+      <tbody class="divide-y divide-gray-200">
+        @each(user in users)
+          <tr>
+            <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900 text-right">{{ user.id }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ user.username }}</td>
+            <td class="flex gap-x-1 justify-center items-center py-3">
+              @!link({
+                text: 'Editar',
+                class: 'bg-yellow-600',
+                href: route('UsersController.edit', [user.id])
+              })
+              <form method="POST" action="{{ route('UsersController.destroy', [user.id], { qs: { _method: 'DELETE' } }) }}">
+                {{ csrfField() }}
+                @!button({
+                  text: 'Deletar',
+                  class: 'bg-red-600',
+                  type: 'submit'
+                })
+              </form>
+            </td>
+          </tr>
+        @else
+          <tr>
+            <td colspan="3" class="text-center px-4 py-2 font-medium">Sem usuários</td>
+          </tr>
+        @end
+      </tbody>
+    </table>
+  </div>
+</main>
+@end

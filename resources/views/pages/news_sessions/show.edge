@@ -5,15 +5,16 @@
   @!homeLink()
 
   <h1 class="mt-2 text-center text-2xl font-bold sm:text-3xl">Sessão de notícia #{{ newsSession.id }}!</h1>
-  
-  <article class="mt-4">
-    <h2 class="text-xl font-semibold">{{ newsSession.name }}</h2>
-    
-    <p>Sessão habilitada a carregar notícias do portal?</p>
-    <p class="text-gray-700">&emsp;{{ !!newsSession.isPortalNewsActive ? 'Sim' : 'Não' }}</p>
 
-    <p>Sessão habilitada a carregar itens globais?</p>
-    <p class="text-gray-700">&emsp;{{ !!newsSession.isInstagramFilesActive ? 'Sim' : 'Não' }}</p>
+  <article class="mt-4">
+    <h2 class="text-xl font-semibold">Nome da sessão: {{ newsSession.name }}</h2>
+    
+    <dl>
+      <dt>Sessão habilitada a carregar notícias do portal?</dt>
+      <dd>&emsp;{{ !!newsSession.isPortalNewsActive ? 'Sim' : 'Não' }}</dd>
+      <dt>Sessão habilitada a carregar itens globais?</dt>
+      <dd>&emsp;{{ !!newsSession.isInstagramFilesActive ? 'Sim' : 'Não' }}</dd>
+    </dl>
   </article>
 
   <article class="mt-4">

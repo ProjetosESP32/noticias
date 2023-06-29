@@ -13,9 +13,9 @@ const generator = nextItem(items)
 let activeItem = null
 
 function* nextItem(arr) {
-  let lastIdx = 0
-
   if (arr.length === 0) return
+
+  let lastIdx = 0
 
   while (true) {
     if (lastIdx >= arr.length) lastIdx = 0
