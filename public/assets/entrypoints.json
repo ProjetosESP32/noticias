@@ -2,23 +2,23 @@
   "entrypoints": {
     "app": {
       "js": [
-        "http://localhost:8080/assets/runtime.js",
-        "http://localhost:8080/assets/vendors-node_modules_alpinejs_dist_module_esm_js-node_modules_mini-css-extract-plugin_dist_hm-918656.js",
-        "http://localhost:8080/assets/app.js"
+        "http://0.0.0.0:8080/assets/runtime.js",
+        "http://0.0.0.0:8080/assets/vendors-node_modules_alpinejs_dist_module_esm_js-node_modules_mini-css-extract-plugin_dist_hm-d24b81.js",
+        "http://0.0.0.0:8080/assets/app.js"
       ],
       "css": [
-        "http://localhost:8080/assets/resources_css_app_css.css"
+        "http://0.0.0.0:8080/assets/resources_css_app_css.css"
       ]
     },
     "news": {
       "js": [
-        "http://localhost:8080/assets/runtime.js",
-        "http://localhost:8080/assets/vendors-node_modules_alpinejs_dist_module_esm_js-node_modules_mini-css-extract-plugin_dist_hm-918656.js",
-        "http://localhost:8080/assets/vendors-node_modules_luxon_src_luxon_js.js",
-        "http://localhost:8080/assets/news.js"
+        "http://0.0.0.0:8080/assets/runtime.js",
+        "http://0.0.0.0:8080/assets/vendors-node_modules_alpinejs_dist_module_esm_js-node_modules_mini-css-extract-plugin_dist_hm-d24b81.js",
+        "http://0.0.0.0:8080/assets/vendors-node_modules_luxon_src_luxon_js.js",
+        "http://0.0.0.0:8080/assets/news.js"
       ],
       "css": [
-        "http://localhost:8080/assets/resources_css_app_css.css"
+        "http://0.0.0.0:8080/assets/resources_css_app_css.css"
       ]
     }
   }

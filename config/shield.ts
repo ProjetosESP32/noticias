@@ -5,7 +5,6 @@
  * file.
  */
 
-import Application from '@ioc:Adonis/Core/Application'
 import { type ShieldConfig } from '@ioc:Adonis/Addons/Shield'
 
 /*
@@ -26,7 +25,7 @@ export const csp: ShieldConfig['csp'] = {
   | The CSP rules are disabled by default for seamless onboarding.
   |
   */
-  enabled: Application.inProduction,
+  enabled: true,
 
   /*
   |--------------------------------------------------------------------------
