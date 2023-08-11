@@ -25,7 +25,7 @@
           @set('file', video.file.data)
 
             <video
-              class="w-full h-full object-center hidden"
+              class="w-full h-[calc(90vh-2rem)] object-center hidden"
               data-index="{{ idx }}"
               preload="auto"
               {{ video.audioEnabled ? '' : 'muted' }}>
@@ -42,7 +42,7 @@
 
           <img
             x-show="index === {{ idx }}"
-            class="w-full h-full object-center object-contain"
+            class="w-full h-[calc(90vh-2rem)] object-center object-contain"
             src="{{ file.url }}"
             alt="{{ file.name }}">
         @end
@@ -56,7 +56,7 @@
 
         <img
           x-show="index === {{ idx }}"
-          class="w-full h-full object-center object-contain"
+          class="w-full h-[calc(90vh-2rem)] object-center object-contain"
           src="{{ file.url }}"
           alt="{{ file.name }}">
       @end
