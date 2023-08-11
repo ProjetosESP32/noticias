@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs'
 import { getNextRestartMillis } from './utils/time'
+import { nextItem } from './utils/next_gen'
 
 import '../css/app.css'
 
@@ -12,23 +13,11 @@ const items = Array.from(document.querySelectorAll('video')).sort(
 const generator = nextItem(items)
 let activeItem = null
 
-function* nextItem(arr) {
-  if (arr.length === 0) return
-
-  let lastIdx = 0
-
-  while (true) {
-    if (lastIdx >= arr.length) lastIdx = 0
-
-    yield arr[lastIdx++]
-  }
-}
-
 function hiddenOld() {
   if (!activeItem) return
 
   activeItem.onplay = null
-  activeItem.onended = null
+  activeItem.onpause = null
   activeItem.classList.add('hidden')
 }
 
@@ -46,7 +35,7 @@ function changeVideo() {
     audio.muted = !activeItem.muted
   }
 
-  activeItem.onended = () => {
+  activeItem.onpause = () => {
     audio.muted = false
     changeVideo()
   }

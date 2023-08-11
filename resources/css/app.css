@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@layer components {
+  .scroll-container {
+    @apply relative flex flex-row overflow-hidden font-[Outfit] select-none bg-green-800;
+    --gap: 5vw;
+    gap: var(--gap);
+  }
+
+  .scroll-content {
+    @apply min-w-full flex flex-row flex-shrink-0 justify-around text-[7vh] uppercase text-white;
+    gap: var(--gap);
+    animation: scroll 15s linear infinite;
+  }
+}
+
 [x-cloak] {
   display: none;
 }

@@ -15,17 +15,17 @@
 
 @section('body')
 <main class="block w-full h-screen overflow-hidden bg-green-700">
-  <audio hidden autoplay>
+  <audio hidden autoplay preload="auto">
     <source src="https://sv13.hdradios.net:6990/live">
   </audio>
-  <div class="w-full h-[calc(100vh-5rem)] grid grid-cols-2 p-4 gap-x-4">
+  <div class="w-full h-[90vh] grid grid-cols-2 p-4 gap-x-4">
     @if (hasVideos)
       <div>
         @each((video, idx) in videos)
           @set('file', video.file.data)
 
             <video
-              class="w-full h-[calc(100vh-7rem)] object-center hidden"
+              class="w-full h-full object-center hidden"
               data-index="{{ idx }}"
               preload="auto"
               {{ video.audioEnabled ? '' : 'muted' }}>
@@ -42,8 +42,7 @@
 
           <img
             x-show="index === {{ idx }}"
-            x-transition
-            class="w-full h-[calc(100vh-7rem)] object-center object-contain"
+            class="w-full h-full object-center object-contain"
             src="{{ file.url }}"
             alt="{{ file.name }}">
         @end
@@ -57,19 +56,25 @@
 
         <img
           x-show="index === {{ idx }}"
-          x-transition
-          class="w-full h-[calc(100vh-7rem)] object-center object-contain"
+          class="w-full h-full object-center object-contain"
           src="{{ file.url }}"
           alt="{{ file.name }}">
       @end
     </div>
   </div>
-  <div x-data="timer({{news.length}}, 20000)" x-cloak class="w-full h-20 bg-green-800">
-    <div class="w-fit text-7xl uppercase text-white whitespace-nowrap animate-slide font-[Outfit]">
+  <div class="scroll-container">
+    <div class="scroll-content" style="animation-duration: {{15 * news.length}}s">
       @each((ns, idx) in news)
-        <p x-show="index === {{ idx }}">
+        <span>
           {{ ns.description }}
-        </p>
+        </span>
+      @end
+    </div>
+    <div class="scroll-content" style="animation-duration: {{15 * news.length}}s" aria-hidden="true">
+      @each((ns, idx) in news)
+        <span>
+          {{ ns.description }}
+        </span>
       @end
     </div>
   </div>
