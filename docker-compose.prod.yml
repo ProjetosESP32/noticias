@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DB_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+    volumes:
+      - mysql_volume:/var/lib/mysql
+
+  backend:
+    depends_on:
+      - mysqldb
+    image: noticias:v1.0.1
+    ports:
+      - ${PORT}:${PORT}
+      - 8080:8080
+      - 9229:9229
+    env_file:
+      - .prod.env
+    environment:
+      MYSQL_HOST: mysqldb
+    volumes:
+      - ./tmp:/home/node/app/tmp
+    healthcheck:
+      test: curl --fail http://localhost:${PORT}/health || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
+
+volumes:
+  mysql_volume:

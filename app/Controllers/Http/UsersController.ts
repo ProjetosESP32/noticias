@@ -14,7 +14,7 @@ export default class UsersController {
 
   public async create({ view, bouncer }: HttpContextContract) {
     await bouncer.allows('admin')
-    const password = generatePassword(16)
+    const password = generatePassword(24)
 
     return view.render('pages/users/create', { password })
   }

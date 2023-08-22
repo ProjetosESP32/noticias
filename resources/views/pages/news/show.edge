@@ -1,10 +1,5 @@
 @layout('layouts/base')
 
-@set('images', posts.filter(p => p.file.data.mimeType.includes('image')))
-@set('videos', posts.filter(p => p.file.data.mimeType.includes('video')))
-@set('hasVideos', videos.length > 0)
-@set('slicePos', Math.round(images.length / 2))
-
 @section('head')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,46 +14,51 @@
     <source src="https://sv13.hdradios.net:6990/live">
   </audio>
   <div class="w-full h-[90vh] grid grid-cols-2 p-4 gap-x-4">
-    @if (hasVideos)
-      <div>
-        @each((video, idx) in videos)
-          @set('file', video.file.data)
+    <div data-js="common-posts-panel">
+      @each((post, idx) in globalPosts)
+        @set('file', post.file.data)
 
-            <video
-              class="w-full h-[calc(90vh-2rem)] object-center hidden"
-              data-index="{{ idx }}"
-              preload="auto"
-              {{ video.audioEnabled ? '' : 'muted' }}>
-              <source src="{{ file.url }}" type="{{ file.mimeType }}">
-            </video>
-          @end
-      </div>
-    @else
-      @set('_images', images.slice(0, slicePos))
-
-      <div x-data="timer({{_images.length}}, 10000)" x-cloak>
-        @each((image, idx) in _images)
-          @set('file', image.file.data)
-
+        @if (file.mimeType.includes('video'))
+          <video
+            class="w-full h-[calc(90vh-2rem)] object-center hidden"
+            data-index="{{ idx }}"
+            data-priority="{{ post.priority }}"
+            preload="auto"
+            {{ post.audioEnabled ? '' : 'muted' }}>
+            <source src="{{ file.url }}" type="{{ file.mimeType }}">
+          </video>
+        @else
           <img
-            x-show="index === {{ idx }}"
-            class="w-full h-[calc(90vh-2rem)] object-center object-contain"
+            data-index="{{ idx }}"
+            data-priority="{{ post.priority }}"
+            class="w-full h-[calc(90vh-2rem)] object-center object-contain hidden"
             src="{{ file.url }}"
             alt="{{ file.name }}">
         @end
-      </div>
-    @end
+      @end
+    </div>
 
-    @set('_images', hasVideos ? images : images.slice(slicePos))
-    <div x-data="timer({{_images.length}}, 10000)" x-cloak>
-      @each((image, idx) in _images)
-        @set('file', image.file.data)
+    <div data-js="session-posts-panel">
+      @each((post, idx) in posts)
+        @set('file', post.file.data)
 
-        <img
-          x-show="index === {{ idx }}"
-          class="w-full h-[calc(90vh-2rem)] object-center object-contain"
-          src="{{ file.url }}"
-          alt="{{ file.name }}">
+        @if (file.mimeType.includes('video'))
+          <video
+            class="w-full h-[calc(90vh-2rem)] object-center hidden"
+            data-index="{{ idx }}"
+            data-priority="{{ post.priority }}"
+            preload="auto"
+            {{ post.audioEnabled ? '' : 'muted' }}>
+            <source src="{{ file.url }}" type="{{ file.mimeType }}">
+          </video>
+        @else
+          <img
+            data-index="{{ idx }}"
+            data-priority="{{ post.priority }}"
+            class="w-full h-[calc(90vh-2rem)] object-center object-contain hidden"
+            src="{{ file.url }}"
+            alt="{{ file.name }}">
+        @end
       @end
     </div>
   </div>

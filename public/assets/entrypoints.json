@@ -3,7 +3,8 @@
     "app": {
       "js": [
         "http://0.0.0.0:8080/assets/runtime.js",
-        "http://0.0.0.0:8080/assets/vendors-node_modules_alpinejs_dist_module_esm_js-node_modules_mini-css-extract-plugin_dist_hm-d24b81.js",
+        "http://0.0.0.0:8080/assets/vendors-node_modules_mini-css-extract-plugin_dist_hmr_hotModuleReplacement_js-node_modules_we-da5a93.js",
+        "http://0.0.0.0:8080/assets/vendors-node_modules_alpinejs_dist_module_esm_js.js",
         "http://0.0.0.0:8080/assets/app.js"
       ],
       "css": [
@@ -13,7 +14,7 @@
     "news": {
       "js": [
         "http://0.0.0.0:8080/assets/runtime.js",
-        "http://0.0.0.0:8080/assets/vendors-node_modules_alpinejs_dist_module_esm_js-node_modules_mini-css-extract-plugin_dist_hm-d24b81.js",
+        "http://0.0.0.0:8080/assets/vendors-node_modules_mini-css-extract-plugin_dist_hmr_hotModuleReplacement_js-node_modules_we-da5a93.js",
         "http://0.0.0.0:8080/assets/vendors-node_modules_luxon_src_luxon_js.js",
         "http://0.0.0.0:8080/assets/news.js"
       ],

@@ -6,8 +6,6 @@ export default class CreateNewsSessionValidator {
 
   public schema = schema.create({
     name: schema.string({ trim: true }, [rules.maxLength(25)]),
-    isPortalNewsActive: schema.boolean.optional(),
-    isInstagramFilesActive: schema.boolean.optional(),
   })
 
   public messages: CustomMessages = {}

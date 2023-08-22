@@ -4,18 +4,7 @@
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
   @!homeLink()
 
-  <h1 class="mt-2 text-center text-2xl font-bold sm:text-3xl">Sessão de notícia #{{ newsSession.id }}!</h1>
-
-  <article class="mt-4">
-    <h2 class="text-xl font-semibold">Nome da sessão: {{ newsSession.name }}</h2>
-    
-    <dl>
-      <dt>Sessão habilitada a carregar notícias do portal?</dt>
-      <dd>&emsp;{{ !!newsSession.isPortalNewsActive ? 'Sim' : 'Não' }}</dd>
-      <dt>Sessão habilitada a carregar itens globais?</dt>
-      <dd>&emsp;{{ !!newsSession.isInstagramFilesActive ? 'Sim' : 'Não' }}</dd>
-    </dl>
-  </article>
+  <h1 class="mt-2 text-center text-2xl sm:text-3xl">Sessão de notícia: <strong>{{ newsSession.name }}</strong>.</h1>
 
   <article class="mt-4">
     <h2 class="text-xl font-semibold">Notícias personalizadas</h2>
@@ -28,18 +17,19 @@
       @end
     </ul>
   </article>
-  
+
   <article class="mt-4">
     <h2 class="text-xl font-semibold">Arquivos personalizados</h2>
 
     <div class="grid grid-cols-3 gap-1 p-2">
       @each(newsFile in newsSession.postFiles)
         @set('file', newsFile.file.data)
+        @set('borderColor', newsFile.priority ? 'border-red-500' : 'border-indigo-500')
 
         @if(file.mimeType.includes('image'))
-          <img class="w-full object-contain object-center aspect-square border-2 border-indigo-500 bg-black" src="{{ file.url }}" alt="{{ file.name }}">
+          <img class="w-full object-contain object-center aspect-square border-2 {{ borderColor }} bg-black" src="{{ file.url }}" alt="{{ file.name }}">
         @elseif(file.mimeType.includes('video'))
-          <video class="w-full aspect-square border-2 border-indigo-500 bg-black" controls {{ newsFile.audioEnabled ? '' : 'muted' }}>
+          <video class="w-full aspect-square border-2 {{ borderColor }} bg-black" controls {{ newsFile.audioEnabled ? '' : 'muted' }}>
             <source src="{{ file.url }}" type="{{ file.mimeType }}">
           </video>
         @end

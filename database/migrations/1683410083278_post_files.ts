@@ -9,6 +9,7 @@ export default class extends BaseSchema {
       table.integer('news_session_id').unsigned().nullable()
       table.integer('file_id').unsigned()
       table.boolean('audio_enabled').defaultTo(false)
+      table.boolean('priority').defaultTo(false)
 
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })

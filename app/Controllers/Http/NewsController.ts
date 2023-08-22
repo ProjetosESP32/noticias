@@ -16,24 +16,11 @@ export default class NewsController {
     await newsSession.load('news')
     await newsSession.load('postFiles')
 
-    let news: News[] = []
-    let posts: PostFile[] = []
+    const news = await News.query().where('news_session_id', newsSession.id).orWhereNull('news_session_id')
+    const posts = await PostFile.query().where('news_session_id', newsSession.id)
+    const globalPosts = await PostFile.query().whereNull('news_session_id')
 
-    const newsQuery = News.query().where('news_session_id', newsSession.id)
-    const postQuery = PostFile.query().where('news_session_id', newsSession.id)
-
-    if (newsSession.isPortalNewsActive) {
-      void newsQuery.orWhereNull('news_session_id')
-    }
-
-    if (newsSession.isInstagramFilesActive) {
-      void postQuery.orWhereNull('news_session_id')
-    }
-
-    news = await newsQuery
-    posts = await postQuery
-
-    return view.render('pages/news/show', { newsSession, news, posts })
+    return view.render('pages/news/show', { newsSession, news, posts, globalPosts })
   }
 
   public async store({ request, params, response, session }: HttpContextContract) {

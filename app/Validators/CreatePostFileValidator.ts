@@ -5,11 +5,14 @@ export default class CreatePostFileValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    file: schema.file({
-      extnames: ['png', 'jpeg', 'jpg', 'mp4'],
-      size: '100mb',
-    }),
+    files: schema.array().members(
+      schema.file({
+        extnames: ['png', 'jpeg', 'jpg', 'mp4'],
+        size: '100mb',
+      }),
+    ),
     audioEnabled: schema.boolean.optional(),
+    priority: schema.boolean.optional(),
   })
 
   public messages: CustomMessages = {}

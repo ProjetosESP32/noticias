@@ -33,12 +33,6 @@
           <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
             Nome da sessão
           </th>
-          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
-            Habilitado notícias do portal
-          </th>
-          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
-            Habilitado post globais
-          </th>
           <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
             Ações
           </th>
@@ -50,8 +44,6 @@
           <tr>
             <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900 text-right">{{ ns.id }}</td>
             <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ ns.name }}</td>
-            <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ !!ns.isPortalNewsActive ? 'Sim' : 'Não' }}</td>
-            <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ !!ns.isInstagramFilesActive ? 'Sim' : 'Não' }}</td>
             <td class="flex gap-x-1 justify-center items-center py-3">
               @!link({
                 text: 'Ver',
@@ -74,7 +66,7 @@
           </tr>
         @else
           <tr>
-            <td colspan="5" class="text-center px-4 py-2 font-medium">Sem sessões de notícia</td>
+            <td colspan="3" class="text-center px-4 py-2 font-medium">Sem sessões de notícia</td>
           </tr>
         @end
       </tbody>

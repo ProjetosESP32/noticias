@@ -1,69 +1,106 @@
-import Alpine from 'alpinejs'
 import { getNextRestartMillis } from './utils/time'
-import { nextItem } from './utils/next_gen'
 
 import '../css/app.css'
 
-window.Alpine = Alpine
-
+// radio
 const audio = document.querySelector('audio')
-const items = Array.from(document.querySelectorAll('video')).sort(
-  (a, b) => Number(a.dataset.index) - Number(b.dataset.index),
+
+// get from panels
+const datasetFilter = (a, b) => a.dataset.index - b.dataset.index
+const commonPostsPanel = Array.from(document.querySelector('[data-js="common-posts-panel"]').children).sort(
+  datasetFilter,
 )
-const generator = nextItem(items)
-let activeItem = null
+const sessionPostsPanel = Array.from(document.querySelector('[data-js="session-posts-panel"]').children).sort(
+  datasetFilter,
+)
 
-function hiddenOld() {
-  if (!activeItem) return
+let isPlaying = false
+let onEndCallback = null
 
-  activeItem.onplay = null
-  activeItem.onpause = null
-  activeItem.classList.add('hidden')
+const hide = el => {
+  if (el.tagName === 'VIDEO') {
+    el.onplay = null
+    el.onpause = null
+    el.pause()
+    el.currentTime = 0
+  }
+
+  el.classList.add('hidden')
 }
 
-function changeVideo() {
-  hiddenOld()
-
-  const next = generator.next()
+const changePost = gen => {
+  const next = gen.next()
 
   if (next.done) return
 
-  activeItem = next.value
+  const el = next.value
 
-  activeItem.classList.remove('hidden')
-  activeItem.onplay = () => {
-    audio.muted = !activeItem.muted
+  el.classList.remove('hidden')
+
+  if (el.tagName === 'VIDEO') {
+    el.onplay = () => {
+      audio.muted = !el.muted
+      isPlaying = !el.muted
+    }
+
+    el.onpause = () => {
+      audio.muted = false
+      isPlaying = false
+      onEndCallback?.()
+      hide(el)
+      changePost(gen)
+    }
+
+    if (!(!el.muted && isPlaying)) {
+      el.play()
+    } else {
+      onEndCallback = () => {
+        el.play()
+        onEndCallback = null
+      }
+    }
+  } else {
+    setTimeout(() => {
+      hide(el)
+      changePost(gen)
+    }, 10_000)
   }
-
-  activeItem.onpause = () => {
-    audio.muted = false
-    changeVideo()
-  }
-
-  activeItem.play()
 }
 
-Alpine.data('timer', (length = 0, timeout = 10000) => ({
-  index: 0,
+const incrementIndex = (index, max) => (index + 1 < max ? index + 1 : 0)
 
-  init() {
-    if (length <= 1) return
+function* nextItemWithPriority(normalPriority, highPriority, each, { normal, high } = { normal: 0, high: 0 }) {
+  if (normalPriority.length === 0) return
 
-    this.$nextTick(() => {
-      setInterval(() => {
-        if (this.index >= length - 1) {
-          this.index = 0
-        } else {
-          this.index++
-        }
-      }, timeout)
-    })
-  },
-}))
+  let normalPriorityYieldedCount = 0
+  let normalPriorityIndex = normal
+  let highPriorityIndex = high
 
-Alpine.start()
+  while (true) {
+    if (normalPriorityYieldedCount >= each && highPriority.length > 0) {
+      normalPriorityYieldedCount = 0
+      yield highPriority[highPriorityIndex]
+      highPriorityIndex = incrementIndex(highPriorityIndex, highPriority.length)
+    } else {
+      normalPriorityYieldedCount++
+      yield normalPriority[normalPriorityIndex]
+      normalPriorityIndex = incrementIndex(normalPriorityIndex, normalPriority.length)
+    }
+  }
+}
 
-changeVideo()
+const noPriorityFilter = el => !Number(el.dataset.priority)
+const priorityFilter = el => Number(el.dataset.priority)
+const separatePriorities = els => [els.filter(noPriorityFilter), els.filter(priorityFilter)]
+
+const [commonNormal, commonHigh] = separatePriorities(commonPostsPanel)
+const [sessionNormal, sessionHigh] = separatePriorities(sessionPostsPanel)
+
+const commonGen = nextItemWithPriority(commonNormal, commonHigh, commonNormal.length > commonHigh.length ? 2 : 1)
+const sessionGen = nextItemWithPriority(sessionNormal, sessionHigh, sessionNormal.length > sessionHigh.length ? 2 : 1)
+
+changePost(commonGen)
+changePost(sessionGen)
 
 setTimeout(() => {
   location.reload()

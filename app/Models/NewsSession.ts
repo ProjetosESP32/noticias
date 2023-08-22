@@ -10,12 +10,6 @@ export default class NewsSession extends BaseModel {
   @column()
   public name: string
 
-  @column()
-  public isPortalNewsActive: boolean
-
-  @column()
-  public isInstagramFilesActive: boolean
-
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

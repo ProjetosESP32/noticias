@@ -47,14 +47,10 @@ export default class NewsSessionsController {
   }
 
   public async update({ params, request, response, session }: HttpContextContract) {
-    const {
-      name,
-      isInstagramFilesActive = false,
-      isPortalNewsActive = false,
-    } = await request.validate(CreateNewsSessionValidator)
+    const { name } = await request.validate(CreateNewsSessionValidator)
     const newsSession = await NewsSession.findOrFail(params.id)
 
-    newsSession.merge({ name, isInstagramFilesActive, isPortalNewsActive })
+    newsSession.merge({ name })
     await newsSession.save()
     session.flash('toast', {
       title: 'Sessão atualizada!',

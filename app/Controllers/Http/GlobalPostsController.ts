@@ -12,13 +12,15 @@ export default class GlobalPostsController {
   }
 
   public async store({ request, response, session }: HttpContextContract) {
-    const { audioEnabled, file } = await request.validate(CreatePostFileValidator)
+    const { audioEnabled, files, priority } = await request.validate(CreatePostFileValidator)
 
-    const newFile = await File.create({ data: Attachment.fromFile(file) })
-    const postFile = await PostFile.create({ audioEnabled: file.extname === 'mp4' ? audioEnabled : false })
-    await postFile.related('file').associate(newFile)
+    const newFiles = await File.createMany(files.map(file => ({ data: Attachment.fromFile(file) })))
+    const postFiles = await PostFile.createMany(
+      files.map(file => ({ audioEnabled: file.extname === 'mp4' ? audioEnabled : false, priority })),
+    )
+    await Promise.all(postFiles.map(async (postFile, i) => postFile.related('file').associate(newFiles[i])))
 
-    session.flash('toast', { title: 'Sucesso!', description: 'Arquivo adicionado.', type: 'success' })
+    session.flash('toast', { title: 'Sucesso!', description: 'Arquivos adicionados.', type: 'success' })
 
     response.redirect().toRoute('global.index')
   }
