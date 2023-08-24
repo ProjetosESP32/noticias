@@ -2,10 +2,8 @@ import { getNextRestartMillis } from './utils/time'
 
 import '../css/app.css'
 
-// radio
 const audio = document.querySelector('audio')
 
-// get from panels
 const datasetFilter = (a, b) => a.dataset.index - b.dataset.index
 const commonPostsPanel = Array.from(document.querySelector('[data-js="common-posts-panel"]').children).sort(
   datasetFilter,
@@ -14,14 +12,12 @@ const sessionPostsPanel = Array.from(document.querySelector('[data-js="session-p
   datasetFilter,
 )
 
-let isPlaying = false
-let onEndCallback = null
+let usingAudio = false
 
 const hide = el => {
   if (el.tagName === 'VIDEO') {
     el.onplay = null
     el.onpause = null
-    el.pause()
     el.currentTime = 0
   }
 
@@ -35,29 +31,22 @@ const changePost = gen => {
 
   const el = next.value
 
-  el.classList.remove('hidden')
-
   if (el.tagName === 'VIDEO') {
+    if (!el.muted && usingAudio) {
+      changePost(gen)
+      return
+    }
+
     el.onplay = () => {
       audio.muted = !el.muted
-      isPlaying = !el.muted
+      usingAudio = !el.muted
     }
 
     el.onpause = () => {
       audio.muted = false
-      isPlaying = false
-      onEndCallback?.()
+      usingAudio = false
       hide(el)
       changePost(gen)
-    }
-
-    if (!(!el.muted && isPlaying)) {
-      el.play()
-    } else {
-      onEndCallback = () => {
-        el.play()
-        onEndCallback = null
-      }
     }
   } else {
     setTimeout(() => {
@@ -65,6 +54,9 @@ const changePost = gen => {
       changePost(gen)
     }, 10_000)
   }
+
+  el.classList.remove('hidden')
+  if (el.tagName === 'VIDEO') el.play().catch(console.warn)
 }
 
 const incrementIndex = (index, max) => (index + 1 < max ? index + 1 : 0)
@@ -90,7 +82,7 @@ function* nextItemWithPriority(normalPriority, highPriority, each, { normal, hig
 }
 
 const noPriorityFilter = el => !Number(el.dataset.priority)
-const priorityFilter = el => Number(el.dataset.priority)
+const priorityFilter = el => !!Number(el.dataset.priority)
 const separatePriorities = els => [els.filter(noPriorityFilter), els.filter(priorityFilter)]
 
 const [commonNormal, commonHigh] = separatePriorities(commonPostsPanel)
