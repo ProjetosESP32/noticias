@@ -2,10 +2,8 @@ import { getNextRestartMillis } from './utils/time'
 
 import '../css/app.css'
 
-// radio
 const audio = document.querySelector('audio')
 
-// get from panels
 const datasetFilter = (a, b) => a.dataset.index - b.dataset.index
 const commonPostsPanel = Array.from(document.querySelector('[data-js="common-posts-panel"]').children).sort(
   datasetFilter,
@@ -89,7 +87,7 @@ function* nextItemWithPriority(normalPriority, highPriority, each, { normal, hig
 }
 
 const noPriorityFilter = el => !Number(el.dataset.priority)
-const priorityFilter = el => Number(el.dataset.priority)
+const priorityFilter = el => !!Number(el.dataset.priority)
 const separatePriorities = els => [els.filter(noPriorityFilter), els.filter(priorityFilter)]
 
 const [commonNormal, commonHigh] = separatePriorities(commonPostsPanel)
