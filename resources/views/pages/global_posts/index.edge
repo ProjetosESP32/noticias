@@ -9,35 +9,9 @@
     <p class="mt-4 text-gray-500">Vídeos e imagens que aparecerão para qualquer sessão de notícia.</p>
   </div>
 
-  @component('components/modal')
-    @slot('trigger', scope)
-      <div class="flex justify-end">
-        @!button({ text: 'Adicionar arquivo', type: 'button', ...scope })
-      </div>
-    @end
-
-    <form class="p-6 flex flex-col gap-y-2" method="POST" action="{{ route('GlobalPostsController.store') }}" enctype="multipart/form-data">
-      {{ csrfField() }}
-
-      @!fileInput({
-        name: 'files',
-        accept: 'image/png, image/jpg, image/jpeg, video/mp4',
-        multiple: true
-      })
-
-      @!checkbox({
-        name: 'audioEnabled',
-        label: 'Se é video, terá áudio?',
-      })
-
-      @!checkbox({
-        name: 'priority',
-        label: 'Exibição prioritária'
-      })
-
-      @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })
-    </form>
-  @end
+  @!postFilesModal({
+    route: route('GlobalPostsController.store')
+  })
 
   <div class="grid grid-cols-3 gap-2.5 mt-4">
     @each(post in posts)

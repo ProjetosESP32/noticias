@@ -6,7 +6,7 @@
     type="checkbox"
     id="{{ id }}"
     {{ $props.serializeExcept(['id', 'type', 'class']) }}>
-  <label class="ml-2 text-sm font-medium" for="{{ id }}">{{ label }}</label>
+  <label class="ml-2 text-sm font-medium select-none" for="{{ id }}">{{ label }}</label>
 </div>
 
 @if(flashMessages.has(`errors.${name}`))

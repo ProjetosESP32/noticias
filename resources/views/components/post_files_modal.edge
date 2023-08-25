@@ -1,0 +1,63 @@
+@component('components/modal')
+  @slot('trigger', scope)
+    <div class="flex justify-end">
+      @!button({ text: 'Adicionar arquivo', type: 'button', ...scope })
+    </div>
+  @end
+
+  <form
+    x-data="post_files_modal"
+    @submit="onSubmit"
+    class="p-6 flex flex-col gap-y-2" 
+    method="POST"
+    action="{{ route }}"
+    enctype="multipart/form-data">
+
+    {{ csrfField() }}
+
+    <div class="flex flex-row justify-end">
+      <button
+        @click="addInput"
+        type="button"
+        class="w-fit rounded border border-green-500 p-2 text-green-500 hover:bg-green-500 hover:text-white focus:outline-none focus:ring">
+        @!icons.filePlus()
+      </button>
+    </div>
+
+    <template x-for="(input, idx) in inputs" :key="input">
+      <div class="w-full flex flex-row gap-x-2" x-data="file_input">
+        <label
+          :for="inputId(input)"
+          x-text="label"
+          class="flex-1 inline-block rounded border border-indigo-600 px-12 py-3 cursor-pointer text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500">
+        </label>
+        <input
+          :id="inputId(input)"
+          x-on:input="onInput"
+          name="files[]"
+          hidden
+          type="file"
+          accept="image/png, image/jpg, image/jpeg, video/mp4">
+
+        <button
+          @click="removeInput(input)"
+          type="button"
+          class="grid place-items-center px-2 rounded border border-red-600 text-red-600 hover:bg-red-600 hover:text-white focus:outline-none focus:ring">
+          @!icons.trash()
+        </button>
+      </div>
+    </template>
+
+    @!checkbox({
+      name: 'audioEnabled',
+      label: 'Se é video, terá áudio?',
+    })
+
+    @!checkbox({
+      name: 'priority',
+      label: 'Exibição prioritária'
+    })
+
+    @!button({ text: 'Enviar', type: 'submit', class: 'w-full', ':disabled': 'isLoading' })
+  </form>
+@end

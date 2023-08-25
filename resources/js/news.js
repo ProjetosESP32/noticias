@@ -15,13 +15,11 @@ const sessionPostsPanel = Array.from(document.querySelector('[data-js="session-p
 )
 
 let isPlaying = false
-let onEndCallback = null
 
 const hide = el => {
   if (el.tagName === 'VIDEO') {
     el.onplay = null
     el.onpause = null
-    el.pause()
     el.currentTime = 0
   }
 
@@ -35,36 +33,37 @@ const changePost = gen => {
 
   const el = next.value
 
-  el.classList.remove('hidden')
-
   if (el.tagName === 'VIDEO') {
+    if (!el.muted && isPlaying) {
+      changePost(gen)
+      return
+    }
+
     el.onplay = () => {
-      audio.muted = !el.muted
-      isPlaying = !el.muted
+      if (!isPlaying) {
+        audio.muted = !el.muted
+        isPlaying = !el.muted
+      }
     }
 
     el.onpause = () => {
-      audio.muted = false
-      isPlaying = false
-      onEndCallback?.()
+      if (!el.muted) {
+        audio.muted = false
+        isPlaying = false
+      }
       hide(el)
       changePost(gen)
     }
 
-    if (!(!el.muted && isPlaying)) {
-      el.play()
-    } else {
-      onEndCallback = () => {
-        el.play()
-        onEndCallback = null
-      }
-    }
+    el.play()
   } else {
     setTimeout(() => {
       hide(el)
       changePost(gen)
     }, 10_000)
   }
+
+  el.classList.remove('hidden')
 }
 
 const incrementIndex = (index, max) => (index + 1 < max ? index + 1 : 0)
@@ -96,8 +95,8 @@ const separatePriorities = els => [els.filter(noPriorityFilter), els.filter(prio
 const [commonNormal, commonHigh] = separatePriorities(commonPostsPanel)
 const [sessionNormal, sessionHigh] = separatePriorities(sessionPostsPanel)
 
-const commonGen = nextItemWithPriority(commonNormal, commonHigh, commonNormal.length > commonHigh.length ? 2 : 1)
-const sessionGen = nextItemWithPriority(sessionNormal, sessionHigh, sessionNormal.length > sessionHigh.length ? 2 : 1)
+const commonGen = nextItemWithPriority(commonNormal, commonHigh, commonNormal.length > commonHigh.length ? 3 : 1)
+const sessionGen = nextItemWithPriority(sessionNormal, sessionHigh, sessionNormal.length > sessionHigh.length ? 3 : 1)
 
 changePost(commonGen)
 changePost(sessionGen)

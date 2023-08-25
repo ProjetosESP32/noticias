@@ -1,5 +1,5 @@
-<div x-data="{ showModal: false }" @keydown.window.escape="showModal = false">
-  {{{ await $slots.trigger({ '@click': 'showModal = !showModal' }) }}}
+<div x-data="modal" @keydown.window.escape="close">
+  {{{ await $slots.trigger({ '@click': 'open' }) }}}
 
   <div
     x-cloak
@@ -15,7 +15,7 @@
     class="fixed inset-0 z-50 flex items-center justify-center"
   >
     <div
-      @click.away="showModal = false"
+      @click.away="close"
       class="w-fit max-w-xl h-fit mx-auto bg-gray-100 rounded-lg"
     >
       {{{ await $slots.main() }}}

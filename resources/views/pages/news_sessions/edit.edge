@@ -107,40 +107,9 @@
   <article class="mx-auto mt-4">
     <h2 class="text-xl font-semibold">Arquivos personalizados</h2>
 
-    @component('components/modal')
-      @slot('trigger', scope)
-        <div class="flex justify-end">
-          @!button({ text: 'Adicionar arquivo', type: 'button', ...scope })
-        </div>
-      @end
-
-      <form
-        x-data="{ isLoading: false }"
-        @submit="isLoading = true"
-        class="p-6 flex flex-col gap-y-2"
-        method="POST"
-        action="{{ route('PostFilesController.store', [newsSession.id]) }}" enctype="multipart/form-data">
-        {{ csrfField() }}
-
-        @!fileInput({
-          name: 'files',
-          accept: 'image/png, image/jpg, image/jpeg, video/mp4',
-          multiple: true
-        })
-
-        @!checkbox({
-          name: 'priority',
-          label: 'Exibição prioritária'
-        })
-
-        @!checkbox({
-          name: 'audioEnabled',
-          label: 'Se é video, terá áudio?',
-        })
-
-        @!button({ text: 'Enviar', type: 'submit', class: 'w-full', ':disabled': 'isLoading' })
-      </form>
-    @end
+    @!postFilesModal({
+      route: route('PostFilesController.store', [newsSession.id])
+    })
 
     <div class="grid grid-cols-3 gap-2.5 mt-4">
       @each(newsFile in newsSession.postFiles)
