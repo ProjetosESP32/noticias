@@ -1,6 +1,3 @@
-/**
- * @type {() => import("alpinejs").AlpineComponent<Record<string, any>>}
- */
 export const postFilesModalComponent = () => ({
   isLoading: false,
   inputs: [],
