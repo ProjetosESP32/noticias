@@ -31,8 +31,8 @@
             data-index="{{ idx }}"
             data-priority="{{ post.priority }}"
             class="w-full h-[calc(90vh-2rem)] object-center object-contain hidden"
-            src="{{ file.url }}"
-            alt="{{ file.name }}">
+            src="{{ post.file.url }}"
+            alt="{{ post.file.name }}">
         @end
       @end
     </div>
@@ -54,8 +54,8 @@
             data-index="{{ idx }}"
             data-priority="{{ post.priority }}"
             class="w-full h-[calc(90vh-2rem)] object-center object-contain hidden"
-            src="{{ file.url }}"
-            alt="{{ file.name }}">
+            src="{{ post.file.url }}"
+            alt="{{ post.file.name }}">
         @end
       @end
     </div>

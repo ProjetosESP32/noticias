@@ -115,7 +115,7 @@
       @each(post in newsSession.postFiles)
         @set('borderColor', post.priority ? 'border-red-500' : 'border-indigo-500')
 
-        <form class="relative" method="POST" action="{{ route('PostFilesController.destroy', [newsSession.id, newsFile.id], { qs: { _method: 'DELETE' } }) }}">
+        <form class="relative" method="POST" action="{{ route('PostFilesController.destroy', [newsSession.id, post.id], { qs: { _method: 'DELETE' } }) }}">
           {{ csrfField() }}
 
           @if(post.type === 'image')
