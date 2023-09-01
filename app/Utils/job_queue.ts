@@ -27,6 +27,7 @@ export class JobQueue<T> {
       return
     }
 
+    this.running = true
     this.worker(job).then(this.boundHandler).catch(this.rejectionHandler)
   }
 }

@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, HasMany, beforeDelete, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import News from './News'
 import PostFile from './PostFile'
+import { SessionType } from 'App/Enums/SessionType'
 
 export default class NewsSession extends BaseModel {
   @column({ isPrimary: true })
@@ -9,6 +10,9 @@ export default class NewsSession extends BaseModel {
 
   @column()
   public name: string
+
+  @column()
+  public type: SessionType
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

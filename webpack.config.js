@@ -9,6 +9,7 @@ Encore.setOutputPath('./public/assets')
 Encore.setPublicPath('/assets')
 Encore.addEntry('app', './resources/js/app.js')
 Encore.addEntry('news', './resources/js/news.js')
+Encore.addEntry('youtube_video', './resources/js/youtube_video.js')
 
 Encore.enablePostCssLoader()
 

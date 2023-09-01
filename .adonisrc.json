@@ -19,10 +19,8 @@
     "./start/kernel",
     "./start/events",
     {
-      "file": "./start/jobs",
-      "environment": [
-        "web"
-      ]
+      "file": "./start/cron",
+      "environment": ["web"]
     },
     "./start/bouncer"
   ],
@@ -45,23 +43,21 @@
     {
       "pattern": "resources/views/**/*.edge",
       "reloadServer": false
+    },
+    {
+      "pattern": "utils/**",
+      "reloadServer": false
     }
   ],
-  "aceProviders": [
-    "@adonisjs/repl"
-  ],
+  "aceProviders": ["@adonisjs/repl"],
   "tests": {
     "suites": [
       {
         "name": "functional",
-        "files": [
-          "tests/functional/**/*.spec(.ts|.js)"
-        ],
+        "files": ["tests/functional/**/*.spec(.ts|.js)"],
         "timeout": 60000
       }
     ]
   },
-  "testProviders": [
-    "@japa/preset-adonis/TestsProvider"
-  ]
+  "testProviders": ["@japa/preset-adonis/TestsProvider"]
 }

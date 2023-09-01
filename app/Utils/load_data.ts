@@ -17,7 +17,7 @@ const throwIfHasRejected = <T>(data: Array<PromiseSettledResult<T>>) => {
 
 const loadNews = async () => {
   Logger.debug('Getting news')
-  const { data } = await axios.get('https://cba.ifmt.edu.br/conteudo/noticias/')
+  const { data } = await axios.get('https://cba.ifmt.edu.br/conteudo/noticias/', { headers: { Accept: 'text/html' } })
   const dom = new JSDOM(data)
   const news = Array.from(dom.window.document.querySelectorAll('div.small-12.columns.borda-esquerda'))
     .map(el => ({

@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { SessionType } from 'App/Enums/SessionType'
 import News from 'App/Models/News'
 import NewsSession from 'App/Models/NewsSession'
 import PostFile from 'App/Models/PostFile'
@@ -13,6 +14,11 @@ export default class NewsController {
 
   public async show({ view, params }: HttpContextContract) {
     const newsSession = await NewsSession.findOrFail(params.id)
+
+    if (newsSession.type === SessionType.YOUTUBE_VIDEO) {
+      return view.render('pages/news/youtube_video')
+    }
+
     await newsSession.load('news')
     await newsSession.load('postFiles')
 

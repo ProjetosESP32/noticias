@@ -1,8 +1,11 @@
 import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import File from 'App/Models/File'
+import { ALLOWED_IMAGE_EXTENSIONS } from 'App/Enums/ImageExt'
+import { PostFileTypes } from 'App/Enums/PostFileTypes'
+import { ALLOWED_VIDEO_EXTENSIONS } from 'App/Enums/VideoExt'
 import NewsSession from 'App/Models/NewsSession'
 import PostFile from 'App/Models/PostFile'
+import { addVideoConvertTask } from 'App/Utils/add_video_convert_task'
 import CreatePostFileValidator from 'App/Validators/CreatePostFileValidator'
 
 export default class PostFilesController {
@@ -10,12 +13,19 @@ export default class PostFilesController {
     const newsSession = await NewsSession.findOrFail(params.session_id)
     const { files, audioEnabled, priority } = await request.validate(CreatePostFileValidator)
 
-    const newFiles = await File.createMany(files.map(file => ({ data: Attachment.fromFile(file) })))
-    const newsFiles = await newsSession
+    const imageFiles = files.filter(file => ALLOWED_IMAGE_EXTENSIONS.includes(file.extname ?? ''))
+    await newsSession
       .related('postFiles')
-      .createMany(files.map(file => ({ audioEnabled: file.extname === 'mp4' ? audioEnabled : false, priority })))
-    await Promise.all(newsFiles.map(async (newsFile, i) => newsFile.related('file').associate(newFiles[i])))
-    session.flash('toast', { title: 'Sucesso!', description: 'Arquivos adicionados.', type: 'success' })
+      .createMany(imageFiles.map(file => ({ priority, type: PostFileTypes.IMAGE, file: Attachment.fromFile(file) })))
+
+    const videoFiles = files.filter(file => ALLOWED_VIDEO_EXTENSIONS.includes(file.extname ?? ''))
+    await addVideoConvertTask(videoFiles, audioEnabled, priority, newsSession)
+
+    session.flash('toast', {
+      title: 'Sucesso!',
+      description: 'Imagens adicionadas e vídeos em processamento.',
+      type: 'success',
+    })
 
     response.redirect().toRoute('sessions.edit', { id: params.session_id })
   }

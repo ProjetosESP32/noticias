@@ -16,16 +16,15 @@
   <div class="w-full h-[90vh] grid grid-cols-2 p-4 gap-x-4">
     <div data-js="common-posts-panel">
       @each((post, idx) in globalPosts)
-        @set('file', post.file.data)
-
-        @if (file.mimeType.includes('video'))
+        @if (post.type === 'video')
           <video
-            class="w-full h-[calc(90vh-2rem)] object-center hidden"
             data-index="{{ idx }}"
             data-priority="{{ post.priority }}"
+            class="w-full h-[calc(90vh-2rem)] object-center hidden"
             preload="auto"
             {{ post.audioEnabled ? '' : 'muted' }}>
-            <source src="{{ file.url }}" type="{{ file.mimeType }}">
+            <source src="{{ post.file.url }}" type="{{ post.file.mimeType }}">
+            <source src="{{ post.fallbackFile.url }}" type="{{ post.fallbackFile.mimeType }}">
           </video>
         @else
           <img
@@ -40,16 +39,15 @@
 
     <div data-js="session-posts-panel">
       @each((post, idx) in posts)
-        @set('file', post.file.data)
-
-        @if (file.mimeType.includes('video'))
+        @if (post.type === 'video')
           <video
-            class="w-full h-[calc(90vh-2rem)] object-center hidden"
             data-index="{{ idx }}"
             data-priority="{{ post.priority }}"
+            class="w-full h-[calc(90vh-2rem)] object-center hidden"
             preload="auto"
             {{ post.audioEnabled ? '' : 'muted' }}>
-            <source src="{{ file.url }}" type="{{ file.mimeType }}">
+            <source src="{{ post.file.url }}" type="{{ post.file.mimeType }}">
+            <source src="{{ post.fallbackFile.url }}" type="{{ post.fallbackFile.mimeType }}">
           </video>
         @else
           <img

@@ -13,16 +13,14 @@ services:
     expose:
       - 3306
     volumes:
-      - mysql_volume:/var/lib/mysql
+      - noticias_mysql_volume:/var/lib/mysql
 
   backend:
     depends_on:
       - mysqldb
-    image: noticias:v1.1.1
+    image: noticias:latest
     ports:
       - ${PORT}:${PORT}
-      - 8080:8080
-      - 9229:9229
     env_file:
       - .prod.env
     environment:
@@ -37,4 +35,4 @@ services:
       timeout: 10s
 
 volumes:
-  mysql_volume:
+  noticias_mysql_volume:

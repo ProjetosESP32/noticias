@@ -15,17 +15,17 @@
 
   <div class="grid grid-cols-3 gap-2.5 mt-4">
     @each(post in posts)
-      @set('file', post.file.data)
       @set('borderColor', post.priority ? 'border-red-500' : 'border-indigo-500')
 
       <form class="relative" method="POST" action="{{ route('GlobalPostsController.destroy', [post.id], { qs: { _method: 'DELETE' } }) }}">
         {{ csrfField() }}
 
-        @if(file.mimeType.includes('image'))
-          <img class="w-full object-contain object-center aspect-square border-2 {{ borderColor }} bg-black" src="{{ file.url }}" alt="{{ file.name }}">
-        @elseif(file.mimeType.includes('video'))
-          <video class="w-full aspect-square border-2 {{ borderColor }} bg-black" controls {{ file.audioEnabled ? '' : 'muted' }}>
-            <source src="{{ file.url }}" type="{{ file.mimeType }}">
+        @if(post.type === 'image')
+          <img class="w-full object-contain object-center aspect-square border-2 {{ borderColor }} bg-black" src="{{ post.file.url }}" alt="{{ post.file.name }}">
+        @elseif(post.type === 'video')
+          <video class="w-full aspect-square border-2 {{ borderColor }} bg-black" controls>
+            <source src="{{ post.file.url }}" type="{{ post.file.mimeType }}">
+            <source src="{{ post.fallbackFile.url }}" type="{{ post.fallbackFile.mimeType }}">
           </video>
         @end
 

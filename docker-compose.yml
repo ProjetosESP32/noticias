@@ -13,7 +13,7 @@ services:
     expose:
       - 3306
     volumes:
-      - mysql_volume:/var/lib/mysql
+      - noticias_mysql_volume:/var/lib/mysql
 
   backend:
     depends_on:
@@ -40,4 +40,4 @@ services:
     command: node ace serve --watch --encore-args="--host ${HOST} --port 8080"
 
 volumes:
-  mysql_volume:
+  noticias_mysql_volume:

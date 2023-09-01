@@ -1,16 +1,16 @@
-import {
-  BaseModel,
-  BelongsTo,
-  ModelQueryBuilderContract,
-  afterDelete,
-  beforeFetch,
-  beforeFind,
-  belongsTo,
-  column,
-} from '@ioc:Adonis/Lucid/Orm'
+import { AttachmentContract, attachment } from '@ioc:Adonis/Addons/AttachmentLite'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { PostFileTypes } from 'App/Enums/PostFileTypes'
 import { DateTime } from 'luxon'
-import File from './File'
 import NewsSession from './NewsSession'
+
+const preComputeUrl = async (disk, attachment) => {
+  try {
+    return await disk.getUrl(attachment.name)
+  } catch (e) {
+    return ''
+  }
+}
 
 export default class PostFile extends BaseModel {
   @column({ isPrimary: true })
@@ -20,7 +20,7 @@ export default class PostFile extends BaseModel {
   public newsSessionId?: number | null
 
   @column()
-  public fileId: number
+  public type: PostFileTypes
 
   @column()
   public audioEnabled: boolean
@@ -37,17 +37,9 @@ export default class PostFile extends BaseModel {
   @belongsTo(() => NewsSession)
   public newsSession: BelongsTo<typeof NewsSession>
 
-  @belongsTo(() => File)
-  public file: BelongsTo<typeof File>
+  @attachment({ preComputeUrl })
+  public file: AttachmentContract
 
-  @beforeFetch()
-  @beforeFind()
-  protected static preloadFile(query: ModelQueryBuilderContract<typeof PostFile>) {
-    void query.preload('file')
-  }
-
-  @afterDelete()
-  protected static async destroyFile(postFile: PostFile) {
-    await postFile.file.delete()
-  }
+  @attachment({ preComputeUrl })
+  public fallbackFile: AttachmentContract | null
 }

@@ -1,0 +1,15 @@
+@layout('layouts/base')
+
+@section('head')
+@entryPointScripts('youtube_video')
+@entryPointStyles('youtube_video')
+@end
+
+@section('body')
+<youtube-video
+  width="1"
+  height="1"
+  src="https://www.youtube.com/watch?v=jfKfPfyJRdk"
+  autoplay
+/>
+@end

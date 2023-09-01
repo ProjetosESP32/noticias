@@ -29,6 +29,13 @@
       required: true
     })
 
+    @!select({
+      label: 'Tipo da sessão',
+      name: 'type',
+      hint: 'Se nada for selecionado, a sessão será a padrão',
+      options: [{ label: 'Padrão', value: 'default' }, { label: 'Video/LiveStream do Youtube', value: 'youtube_video' }]
+    })
+
     @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })
   </form>
 </main>

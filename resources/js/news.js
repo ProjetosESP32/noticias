@@ -2,6 +2,8 @@ import { getNextRestartMillis } from './utils/time'
 
 import '../css/app.css'
 
+const noop = () => {}
+
 const audio = document.querySelector('audio')
 
 const datasetFilter = (a, b) => a.dataset.index - b.dataset.index
@@ -16,8 +18,9 @@ let isPlaying = false
 
 const hide = el => {
   if (el.tagName === 'VIDEO') {
-    el.onplay = null
-    el.onpause = null
+    el.onplay = noop
+    el.onpause = noop
+    el.pause()
     el.currentTime = 0
   }
 
