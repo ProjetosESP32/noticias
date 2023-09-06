@@ -42,4 +42,7 @@ export default class PostFile extends BaseModel {
 
   @attachment({ preComputeUrl })
   public fallbackFile: AttachmentContract | null
+
+  @column()
+  public extra: any
 }

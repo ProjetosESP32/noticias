@@ -24,6 +24,7 @@ export interface VideoJobData {
   audioEnabled?: boolean
   priority?: boolean
   session?: NewsSession
+  extra?: object
 }
 
 const COMMON_AUDIO_CONFIG = ['-strict', 'experimental', '-b:a', '48k']
@@ -35,7 +36,7 @@ const noop = () => {}
 const safeDeleteFile = async (path: PathLike) => unlink(path).catch(noop)
 const safeDriveDelete = async (path: string) => Drive.delete(path).catch(noop)
 
-const worker = async ({ folderProcessPath, filePath, audioEnabled, priority, session }: VideoJobData) => {
+const worker = async ({ folderProcessPath, filePath, audioEnabled, priority, session, extra }: VideoJobData) => {
   Logger.info(`starting convertion process of video ${filePath}`)
   const webmFile = `${cuid()}.webm`
   const mp4File = `${cuid()}.mp4`
@@ -55,7 +56,7 @@ const worker = async ({ folderProcessPath, filePath, audioEnabled, priority, ses
       '40',
       '-b:v',
       '15000k',
-      'threads',
+      '-threads',
       '1',
       ...(audioEnabled ? OPUS_AUDIO_CONFIG : NO_AUDIO_CONFIG),
       webmOutputFile,
@@ -71,7 +72,7 @@ const worker = async ({ folderProcessPath, filePath, audioEnabled, priority, ses
       'baseline',
       '-preset:v',
       'ultrafast',
-      'threads',
+      '-threads',
       '1',
       ...(audioEnabled ? AAC_AUDIO_CONFIG : NO_AUDIO_CONFIG),
       mp4OutputFile,
@@ -108,6 +109,7 @@ const worker = async ({ folderProcessPath, filePath, audioEnabled, priority, ses
       fallbackFile: mp4Attachment,
       priority,
       audioEnabled,
+      extra,
     }
 
     Logger.debug('saving in database')
