@@ -11,7 +11,7 @@ export const addVideoConvertTask = async (
   session?: NewsSession,
 ) => {
   const folderProcessPath = Application.tmpPath('convert')
-  await Promise.all(videoFiles.map(async file => file.move(folderProcessPath, { name: `${cuid()}.mp4` })))
+  await Promise.all(videoFiles.map(async file => file.move(folderProcessPath, { name: cuid() })))
 
   videoFiles.forEach(file => {
     if (!file.filePath) return
