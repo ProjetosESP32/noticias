@@ -28,6 +28,6 @@ export class JobQueue<T> {
     }
 
     this.running = true
-    this.worker(job).then(this.boundHandler).catch(this.rejectionHandler)
+    this.worker(job).catch(this.rejectionHandler).finally(this.boundHandler)
   }
 }
