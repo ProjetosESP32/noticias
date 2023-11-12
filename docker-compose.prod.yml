@@ -15,9 +15,19 @@ services:
     volumes:
       - noticias_mysql_volume:/var/lib/mysql
 
+  redisdb:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+    volumes:
+      - noticias_redis_volume:/data
+
   backend:
     depends_on:
       - mysqldb
+      - redisdb
     image: noticias:latest
     ports:
       - ${PORT}:${PORT}
@@ -36,3 +46,4 @@ services:
 
 volumes:
   noticias_mysql_volume:
+  noticias_redis_volume:
