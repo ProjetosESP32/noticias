@@ -61,7 +61,7 @@
     "@adonisjs/shield": "^7.1.0",
     "@adonisjs/view": "^6.2.0",
     "@poppinss/utils": "^5.0.0",
-    "axios": "^1.4.0",
+    "axios": "^1.6.0",
     "cron": "^2.3.0",
     "jsdom": "^22.0.0",
     "luxon": "^3.3.0",
