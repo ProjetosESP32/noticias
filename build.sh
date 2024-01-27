@@ -1,8 +1,7 @@
 #!/bin/sh
 
-cp .env build/.env
+cp /home/bitnami/.env /home/bitnami/noticias/build/.env
 
-cd build
-npm i --omit=dev
+npm i /home/bitnami/noticias/build --omit=dev
 
 pm2 restart all --update-env
