@@ -133,6 +133,7 @@ const loadInstagramPosts = async () => {
           await writeFile(filePath, mediaResponse.data)
 
           await videoConvertQueue.enqueue({
+            sessionId: null,
             groupId: group.id,
             filePath,
             folderProcessPath,
