@@ -2,7 +2,7 @@
 
 @section('body')
 <main class="w-full h-screen grid place-items-center">
-  <form class="w-fit flex flex-col gap-y-2 rounded-lg p-2" method="POST" action="{{ route('LoginController.store') }}">
+  <form class="w-fit flex flex-col gap-y-2 rounded-lg p-2" method="POST" action="{{ route('UserSessionsController.store') }}">
     <h1 class="text-3xl font-bold text-center">Login para a Dashboard</h1>
 
     {{ csrfField() }}
@@ -24,7 +24,9 @@
 
     @!button({ text: 'Enviar', type: 'submit' })
 
-    <p class="text-center">Não é isso que deseja? <a class="text-sky-600" href="{{ route('NewsController.index') }}">Selecionar sessão de notícia</a></p>
+    <p class="text-center">Não é isso que deseja?
+      <a class="text-sky-600" href="{{ route('AllNewsSessionsController.index') }}">Selecionar sessão de notícia</a>
+    </p>
   </form>
 </main>
 @end

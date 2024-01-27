@@ -22,20 +22,34 @@
       </thead>
 
       <tbody class="divide-y divide-gray-200">
-        @each(ns in newsSessions)
+        @each(group in groups)
           <tr>
-            <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900">{{ ns.id }}</td>
-            <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ ns.name }}</td>
-            <td class="flex justify-center items-center py-3">
-              @!link({ text: 'Abrir', href: route('NewsController.show', [ns.id]) })
-            </td>
+            <td colspan="3" class="text-left font-semibold px-4">{{ group.name }}:</td>
           </tr>
+
+          @each(session in group.sessions)
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900">{{ session.id }}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-gray-700">{{ session.name }}</td>
+              <td class="flex justify-center items-center py-3">
+                @!link({ text: 'Abrir', href: route('NewsSessionsController.show', [group.id, session.id]) })
+              </td>
+            </tr>
+          @else
+            <tr>
+              <td colspan="3" class="text-center font-medium">Sem sessões de notícia para este grupo</td>
+            </tr>
+          @end
         @else
           <tr>
             <td colspan="3" class="text-center px-4 py-2 font-medium">Sem sessões de notícia</td>
           </tr>
         @end
       </tbody>
+
+      <tfoot>
+        @!tableRowPagination({ paginator: groups, cols: 3 })
+      </tfoot>
     </table>
   </div>
 </main>

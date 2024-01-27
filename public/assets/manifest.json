@@ -1,8 +1,6 @@
 {
   "assets/app.js": "http://0.0.0.0:8080/assets/app.js",
   "assets/news.js": "http://0.0.0.0:8080/assets/news.js",
-  "assets/youtube_video.css": "http://0.0.0.0:8080/assets/youtube_video.css",
-  "assets/youtube_video.js": "http://0.0.0.0:8080/assets/youtube_video.js",
   "assets/runtime.js": "http://0.0.0.0:8080/assets/runtime.js",
   "assets/vendors-node_modules_mini-css-extract-plugin_dist_hmr_hotModuleReplacement_js-node_modules_we-da5a93.js": "http://0.0.0.0:8080/assets/vendors-node_modules_mini-css-extract-plugin_dist_hmr_hotModuleReplacement_js-node_modules_we-da5a93.js",
   "assets/vendors-node_modules_luxon_src_luxon_js.js": "http://0.0.0.0:8080/assets/vendors-node_modules_luxon_src_luxon_js.js",

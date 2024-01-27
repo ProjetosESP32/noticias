@@ -6,7 +6,7 @@ export default class LoginValidator {
 
   public schema = schema.create({
     username: schema.string({ trim: true }, [rules.exists({ column: 'username', table: 'users' })]),
-    password: schema.string({}, [rules.minLength(6)]),
+    password: schema.string({}, [rules.minLength(8)]),
     remember: schema.boolean.optional(),
   })
 

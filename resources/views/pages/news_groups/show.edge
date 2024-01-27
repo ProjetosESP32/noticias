@@ -1,0 +1,74 @@
+@layout('layouts/dashboard')
+
+@section('body')
+<main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 flex flex-col gap-y-4">
+  @!backLink({ href: route('NewsGroupsController.index') })
+
+  <nav class="w-full flex flex-row justify-end gap-x-2">
+    @!link({
+      text: 'Criar nova sessão de notícia',
+      href: route('NewsSessionsController.create', [group.id])
+    })
+    @!link({
+      text: 'Itens globais',
+      href: route('GlobalPostsController.index', [group.id])
+    })
+  </nav>
+
+  <div class="overflow-x-auto rounded-lg border border-gray-200 mt-4">
+    <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+      <caption class="text-lg text-left font-semibold ml-2">Grupo: {{ group.name }}
+        <br>
+        <span class="text-base font-medium">{{ group.description }}</span>
+      </caption>
+
+      <thead>
+        <tr>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-right">
+            ID
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
+            Sessão
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
+            Descrição
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
+            Ações
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-200">
+        @each(session in sessions)
+          <tr>
+            <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900 text-right">{{ session.id }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ session.name }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ session.description }}</td>
+            <td class="flex gap-x-1 justify-center items-center py-3">
+              @!link({ text: 'Editar', href: route('NewsSessionsController.edit', [group.id, session.id]) })
+
+              <form method="POST" action="{{ route('NewsSessionsController.destroy', [group.id, session.id], { qs: { _method: 'DELETE' } }) }}">
+                {{ csrfField() }}
+                @!button({
+                  text: 'Deletar',
+                  class: 'bg-red-600',
+                  type: 'submit'
+                })
+              </form>
+            </td>
+          </tr>
+        @else
+          <tr>
+            <td colspan="4" class="text-center px-4 py-2 font-medium">Sem sess&otilde;es</td>
+          </tr>
+        @end
+      </tbody>
+
+      <tfoot>
+        @!tableRowPagination({ paginator: sessions, cols: 4 })
+      </tfoot>
+    </table>
+  </div>
+</main>
+@end

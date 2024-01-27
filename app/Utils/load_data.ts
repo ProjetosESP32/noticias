@@ -4,9 +4,8 @@ import Drive from '@ioc:Adonis/Core/Drive'
 import { cuid } from '@ioc:Adonis/Core/Helpers'
 import Logger from '@ioc:Adonis/Core/Logger'
 import { PostFileTypes } from 'App/Enums/PostFileTypes'
-import AppConfig from 'App/Models/AppConfig'
 import News from 'App/Models/News'
-import PostFile from 'App/Models/PostFile'
+import NewsGroup from 'App/Models/NewsGroup'
 import { videoConvertQueue } from 'App/Tasks/video_convert'
 import axios from 'axios'
 import { JSDOM } from 'jsdom'
@@ -68,7 +67,7 @@ const loadNews = async () => {
     .map(({ news: n }) => n.trim())
 
   await News.query().whereNull('news_session_id').delete()
-  await News.createMany(news.map(description => ({ description })))
+  await News.createMany(news.map(message => ({ message })))
 
   Logger.debug('Getting news complete')
 }
@@ -76,58 +75,76 @@ const loadNews = async () => {
 const loadInstagramPosts = async () => {
   Logger.debug('Getting instagram posts')
 
-  const appToken = await AppConfig.findByOrFail('key', 'instagram_token')
-  const postsToDelete = await PostFile.query().whereNotNull('extra')
-  const instagramPostsToDelete = postsToDelete
-    .filter(p => p.extra.from === 'instagram')
-    .filter(p => DateTime.fromISO(p.extra.timestamp).diffNow().as('days') < -5)
+  const groups = await NewsGroup.query().whereNotNull('instagram_token')
 
-  await Promise.all(instagramPostsToDelete.map(async p => p.delete()))
+  const promises = groups.map(async group => {
+    const groupDefaultPosts = await group.related('posts').query().whereNull('newsSessionId')
+    const instagramPostsToDelete = groupDefaultPosts
+      .filter(p => p.extra.from === 'instagram')
+      .filter(
+        p =>
+          DateTime.fromISO(p.extra.timestamp as string)
+            .diffNow()
+            .as('days') < -5,
+      )
 
-  const posts = await PostFile.query().whereNotNull('extra')
-  const instagramPosts = posts.filter(p => p.extra.from === 'instagram')
+    await Promise.all(instagramPostsToDelete.map(async p => p.delete()))
 
-  const {
-    data: { data },
-  } = await axios.get<InstagramAPIResponse>('https://graph.instagram.com/me/media', {
-    params: {
-      access_token: appToken.value,
-      fields: ['media_url', 'media_type', 'id', 'timestamp'].join(','),
-      since: DateTime.now().minus({ days: 5 }).toISO(),
-    },
-  })
+    const remainPosts = groupDefaultPosts.filter(p => !p.$isDeleted)
 
-  const promises = data
-    .filter(({ id }) => !instagramPosts.some(p => p.extra.id === id))
-    .filter(({ media_type: mediaType }) => mediaType !== InstagramMedia.CAROUSEL_ALBUM)
-    .map(async ({ id, timestamp, media_url: mediaUrl, media_type: mediaType }) => {
-      const mediaResponse = await axios.get(mediaUrl, { responseType: 'stream' })
-      const extra = { id, timestamp, from: 'instagram' }
-
-      if (mediaType === InstagramMedia.IMAGE) {
-        const mimeType = String(mediaResponse.headers['content-type'])
-        const extname = extension(mimeType) || ''
-        const filename = `${cuid()}.${extname}`
-        await Drive.putStream(filename, mediaResponse.data)
-        const stats = await Drive.getStats(filename)
-
-        const fileAttachment = new Attachment({ extname, mimeType, size: stats.size, name: filename })
-        fileAttachment.isPersisted = true
-
-        await PostFile.create({
-          file: fileAttachment,
-          type: PostFileTypes.IMAGE,
-          extra,
-        })
-        return
-      }
-
-      const folderProcessPath = Application.tmpPath('convert')
-      const filePath = Application.tmpPath('convert', cuid())
-      await writeFile(filePath, mediaResponse.data)
-
-      videoConvertQueue.enqueue({ filePath, folderProcessPath, audioEnabled: false, priority: false, extra })
+    const {
+      data: { data },
+    } = await axios.get<InstagramAPIResponse>('https://graph.instagram.com/me/media', {
+      params: {
+        access_token: group.instagramToken,
+        fields: ['media_url', 'media_type', 'id', 'timestamp'].join(','),
+        since: DateTime.now().minus({ days: 5 }).toISO(),
+      },
     })
+
+    const settled = await Promise.allSettled(
+      data
+        .filter(({ id }) => !remainPosts.some(p => p.extra.id === id))
+        .filter(({ media_type: mediaType }) => mediaType !== InstagramMedia.CAROUSEL_ALBUM)
+        .map(async ({ id, timestamp, media_url: mediaUrl, media_type: mediaType }) => {
+          const mediaResponse = await axios.get(mediaUrl, { responseType: 'stream' })
+          const extra = { id, timestamp, from: 'instagram' }
+
+          if (mediaType === InstagramMedia.IMAGE) {
+            const mimeType = String(mediaResponse.headers['content-type'])
+            const extname = extension(mimeType) || ''
+            const filename = `${cuid()}.${extname}`
+            await Drive.putStream(filename, mediaResponse.data)
+            const stats = await Drive.getStats(filename)
+
+            const fileAttachment = new Attachment({ extname, mimeType, size: stats.size, name: filename })
+            fileAttachment.isPersisted = true
+
+            await group.related('posts').create({
+              file: fileAttachment,
+              type: PostFileTypes.IMAGE,
+              extra,
+            })
+            return
+          }
+
+          const folderProcessPath = Application.tmpPath('convert')
+          const filePath = Application.tmpPath('convert', cuid())
+          await writeFile(filePath, mediaResponse.data)
+
+          await videoConvertQueue.enqueue({
+            groupId: group.id,
+            filePath,
+            folderProcessPath,
+            audioEnabled: false,
+            priority: false,
+            extra,
+          })
+        }),
+    )
+
+    throwIfHasRejected(settled)
+  })
 
   const settled = await Promise.allSettled(promises)
   throwIfHasRejected(settled)

@@ -2,17 +2,19 @@ import { DateTime } from 'luxon'
 import { BaseModel, HasMany, beforeDelete, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import News from './News'
 import PostFile from './PostFile'
-import { SessionType } from 'App/Enums/SessionType'
 
 export default class NewsSession extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
+  public newsGroupId: number
+
+  @column()
   public name: string
 
   @column()
-  public type: SessionType
+  public description: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -29,8 +31,9 @@ export default class NewsSession extends BaseModel {
   @beforeDelete()
   protected static async deleteItens(newsSession: NewsSession) {
     await newsSession.load('news')
-    await newsSession.load('postFiles')
     await Promise.all(newsSession.news.map(async news => news.delete()))
+
+    await newsSession.load('postFiles')
     await Promise.all(newsSession.postFiles.map(async file => file.delete()))
   }
 }

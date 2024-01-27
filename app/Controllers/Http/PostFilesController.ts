@@ -3,14 +3,14 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { ALLOWED_IMAGE_EXTENSIONS } from 'App/Enums/ImageExt'
 import { PostFileTypes } from 'App/Enums/PostFileTypes'
 import { ALLOWED_VIDEO_EXTENSIONS } from 'App/Enums/VideoExt'
-import NewsSession from 'App/Models/NewsSession'
-import PostFile from 'App/Models/PostFile'
+import NewsGroup from 'App/Models/NewsGroup'
 import { addVideoConvertTask } from 'App/Utils/add_video_convert_task'
 import CreatePostFileValidator from 'App/Validators/CreatePostFileValidator'
 
 export default class PostFilesController {
   public async store({ request, response, params, session }: HttpContextContract) {
-    const newsSession = await NewsSession.findOrFail(params.session_id)
+    const group = await NewsGroup.findOrFail(params.group_id)
+    const newsSession = await group.related('sessions').query().where('id', params.session_id).firstOrFail()
     const { files, audioEnabled, priority } = await request.validate(CreatePostFileValidator)
 
     const imageFiles = files.filter(file => ALLOWED_IMAGE_EXTENSIONS.includes(file.extname ?? ''))
@@ -19,7 +19,7 @@ export default class PostFilesController {
       .createMany(imageFiles.map(file => ({ priority, type: PostFileTypes.IMAGE, file: Attachment.fromFile(file) })))
 
     const videoFiles = files.filter(file => ALLOWED_VIDEO_EXTENSIONS.includes(file.extname ?? ''))
-    await addVideoConvertTask(videoFiles, audioEnabled, priority, newsSession)
+    await addVideoConvertTask(group.id, newsSession.id, videoFiles, audioEnabled, priority)
 
     session.flash('toast', {
       title: 'Sucesso!',
@@ -27,15 +27,17 @@ export default class PostFilesController {
       type: 'success',
     })
 
-    response.redirect().toRoute('sessions.edit', { id: params.session_id })
+    response.redirect().toRoute('groups.sessions.edit', [group.id, newsSession.id])
   }
 
   public async destroy({ params, response, session }: HttpContextContract) {
-    const file = await PostFile.findOrFail(params.id)
+    const group = await NewsGroup.findOrFail(params.group_id)
+    const newsSession = await group.related('sessions').query().where('id', params.session_id).firstOrFail()
+    const file = await newsSession.related('postFiles').query().where('id', params.id).firstOrFail()
 
     await file.delete()
     session.flash('toast', { title: 'Sucesso!', description: 'Arquivo removido.', type: 'success' })
 
-    response.redirect().toRoute('sessions.edit', { id: params.session_id })
+    response.redirect().toRoute('groups.sessions.edit', [group.id, newsSession.id])
   }
 }

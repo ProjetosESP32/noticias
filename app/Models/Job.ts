@@ -1,15 +1,15 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
-export default class AppConfig extends BaseModel {
+export default class Job extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public key: string
+  public type: string
 
   @column()
-  public value: string
+  public data: Record<string, unknown>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

@@ -1,4 +1,4 @@
-import AppConfig from 'App/Models/AppConfig'
+import NewsGroup from 'App/Models/NewsGroup'
 import axios from 'axios'
 
 interface InstagramAPIUpdateTokenResponse {
@@ -8,18 +8,30 @@ interface InstagramAPIUpdateTokenResponse {
 }
 
 export const updateInstagramApiToken = async () => {
-  const apiConfig = await AppConfig.findByOrFail('key', 'instagram_token')
+  const newsGroups = await NewsGroup.query().whereNotNull('instagram_token')
 
-  const { data } = await axios.get<InstagramAPIUpdateTokenResponse>(
-    'https://graph.instagram.com/refresh_access_token',
-    {
-      params: {
-        grant_type: 'ig_refresh_token',
-        access_token: apiConfig.value,
+  const promises = newsGroups.map(async group => {
+    const { data } = await axios.get<InstagramAPIUpdateTokenResponse>(
+      'https://graph.instagram.com/refresh_access_token',
+      {
+        params: {
+          grant_type: 'ig_refresh_token',
+          access_token: group.instagramToken,
+        },
       },
-    },
-  )
+    )
 
-  apiConfig.merge({ value: data.access_token })
-  await apiConfig.save()
+    group.merge({ instagramToken: data.access_token })
+    await group.save()
+  })
+
+  const settled = await Promise.allSettled(promises)
+  const hasRejections = settled.some(({ status }) => status === 'rejected')
+
+  if (hasRejections) {
+    const rejected = settled.filter(({ status }) => status === 'rejected') as PromiseRejectedResult[]
+    const message = rejected.reduce((acc, { reason }) => `${acc}\n${String(reason)}`, '')
+
+    throw new Error(`Update rejected: ${message}`)
+  }
 }

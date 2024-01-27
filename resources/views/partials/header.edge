@@ -13,13 +13,13 @@
 
       <form
         method="POST"
-        action="{{ route('LoginController.destroy', null, { qs: { _method: 'DELETE' } }) }}">
+        action="{{ route('UserSessionsController.destroy', null, { qs: { _method: 'DELETE' } }) }}">
         {{ csrfField() }}
         <button
-          class="block rounded-lg bg-red-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 focus:outline-none focus:ring"
+          class="block rounded-lg bg-red-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-700 focus:outline-none focus:ring"
           type="submit"
         >
-          Deslogar
+          Sair
         </button>
       </form>
     </div>

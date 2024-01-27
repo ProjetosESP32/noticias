@@ -6,12 +6,10 @@ const noop = () => {}
 
 const audio = document.querySelector('audio')
 
-const datasetFilter = (a, b) => a.dataset.index - b.dataset.index
-const commonPostsPanel = Array.from(document.querySelector('[data-js="common-posts-panel"]').children).sort(
-  datasetFilter,
-)
+const indexFilter = (a, b) => a.dataset.index - b.dataset.index
+const commonPostsPanel = Array.from(document.querySelector('[data-js="common-posts-panel"]').children).sort(indexFilter)
 const sessionPostsPanel = Array.from(document.querySelector('[data-js="session-posts-panel"]').children).sort(
-  datasetFilter,
+  indexFilter,
 )
 
 let isPlaying = false

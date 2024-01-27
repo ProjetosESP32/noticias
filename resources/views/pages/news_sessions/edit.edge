@@ -2,7 +2,7 @@
 
 @section('body')
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-  @!homeLink()
+  @!backLink({ href: route('NewsGroupsController.show', [group.id]) })
 
   <div class="mx-auto max-w-lg text-center">
     <h1 class="text-2xl font-bold sm:text-3xl">Edição da sessão de notícia {{ newsSession.name }}.</h1>
@@ -15,7 +15,7 @@
   <form
     class="block mx-auto mb-0 mt-8 space-y-4"
     method="POST"
-    action="{{ route('NewsSessionsController.update', [newsSession.id], { qs: { _method: 'PUT' } }) }}">
+    action="{{ route('NewsSessionsController.update', [group.id, newsSession.id], { qs: { _method: 'PUT' } }) }}">
 
     {{ csrfField() }}
 
@@ -45,7 +45,7 @@
         </div>
       @end
 
-      <form class="p-6" method="POST" action="{{ route('NewsController.store', [newsSession.id]) }}">
+      <form class="p-6" method="POST" action="{{ route('NewsController.store', [group.id, newsSession.id]) }}">
         <h3>Adicionar notícia</h3>
 
         {{ csrfField() }}
@@ -53,9 +53,9 @@
         @!textarea({
           label: 'Notícia',
           placeholder: 'Digite a notícia',
-          name: 'description',
+          name: 'message',
           type: 'text',
-          maxlength: 100,
+          maxlength: 255,
           required: true,
           class: 'resize-none',
           rows: 3,
@@ -86,9 +86,9 @@
           @each(news in newsSession.news)
             <tr>
               <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900 text-right">{{ news.id }}</td>
-              <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ news.description }}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ news.message }}</td>
               <td class="flex justify-center items-center py-3">
-                <form method="POST" action="{{ route('NewsController.destroy', [newsSession.id, news.id], { qs: { _method: 'DELETE' } }) }}">
+                <form method="POST" action="{{ route('NewsController.destroy', [group.id, newsSession.id, news.id], { qs: { _method: 'DELETE' } }) }}">
                   {{ csrfField() }}
                   @!button({ text: 'Deletar', type: 'submit', class: 'bg-red-600' })
                 </form>
@@ -108,14 +108,14 @@
     <h2 class="text-xl font-semibold">Arquivos personalizados</h2>
 
     @!postFilesModal({
-      route: route('PostFilesController.store', [newsSession.id])
+      route: route('PostFilesController.store', [group.id, newsSession.id])
     })
 
     <div class="grid grid-cols-3 gap-2.5 mt-4">
       @each(post in newsSession.postFiles)
         @set('borderColor', post.priority ? 'border-red-500' : 'border-indigo-500')
 
-        <form class="relative" method="POST" action="{{ route('PostFilesController.destroy', [newsSession.id, post.id], { qs: { _method: 'DELETE' } }) }}">
+        <form class="relative" method="POST" action="{{ route('PostFilesController.destroy', [group.id, newsSession.id, post.id], { qs: { _method: 'DELETE' } }) }}">
           {{ csrfField() }}
 
           @if(post.type === 'image')
@@ -123,7 +123,6 @@
           @elseif(post.type === 'video')
             <video class="w-full aspect-square border-2 {{ borderColor }} bg-black" controls>
               <source src="{{ post.file.url }}" type="{{ post.file.mimeType }}">
-              <source src="{{ post.fallbackFile.url }}" type="{{ post.fallbackFile.mimeType }}">
             </video>
           @end
 
@@ -132,7 +131,7 @@
           </button>
         </form>
       @else
-        <span>Sem arquivos personalizados</span>
+        <span>Sem arquivos</span>
       @end
     </div>
     <p class="text-center">Os arquivos sinalizados com borda vermelha tem prioridade de visualização.</p>

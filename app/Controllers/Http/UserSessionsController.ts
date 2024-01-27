@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import LoginValidator from 'App/Validators/LoginValidator'
 
-export default class LoginController {
+export default class UserSessionsController {
   public async index({ view }: HttpContextContract) {
     return view.render('pages/login')
   }
@@ -19,6 +19,6 @@ export default class LoginController {
     await auth.use('web').logout()
     session.flash('toast', { title: 'Sucesso!', description: 'Desconectado.', type: 'success' })
 
-    response.redirect('/login')
+    response.redirect('/auth/login')
   }
 }

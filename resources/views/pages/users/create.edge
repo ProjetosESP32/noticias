@@ -2,8 +2,6 @@
 
 @section('body')
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-  @!homeLink()
-
   <div class="mx-auto max-w-lg text-center">
     <h1 class="text-2xl font-bold sm:text-3xl">Criação de usuário!</h1>
 
@@ -21,7 +19,7 @@
 
     @!input({
       label: 'Nome de usuário',
-      hint: 'Sugestão: use diferentes usuários para diferentes departamentos',
+      hint: 'Nome de usuário',
       name: 'username',
       type: 'text',
       autofocus: true,
@@ -37,6 +35,14 @@
       required: true,
       readonly: true,
       value: password
+    })
+
+    @!select({
+      label: 'Grupos de sessões de notícias',
+      name: 'groups[]',
+      options: groupOptions,
+      multiple: true,
+      hint: 'Para selecionar mais de um grupo segure CTRL e clique.'
     })
 
     @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })

@@ -1,15 +1,21 @@
 import { schema, type CustomMessages, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-export default class CreateNewsValidator {
+export default class UpdateNewsGroupValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    message: schema.string({ trim: true, escape: true }, [
+    name: schema.string.optional({ trim: true }, [
       rules.minLength(5),
-      rules.maxLength(255),
+      rules.maxLength(25),
       rules.alphaNum({ allow: ['space'] }),
     ]),
+    description: schema.string.optional({ trim: true }, [
+      rules.minLength(5),
+      rules.maxLength(100),
+      rules.alphaNum({ allow: ['space'] }),
+    ]),
+    instagramToken: schema.string.optional({}),
   })
 
   public messages: CustomMessages = {}

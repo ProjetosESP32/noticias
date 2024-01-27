@@ -2,8 +2,6 @@
 
 @section('body')
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-  @!homeLink()
-
   <div class="mx-auto max-w-lg text-center">
     <h1 class="text-2xl font-bold sm:text-3xl">Edição de usuário!</h1>
   </div>
@@ -24,6 +22,14 @@
       maxlength: 255,
       required: true,
       value: user.username
+    })
+
+    @!select({
+      label: 'Grupos de sessões de notícias',
+      name: 'groups',
+      options: groupOptions,
+      multiple: true,
+      hint: 'Selecione os grupos que este usuário participará.'
     })
 
     @!button({ text: 'Enviar', type: 'submit' })

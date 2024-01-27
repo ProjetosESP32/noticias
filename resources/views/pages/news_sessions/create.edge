@@ -2,7 +2,7 @@
 
 @section('body')
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-  @!homeLink()
+  @!backLink({ href: route('NewsGroupsController.show', [group.id]) })
 
   <div class="mx-auto max-w-lg text-center">
     <h1 class="text-2xl font-bold sm:text-3xl">Criação de sessão de notícia!</h1>
@@ -15,7 +15,7 @@
   <form
     class="mx-auto mb-0 mt-8 w-96 space-y-4"
     method="POST"
-    action="{{ route('NewsSessionsController.store') }}">
+    action="{{ route('NewsSessionsController.store', [group.id]) }}">
 
     {{ csrfField() }}
 
@@ -29,11 +29,13 @@
       required: true
     })
 
-    @!select({
-      label: 'Tipo da sessão',
-      name: 'type',
-      hint: 'Se nada for selecionado, a sessão será a padrão',
-      options: [{ label: 'Padrão', value: 'default' }, { label: 'Video/LiveStream do Youtube', value: 'youtube_video' }]
+    @!input({
+      label: 'Descrição da sessão',
+      hint: 'A descrição da sessão para facil identificação',
+      name: 'description',
+      type: 'text',
+      maxlength: 100,
+      required: true
     })
 
     @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })

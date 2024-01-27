@@ -1,0 +1,6 @@
+<div class="w-full inline-flex justify-end items-center gap-2 px-4 py-2">
+  <span>Páginas:</span>
+  @each(anchor in paginator.getUrlsForRange(1, paginator.lastPage))
+    <a href="{{ anchor.url }}" class="text-sky-600 font-bold">{{ anchor.page }}</a>
+  @end
+</div>

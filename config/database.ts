@@ -44,7 +44,7 @@ const databaseConfig: DatabaseConfig = {
           conn.run('PRAGMA foreign_keys=true', cb)
         },
         min: 0,
-        max: 2,
+        max: 10,
       },
       migrations: {
         naturalSort: true,

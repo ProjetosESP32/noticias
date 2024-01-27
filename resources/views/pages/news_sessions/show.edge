@@ -1,42 +1,78 @@
-@layout('layouts/dashboard')
+@layout('layouts/base')
+
+@section('head')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+@entryPointScripts('news')
+@entryPointStyles('news')
+@end
 
 @section('body')
-<main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-  @!homeLink()
-
-  <h1 class="mt-2 text-center text-2xl sm:text-3xl">Sessão de notícia: <strong>{{ newsSession.name }}</strong>.</h1>
-
-  <article class="mt-4">
-    <h2 class="text-xl font-semibold">Notícias personalizadas</h2>
-
-    <ul>
-      @each(news in newsSession.news)
-        <li class="list-disc">#{{ news.id }}: {{ news.description }}</li>
-      @else
-        <li>Sem notícias personalizadas</li>
-      @end
-    </ul>
-  </article>
-
-  <article class="mt-4">
-    <h2 class="text-xl font-semibold">Arquivos personalizados</h2>
-
-    <div class="grid grid-cols-3 gap-1 p-2">
-      @each(post in newsSession.postFiles)
-        @set('borderColor', post.priority ? 'border-red-500' : 'border-indigo-500')
-
-        @if(post.type === 'image')
-          <img class="w-full object-contain object-center aspect-square border-2 {{ borderColor }} bg-black" src="{{ post.file.url }}" alt="{{ post.file.name }}">
-        @elseif(post.type === 'video')
-          <video class="w-full aspect-square border-2 {{ borderColor }} bg-black" controls>
+<main class="block w-full h-screen overflow-hidden bg-green-700">
+  <audio hidden autoplay preload="auto">
+    <source src="https://sv13.hdradios.net:6990/live">
+  </audio>
+  <div class="w-full h-[90vh] grid grid-cols-2 p-4 gap-x-4">
+    <div data-js="common-posts-panel">
+      @each((post, idx) in group.posts)
+        @if (post.type === 'video')
+          <video
+            data-index="{{ idx }}"
+            data-priority="{{ post.priority }}"
+            class="w-full h-[calc(90vh-2rem)] object-center hidden"
+            preload="auto"
+            {{ post.audioEnabled ? '' : 'muted' }}>
             <source src="{{ post.file.url }}" type="{{ post.file.mimeType }}">
-            <source src="{{ post.fallbackFile.url }}" type="{{ post.fallbackFile.mimeType }}">
           </video>
+        @else
+          <img
+            data-index="{{ idx }}"
+            data-priority="{{ post.priority }}"
+            class="w-full h-[calc(90vh-2rem)] object-center object-contain hidden"
+            src="{{ post.file.url }}"
+            alt="{{ post.file.name }}">
         @end
-      @else
-        <span>Sem arquivos personalizados</span>
       @end
     </div>
-  </article>
+
+    <div data-js="session-posts-panel">
+      @each((post, idx) in newsSession.postFiles)
+        @if (post.type === 'video')
+          <video
+            data-index="{{ idx }}"
+            data-priority="{{ post.priority }}"
+            class="w-full h-[calc(90vh-2rem)] object-center hidden"
+            preload="auto"
+            {{ post.audioEnabled ? '' : 'muted' }}>
+            <source src="{{ post.file.url }}" type="{{ post.file.mimeType }}">
+          </video>
+        @else
+          <img
+            data-index="{{ idx }}"
+            data-priority="{{ post.priority }}"
+            class="w-full h-[calc(90vh-2rem)] object-center object-contain hidden"
+            src="{{ post.file.url }}"
+            alt="{{ post.file.name }}">
+        @end
+      @end
+    </div>
+  </div>
+  <div class="scroll-container">
+    <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length}}s">
+      @each((news, idx) in newsSession.news)
+        <span>
+          {{ news.message }}
+        </span>
+      @end
+    </div>
+    <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length}}s" aria-hidden="true">
+      @each((news, idx) in newsSession.news)
+        <span>
+          {{ news.message }}
+        </span>
+      @end
+    </div>
+  </div>
 </main>
 @end

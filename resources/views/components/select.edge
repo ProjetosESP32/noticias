@@ -13,15 +13,17 @@
     class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm"
     {{ $props.serializeExcept(['name', 'label', 'options', 'hint']) }}
   >
+    @if(!multiple)
     <option value="">Selecione</option>
+    @end
     @each(option in options)
-      <option value="{{ option.value }}">{{ option.label }}</option>
+      <option value="{{ option.value }}" {{ option.selected ? 'selected' : '' }}>{{ option.label }}</option>
     @end
   </select>
-</div>
 
-@if(flashMessages.has(`errors.${name}`))
-  <span class="w-full text-sm text-red-600">{{ flashMessages.get(`errors.${name}`) }}</span>
-@elseif(hint)
-  <span class="w-full text-sm text-cyan-600">{{ hint }}</span>
-@end
+  @if(flashMessages.has(`errors.${name}`))
+    <span class="w-full text-sm text-red-600">{{ flashMessages.get(`errors.${name}`) }}</span>
+  @elseif(hint)
+    <span class="w-full text-sm text-cyan-600">{{ hint }}</span>
+  @end
+</div>

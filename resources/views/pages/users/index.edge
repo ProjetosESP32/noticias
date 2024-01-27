@@ -2,9 +2,9 @@
 
 @section('body')
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-  @!homeLink()
+  @!backLink({ href: route('NewsGroupsController.index') })
 
-  <h1 class="mt-2 text-center text-2xl font-bold sm:text-3xl">Usuários!</h1>
+  <h1 class="mt-2 text-center text-2xl font-bold sm:text-3xl">Usuários.</h1>
 
   <nav class="w-full flex flex-row justify-end gap-x-2">
     @!link({
@@ -16,14 +16,17 @@
   <div class="overflow-x-auto rounded-lg border border-gray-200 mt-4">
     <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
       <thead>
-        <tr>
-          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-right">
+        <tr class="whitespace-nowrap font-medium text-gray-900">
+          <th class="px-4 py-2 text-right">
             ID
           </th>
-          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
+          <th class="px-4 py-2 text-left">
             Nome de usuário
           </th>
-          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
+          <th class="px-4 py-2 text-left">
+            Grupos
+          </th>
+          <th class="px-4 py-2 text-center">
             Ações
           </th>
         </tr>
@@ -34,6 +37,15 @@
           <tr>
             <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900 text-right">{{ user.id }}</td>
             <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ user.username }}</td>
+            <td class="px-2 py-3 text-gray-700 text-left">
+              <ul class="list-none">
+                @each(group in user.newsGroups)
+                  <li>{{ group.name }}</li>
+                @else
+                  <li>Sem grupos</li>
+                @end
+              </ul>
+            </td>
             <td class="flex gap-x-1 justify-center items-center py-3">
               @!link({
                 text: 'Editar',
@@ -52,10 +64,14 @@
           </tr>
         @else
           <tr>
-            <td colspan="3" class="text-center px-4 py-2 font-medium">Sem usuários</td>
+            <td colspan="4" class="text-center px-4 py-2 font-medium">Sem usuários</td>
           </tr>
         @end
       </tbody>
+
+      <tfoot>
+        @!tableRowPagination({ paginator: users, cols: 4 })
+      </tfoot>
     </table>
   </div>
 </main>

@@ -1,13 +1,14 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'news_sessions'
+  protected tableName = 'jobs'
 
   public async up() {
     void this.schema.createTable(this.tableName, table => {
       table.increments('id')
-      table.string('name', 25)
-      table.enum('type', ['default', 'youtube_video']).defaultTo('default')
+
+      table.string('type', 25)
+      table.json('data')
 
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })

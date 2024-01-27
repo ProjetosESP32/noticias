@@ -2,22 +2,23 @@
 
 @section('body')
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-  @!homeLink()
+  @!backLink({ href: route('NewsGroupsController.show', [group.id]) })
 
   <div class="mx-auto max-w-lg text-center">
     <h1 class="mt-2 text-2xl font-bold sm:text-3xl">Itens globais.</h1>
     <p class="mt-4 text-gray-500">Vídeos e imagens que aparecerão para qualquer sessão de notícia.</p>
+    <p class="mt-4 text-gray-500">Grupo: {{ group.name }}.</p>
   </div>
 
   @!postFilesModal({
-    route: route('GlobalPostsController.store')
+    route: route('GlobalPostsController.store', [group.id])
   })
 
   <div class="grid grid-cols-3 gap-2.5 mt-4">
     @each(post in posts)
       @set('borderColor', post.priority ? 'border-red-500' : 'border-indigo-500')
 
-      <form class="relative" method="POST" action="{{ route('GlobalPostsController.destroy', [post.id], { qs: { _method: 'DELETE' } }) }}">
+      <form class="relative" method="POST" action="{{ route('GlobalPostsController.destroy', [group.id, post.id], { qs: { _method: 'DELETE' } }) }}">
         {{ csrfField() }}
 
         @if(post.type === 'image')
@@ -25,7 +26,6 @@
         @elseif(post.type === 'video')
           <video class="w-full aspect-square border-2 {{ borderColor }} bg-black" controls>
             <source src="{{ post.file.url }}" type="{{ post.file.mimeType }}">
-            <source src="{{ post.fallbackFile.url }}" type="{{ post.fallbackFile.mimeType }}">
           </video>
         @end
 
@@ -37,6 +37,7 @@
       <span>Sem arquivos</span>
     @end
   </div>
+  @!pagination({ paginator: posts })
   <p class="text-center">Os arquivos sinalizados com borda vermelha tem prioridade de visualização.</p>
 </main>
 @end

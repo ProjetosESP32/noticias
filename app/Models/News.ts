@@ -7,10 +7,13 @@ export default class News extends BaseModel {
   public id: number
 
   @column()
+  public newsGroupId: number
+
+  @column()
   public newsSessionId?: number | null
 
   @column()
-  public description: string
+  public message: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

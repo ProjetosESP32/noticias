@@ -1,0 +1,74 @@
+@layout('layouts/dashboard')
+
+@section('body')
+<main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 flex flex-col gap-y-4">
+  @can('root')
+    <nav class="w-full flex flex-row justify-end gap-x-2">
+      @!link({
+        text: 'Visualizar sessões',
+        href: route('AllNewsSessionsController.index')
+      })
+      @!link({
+        text: 'Criar grupo de sessões',
+        href: route('NewsGroupsController.create')
+      })
+      @!link({
+        text: 'Usuários',
+        href: route('UsersController.index')
+      })
+    </nav>
+  @end
+
+  <div class="overflow-x-auto rounded-lg border border-gray-200 mt-4">
+    <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+      <thead>
+        <tr>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-right">
+            ID
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
+            Grupo
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-left">
+            Descrição
+          </th>
+          <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
+            Ações
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-200">
+        @each(group in groups)
+          <tr>
+            <td class="whitespace-nowrap px-4 py-3 font-medium text-gray-900 text-right">{{ group.id }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ group.name }}</td>
+            <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ group.description }}</td>
+            <td class="flex gap-x-1 justify-center items-center py-3">
+              @!link({ text: 'Visualizar', href: route('NewsGroupsController.show', [group.id]) })
+              @can('root')
+                <form method="POST" action="{{ route('NewsGroupsController.destroy', [group.id], { qs: { _method: 'DELETE' } }) }}">
+                  {{ csrfField() }}
+                  @!button({
+                    text: 'Deletar',
+                    class: 'bg-red-600',
+                    type: 'submit'
+                  })
+                </form>
+              @end
+            </td>
+          </tr>
+        @else
+          <tr>
+            <td colspan="4" class="text-center px-4 py-2 font-medium">Sem grupos</td>
+          </tr>
+        @end
+      </tbody>
+
+      <tfoot>
+        @!tableRowPagination({ paginator: groups, cols: 4 })
+      </tfoot>
+    </table>
+  </div>
+</main>
+@end

@@ -17,6 +17,9 @@ export default class PostFile extends BaseModel {
   public id: number
 
   @column()
+  public newsGroupId: number
+
+  @column()
   public newsSessionId?: number | null
 
   @column()
@@ -28,6 +31,12 @@ export default class PostFile extends BaseModel {
   @column()
   public priority: boolean
 
+  @attachment({ preComputeUrl })
+  public file: AttachmentContract
+
+  @column({ consume: v => JSON.parse(v) })
+  public extra: Record<string, unknown>
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
@@ -36,13 +45,4 @@ export default class PostFile extends BaseModel {
 
   @belongsTo(() => NewsSession)
   public newsSession: BelongsTo<typeof NewsSession>
-
-  @attachment({ preComputeUrl })
-  public file: AttachmentContract
-
-  @attachment({ preComputeUrl })
-  public fallbackFile: AttachmentContract | null
-
-  @column()
-  public extra: any
 }

@@ -1,16 +1,16 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { rules, schema, type CustomMessages } from '@ioc:Adonis/Core/Validator'
+import { type CustomMessages, rules, schema } from '@ioc:Adonis/Core/Validator'
 
-export default class CreateNewsSessionValidator {
+export default class UpdateNewsSessionValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    name: schema.string({ trim: true }, [
+    name: schema.string.optional({ trim: true }, [
       rules.minLength(5),
       rules.maxLength(25),
       rules.alphaNum({ allow: ['space'] }),
     ]),
-    description: schema.string({ trim: true }, [
+    description: schema.string.optional({ trim: true }, [
       rules.minLength(5),
       rules.maxLength(100),
       rules.alphaNum({ allow: ['space'] }),

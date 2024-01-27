@@ -9,17 +9,21 @@ Route.get('health', async ({ response }) => {
 })
 
 Route.group(() => {
-  Route.resource('login', 'LoginController').only(['index', 'store'])
+  Route.resource('auth/login', 'UserSessionsController').only(['index', 'store'])
 }).middleware(['guest'])
 
-Route.resource('news', 'NewsController').only(['index', 'show'])
+Route.get('all-sessions', 'AllNewsSessionsController.index')
 
 Route.group(() => {
-  Route.delete('login', 'LoginController.destroy')
-  Route.get('/', 'NewsSessionsController.index').as('sessions.index')
-  Route.resource('global', 'GlobalPostsController').only(['index', 'store', 'destroy'])
-  Route.resource('sessions', 'NewsSessionsController').except(['index'])
-  Route.resource('sessions.files', 'PostFilesController').only(['store', 'destroy'])
-  Route.resource('sessions.news', 'NewsController').only(['store', 'destroy'])
+  Route.get('/', ({ response }) => {
+    response.redirect('/groups')
+  })
+
+  Route.delete('auth/logout', 'UserSessionsController.destroy')
+  Route.resource('groups', 'NewsGroupsController')
+  Route.resource('groups.sessions', 'NewsSessionsController').except(['index'])
+  Route.resource('groups.global-posts', 'GlobalPostsController').only(['index', 'store', 'destroy'])
+  Route.resource('groups.sessions.news', 'NewsController').only(['store', 'destroy'])
+  Route.resource('groups.sessions.posts', 'PostFilesController').only(['store', 'destroy'])
   Route.resource('users', 'UsersController').except(['show'])
 }).middleware(['auth:web'])
