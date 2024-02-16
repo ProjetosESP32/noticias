@@ -11,6 +11,11 @@ export default class extends BaseSchema {
       table.string('name', 25)
       table.string('description', 100)
 
+      table.string('tersound', 25)
+      table.string('soundtrack', 200)
+      
+      table.string('tervinheta', 25)
+
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

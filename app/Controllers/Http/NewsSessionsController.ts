@@ -1,6 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import NewsGroup from 'App/Models/NewsGroup'
+import UserNewsGroup from 'App/Models/UserNewsGroup'
 import NewsSession from 'App/Models/NewsSession'
+import { getPaginationData } from 'App/Utils/request'
 import CreateNewsSessionValidator from 'App/Validators/CreateNewsSessionValidator'
 import UpdateNewsSessionValidator from 'App/Validators/UpdateNewsSessionValidator'
 
@@ -35,11 +37,24 @@ export default class NewsSessionsController {
       .preload('news')
       .preload('postFiles')
       .firstOrFail()
-
-    return view.render('pages/news_sessions/show', { group, newsSession })
+    let soundtracktype = ""
+    if (newsSession.soundtrack.includes("youtube")) {
+    soundtracktype = "youtube"
+    newsSession.soundtrack = newsSession.soundtrack.replace('https://www.youtube.com/watch?v=',"")
+    }else {
+        soundtracktype = "radio"
+    }
+    return view.render('pages/news_sessions/show', { group, newsSession, soundtracktype })
   }
 
-  public async edit({ params, view }: HttpContextContract) {
+  public async edit({ auth, request, params, view }: HttpContextContract) {
+    const user = auth.user!
+    const verify = await UserNewsGroup.query().where('user_id', user.id).where('news_group_id', params.id);
+      if (verify.length === 0 && user.username != "admin") {
+          const [page, perPage] = getPaginationData(request)
+          const groups = await user.related('newsGroups').query().paginate(page, perPage)
+          return view.render('pages/news_groups/index', {groups});
+      }
     const group = await NewsGroup.findOrFail(params.group_id)
     const newsSession = await group
       .related('sessions')
@@ -48,7 +63,6 @@ export default class NewsSessionsController {
       .preload('news')
       .preload('postFiles')
       .firstOrFail()
-
     return view.render('pages/news_sessions/edit', { group, newsSession })
   }
 

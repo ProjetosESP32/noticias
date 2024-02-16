@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import NewsGroup from 'App/Models/NewsGroup'
+import UserNewsGroup from 'App/Models/UserNewsGroup'
 import { getPaginationData } from 'App/Utils/request'
 import CreateNewsGroupValidator from 'App/Validators/CreateNewsGroupValidator'
 import UpdateNewsGroupValidator from 'App/Validators/UpdateNewsGroupValidator'
@@ -41,7 +42,14 @@ export default class NewsGroupsController {
     response.redirect().toRoute('groups.index')
   }
 
-  public async show({ request, view, params }: HttpContextContract) {
+  public async show({ auth, request, view, params }: HttpContextContract) {
+    const user = auth.user!
+    const verify = await UserNewsGroup.query().where('user_id', user.id).where('news_group_id', params.id);
+      if (verify.length === 0 && user.username != "admin") {
+          const [page, perPage] = getPaginationData(request)
+          const groups = await user.related('newsGroups').query().paginate(page, perPage)
+          return view.render('pages/news_groups/index', {groups});
+      }
     const group = await NewsGroup.findOrFail(params.id)
     const [page, perPage] = getPaginationData(request)
     const sessions = await group.related('sessions').query().paginate(page, perPage)
