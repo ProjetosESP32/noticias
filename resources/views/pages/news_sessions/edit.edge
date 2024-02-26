@@ -56,14 +56,26 @@
     @!select({
       label: 'Mostrar vinheta?',
       name: 'tervinheta',
-      value: newsSession.tervinheta,
       options: [{ label: 'Não', value: 'False' }, { label: 'Sim', value: 'True', selected: 'True' }]
     })
     @else
     @!select({
       label: 'Mostrar vinheta?',
       name: 'tervinheta',
-      value: newsSession.tervinheta,
+      options: [{ label: 'Não', value: 'False', selected: 'True' }, { label: 'Sim', value: 'True' }]
+    })
+    @end
+
+    @if(newsSession.importarnoticias == "True")
+    @!select({
+      label: 'Importar noticias do link do grupo?',
+      name: 'importarnoticias',
+      options: [{ label: 'Não', value: 'False' }, { label: 'Sim', value: 'True', selected: 'True' }]
+    })
+    @else
+    @!select({
+      label: 'Importar noticias do link do grupo?',
+      name: 'importarnoticias',
       options: [{ label: 'Não', value: 'False', selected: 'True' }, { label: 'Sim', value: 'True' }]
     })
     @end

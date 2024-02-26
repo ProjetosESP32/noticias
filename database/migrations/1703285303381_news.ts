@@ -11,6 +11,8 @@ export default class extends BaseSchema {
 
       table.string('message', 255)
 
+      table.string('automatic_generated')
+
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

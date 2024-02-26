@@ -7,6 +7,7 @@ import UpdateNewsGroupValidator from 'App/Validators/UpdateNewsGroupValidator'
 
 export default class NewsGroupsController {
   public async index({ auth, request, view }: HttpContextContract) {
+    
     const user = auth.user!
 
     const [page, perPage] = getPaginationData(request)
@@ -18,7 +19,7 @@ export default class NewsGroupsController {
 
     const groups = await user.related('newsGroups').query().paginate(page, perPage)
     groups.baseUrl('/groups')
-    return view.render('pages/news_groups/index', { groups })
+    return view.render('pages/news_groups/index', { groups, auth})
   }
 
   public async create({ bouncer, view }: HttpContextContract) {
@@ -42,14 +43,12 @@ export default class NewsGroupsController {
     response.redirect().toRoute('groups.index')
   }
 
-  public async show({ auth, request, view, params }: HttpContextContract) {
+  public async show({ auth, request, response, view, params }: HttpContextContract) {
     const user = auth.user!
     const verify = await UserNewsGroup.query().where('user_id', user.id).where('news_group_id', params.id);
-      if (verify.length === 0 && user.username != "admin") {
-          const [page, perPage] = getPaginationData(request)
-          const groups = await user.related('newsGroups').query().paginate(page, perPage)
-          return view.render('pages/news_groups/index', {groups});
-      }
+    if (verify.length === 0 && user.username != "admin") {
+        return response.redirect().toPath("/groups")
+    }
     const group = await NewsGroup.findOrFail(params.id)
     const [page, perPage] = getPaginationData(request)
     const sessions = await group.related('sessions').query().paginate(page, perPage)
@@ -59,6 +58,8 @@ export default class NewsGroupsController {
   }
 
   public async edit({ view, params }: HttpContextContract) {
+
+
     const group = await NewsGroup.findOrFail(params.id)
 
     return view.render('pages/news_groups/edit', { group })

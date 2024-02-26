@@ -15,6 +15,9 @@ export default class News extends BaseModel {
   @column()
   public message: string
 
+  @column()
+  public automaticGenerated: boolean
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

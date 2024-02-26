@@ -70,19 +70,45 @@
   </div>
   @if (newsSession.tervinheta == 'True')
     <div class="scroll-container">
+      @if (newsSession.importarnoticias == "True")
+      <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length + 15 * group.news.length}}s">
+      @else
       <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length}}s">
+      @end
         @each((news, idx) in newsSession.news)
           <span>
             {{ news.message }}
           </span>
         @end
+
+        @if (newsSession.importarnoticias == "True")
+        @each((news, idx) in group.news)
+          <span>
+            {{ news.message }}
+          </span>
+        @end
+        @end
+        
       </div>
-      <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length}}s" aria-hidden="true">
+      @if (newsSession.importarnoticias == "True")
+      <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length + 15 * group.news.length}}s">
+      @else
+      <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length}}s">
+      @end
         @each((news, idx) in newsSession.news)
           <span>
             {{ news.message }}
           </span>
         @end
+ 
+        @if (newsSession.importarnoticias == "True")
+        @each((news, idx) in group.news)
+          <span>
+            {{ news.message }}
+          </span>
+        @end
+        @end
+        
       </div>
     </div>
   @end

@@ -23,6 +23,8 @@ export default class UpdateNewsSessionValidator {
     ]),
     tervinheta: schema.string({ trim: true }, [
     ]),
+    importarnoticias: schema.string({ trim: true }, [
+    ]),
   })
 
   public messages: CustomMessages = {}

@@ -4,12 +4,18 @@ import { ALLOWED_IMAGE_EXTENSIONS } from 'App/Enums/ImageExt'
 import { PostFileTypes } from 'App/Enums/PostFileTypes'
 import { ALLOWED_VIDEO_EXTENSIONS } from 'App/Enums/VideoExt'
 import NewsGroup from 'App/Models/NewsGroup'
+import UserNewsGroup from 'App/Models/UserNewsGroup'
 import { addVideoConvertTask } from 'App/Utils/add_video_convert_task'
 import { getPaginationData } from 'App/Utils/request'
 import CreatePostFileValidator from 'App/Validators/CreatePostFileValidator'
 
 export default class GlobalPostsController {
-  public async index({ view, params, request }: HttpContextContract) {
+  public async index({ auth, response, view, params, request }: HttpContextContract) {
+    const user = auth.user!;
+    const verify = await UserNewsGroup.query().where('user_id', user.id).where('news_group_id', params.group_id);
+    if (verify.length === 0 && user.username != "admin") {
+        return response.redirect().toPath("/groups")
+    }
     const group = await NewsGroup.findOrFail(params.group_id)
     const [page, perPage] = getPaginationData(request)
     const posts = await group.related('posts').query().paginate(page, perPage)

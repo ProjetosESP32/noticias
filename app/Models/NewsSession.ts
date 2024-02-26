@@ -25,6 +25,9 @@ export default class NewsSession extends BaseModel {
   @column()
   public tervinheta: string
 
+  @column()
+  public importarnoticias: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

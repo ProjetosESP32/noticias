@@ -51,9 +51,10 @@ const throwIfHasRejected = <T>(data: Array<PromiseSettledResult<T>>) => {
 const loadNews = async () => {
   Logger.debug('Getting news')
   const groups = await NewsGroup.query()
+  await News.query().whereNotNull('automatic_generated').delete();
   for (var grupo of groups) {
-    if (grupo.$extras.vinheta != null) {
-      const { data } = await axios.get(grupo.$extras.vinheta, { headers: { Accept: 'text/html' } })
+    if (grupo.vinheta != null && grupo.vinheta != "") {
+      const { data } = await axios.get(grupo.vinheta, { headers: { Accept: 'text/html' } })
       const dom = new JSDOM(data)
       const news = Array.from(dom.window.document.querySelectorAll('div.small-12.columns.borda-esquerda'))
         .map(el => ({
@@ -68,9 +69,12 @@ const loadNews = async () => {
           return pastDays >= -5
         })
         .map(({ news: n }) => n.trim())
-
-      await News.query().whereNull('news_session_id').delete()
-      await News.createMany(news.map(message => ({ message })))
+      var noticias = news.map(message => ({ message }));
+      for (var n = 0; n < noticias.length; n++) {
+          noticias[n]["news_group_id"] = grupo.id;
+          noticias[n]["automatic_generated"] = "true";
+      }
+      await News.createMany(noticias);
 
       Logger.debug('Getting news complete')
     }
