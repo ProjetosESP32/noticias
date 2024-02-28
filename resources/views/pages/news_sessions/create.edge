@@ -29,6 +29,7 @@
       required: true
     })
 
+
     @!input({
       label: 'Descrição da sessão',
       hint: 'A descrição da sessão para facil identificação',
@@ -37,6 +38,35 @@
       maxlength: 100,
       required: true
     })
+
+    @!select({
+      label: 'Ter música ou playlist?',
+      hint: 'Se nada for selecionado, a sessão não terá música/playlist',
+      name: 'tersound',
+      options: [{ label: 'Não', value: 'False' }, { label: 'Sim', value: 'True' }],
+    })
+
+    @!input({
+      label: 'Link da playlist ou musica',
+      hint: 'Só pode ser rádio ou música/playlist do youtube',
+      name: 'soundtrack',
+      type: 'text',
+    })
+
+    @!select({
+      label: 'Mostrar vinheta?',
+      hint: 'Se nada for selecionado, a sessão não terá vinheta',
+      name: 'tervinheta',
+      options: [{ label: 'Não', value: 'False' }, { label: 'Sim', value: 'True' }]
+    })
+
+    @!select({
+      label: 'Importar noticias do link do grupo?',
+      hint: 'link de noticias associado ao grupo',
+      name: 'importarnoticias',
+      options: [{ label: 'Não', value: 'False' }, { label: 'Sim', value: 'True' }]
+    })
+    
 
     @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })
   </form>

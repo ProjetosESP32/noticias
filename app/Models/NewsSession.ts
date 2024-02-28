@@ -16,6 +16,18 @@ export default class NewsSession extends BaseModel {
   @column()
   public description: string
 
+  @column()
+  public tersound: string
+  
+  @column()
+  public soundtrack: string
+
+  @column()
+  public tervinheta: string
+
+  @column()
+  public importarnoticias: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

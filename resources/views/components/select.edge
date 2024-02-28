@@ -14,7 +14,7 @@
     {{ $props.serializeExcept(['name', 'label', 'options', 'hint']) }}
   >
     @if(!multiple)
-    <option value="">Selecione</option>
+    <option value="False">Selecione</option>
     @end
     @each(option in options)
       <option value="{{ option.value }}" {{ option.selected ? 'selected' : '' }}>{{ option.label }}</option>

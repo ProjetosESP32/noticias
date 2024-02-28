@@ -15,6 +15,16 @@ export default class UpdateNewsSessionValidator {
       rules.maxLength(100),
       rules.alphaNum({ allow: ['space'] }),
     ]),
+    tersound: schema.string({ trim: true }, [
+    ]),
+    soundtrack: schema.string({ trim: true }, [
+      rules.minLength(5),
+      rules.maxLength(100),
+    ]),
+    tervinheta: schema.string({ trim: true }, [
+    ]),
+    importarnoticias: schema.string({ trim: true }, [
+    ]),
   })
 
   public messages: CustomMessages = {}

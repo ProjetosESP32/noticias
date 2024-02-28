@@ -15,6 +15,8 @@ export default class CreateNewsGroupValidator {
       rules.maxLength(100),
       rules.alphaNum({ allow: ['space'] }),
     ]),
+    vinheta: schema.string({ trim: true }, [
+    ]),
     instagramToken: schema.string.optional({}),
   })
 

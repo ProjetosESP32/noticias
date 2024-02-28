@@ -2,6 +2,8 @@
 
 @section('body')
 <main class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 flex flex-col gap-y-4">
+
+  @!backLink({ href: route('NewsGroupsController.index') })
   @can('root')
     <nav class="w-full flex flex-row justify-end gap-x-2">
       @!link({
@@ -46,6 +48,7 @@
             <td class="whitespace-nowrap px-4 py-3 text-gray-700 text-left">{{ group.description }}</td>
             <td class="flex gap-x-1 justify-center items-center py-3">
               @!link({ text: 'Visualizar', href: route('NewsGroupsController.show', [group.id]) })
+              @!link({ text: 'Editar', href: route('NewsGroupsController.edit', [group.id]) })
               @can('root')
                 <form method="POST" action="{{ route('NewsGroupsController.destroy', [group.id], { qs: { _method: 'DELETE' } }) }}">
                   {{ csrfField() }}

@@ -50,26 +50,36 @@ const throwIfHasRejected = <T>(data: Array<PromiseSettledResult<T>>) => {
 
 const loadNews = async () => {
   Logger.debug('Getting news')
-  const { data } = await axios.get('https://cba.ifmt.edu.br/conteudo/noticias/', { headers: { Accept: 'text/html' } })
-  const dom = new JSDOM(data)
-  const news = Array.from(dom.window.document.querySelectorAll('div.small-12.columns.borda-esquerda'))
-    .map(el => ({
-      date: el.children.item(0)?.textContent ?? '',
-      news: el.children.item(1)?.textContent ?? '',
-    }))
-    .filter(({ date }) => {
-      const [datePart] = date.split('-')
-      const trimmedDate = datePart.trim()
-      const pastDays = DateTime.fromFormat(trimmedDate, 'dd MMM', { locale: 'pt-br' }).diffNow().as('days')
+  const groups = await NewsGroup.query()
+  await News.query().whereNotNull('automatic_generated').delete();
+  for (var grupo of groups) {
+    if (grupo.vinheta != null && grupo.vinheta != "") {
+      const { data } = await axios.get(grupo.vinheta, { headers: { Accept: 'text/html' } })
+      const dom = new JSDOM(data)
+      const news = Array.from(dom.window.document.querySelectorAll('div.small-12.columns.borda-esquerda'))
+        .map(el => ({
+          date: el.children.item(0)?.textContent ?? '',
+          news: el.children.item(1)?.textContent ?? '',
+        }))
+        .filter(({ date }) => {
+          const [datePart] = date.split('-')
+          const trimmedDate = datePart.trim()
+          const pastDays = DateTime.fromFormat(trimmedDate, 'dd MMM', { locale: 'pt-br' }).diffNow().as('days')
 
-      return pastDays >= -5
-    })
-    .map(({ news: n }) => n.trim())
+          return pastDays >= -5
+        })
+        .map(({ news: n }) => n.trim())
+      var noticias = news.map(message => ({ message }));
+      for (var n = 0; n < noticias.length; n++) {
+          noticias[n]["news_group_id"] = grupo.id;
+          noticias[n]["automatic_generated"] = "true";
+      }
+      await News.createMany(noticias);
 
-  await News.query().whereNull('news_session_id').delete()
-  await News.createMany(news.map(message => ({ message })))
-
-  Logger.debug('Getting news complete')
+      Logger.debug('Getting news complete')
+    }
+  }
+  
 }
 
 const loadInstagramPosts = async () => {

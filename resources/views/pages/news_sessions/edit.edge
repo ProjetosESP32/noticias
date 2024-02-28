@@ -30,6 +30,56 @@
       value: newsSession.name
     })
 
+    @if(newsSession.tersound == "True")
+    @!select({
+      label: 'Ter música ou playlist?',
+      name: 'tersound',
+      options: [{ label: 'Não', value: 'False'}, { label: 'Sim', value: 'True', selected: 'True' }],
+    })
+    @else
+    @!select({
+      label: 'Ter música ou playlist?',
+      name: 'tersound',
+      options: [{ label: 'Não', value: 'False', selected: 'True'}, { label: 'Sim', value: 'True' }],
+    })
+    @end
+
+    @!input({
+      label: 'Link da playlist ou musica',
+      hint: 'Só pode ser rádio ou música/playlist do youtube',
+      name: 'soundtrack',
+      type: 'text',
+      value: newsSession.soundtrack
+    })
+
+    @if(newsSession.tervinheta == "True")
+    @!select({
+      label: 'Mostrar vinheta?',
+      name: 'tervinheta',
+      options: [{ label: 'Não', value: 'False' }, { label: 'Sim', value: 'True', selected: 'True' }]
+    })
+    @else
+    @!select({
+      label: 'Mostrar vinheta?',
+      name: 'tervinheta',
+      options: [{ label: 'Não', value: 'False', selected: 'True' }, { label: 'Sim', value: 'True' }]
+    })
+    @end
+
+    @if(newsSession.importarnoticias == "True")
+    @!select({
+      label: 'Importar noticias do link do grupo?',
+      name: 'importarnoticias',
+      options: [{ label: 'Não', value: 'False' }, { label: 'Sim', value: 'True', selected: 'True' }]
+    })
+    @else
+    @!select({
+      label: 'Importar noticias do link do grupo?',
+      name: 'importarnoticias',
+      options: [{ label: 'Não', value: 'False', selected: 'True' }, { label: 'Sim', value: 'True' }]
+    })
+    @end
+
     <div class="flex justify-end">
       @!button({ text: 'Atualizar', type: 'submit' })
     </div>

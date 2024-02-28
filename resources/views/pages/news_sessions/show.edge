@@ -9,18 +9,25 @@
 @end
 
 @section('body')
-<main class="block w-full h-screen overflow-hidden bg-green-700">
-  <audio hidden autoplay preload="auto">
-    <source src="https://sv13.hdradios.net:6990/live">
-  </audio>
-  <div class="w-full h-[90vh] grid grid-cols-2 p-4 gap-x-4">
+<main class="block w-full h-screen overflow-hidden bg-black">
+  @if (newsSession.tersound == 'True')
+    @if (soundtracktype === 'youtube')
+    <iframe hidden width="560" height="315" src="https://www.youtube.com/embed/{{newsSession.soundtrack}}?si=jQmi1w-L3lLg5ULi&autoplay=1&loop=1&playlist={{newsSession.soundtrack}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    @else
+    <audio hidden autoplay preload="auto">
+      <source src="{{newsSession.soundtrack}}">
+    </audio>
+    @end
+  @end
+  <div class="w-full h-[90vh] grid grid-cols-2">
     <div data-js="common-posts-panel">
       @each((post, idx) in group.posts)
         @if (post.type === 'video')
           <video
             data-index="{{ idx }}"
             data-priority="{{ post.priority }}"
-            class="w-full h-[calc(90vh-2rem)] object-center hidden"
+            class="w-full object-center hidden"
+            style="height: 92vh;"
             preload="auto"
             {{ post.audioEnabled ? '' : 'muted' }}>
             <source src="{{ post.file.url }}" type="{{ post.file.mimeType }}">
@@ -29,7 +36,8 @@
           <img
             data-index="{{ idx }}"
             data-priority="{{ post.priority }}"
-            class="w-full h-[calc(90vh-2rem)] object-center object-contain hidden"
+            class="w-full object-center object-contain hidden"
+            style="height: 92vh;"
             src="{{ post.file.url }}"
             alt="{{ post.file.name }}">
         @end
@@ -42,7 +50,8 @@
           <video
             data-index="{{ idx }}"
             data-priority="{{ post.priority }}"
-            class="w-full h-[calc(90vh-2rem)] object-center hidden"
+            class="w-full object-center hidden"
+            style="height: 92vh;"
             preload="auto"
             {{ post.audioEnabled ? '' : 'muted' }}>
             <source src="{{ post.file.url }}" type="{{ post.file.mimeType }}">
@@ -51,28 +60,57 @@
           <img
             data-index="{{ idx }}"
             data-priority="{{ post.priority }}"
-            class="w-full h-[calc(90vh-2rem)] object-center object-contain hidden"
+            class="w-full object-center object-contain hidden"
+            style="height: 92vh;"
             src="{{ post.file.url }}"
             alt="{{ post.file.name }}">
         @end
       @end
     </div>
   </div>
-  <div class="scroll-container">
-    <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length}}s">
-      @each((news, idx) in newsSession.news)
-        <span>
-          {{ news.message }}
-        </span>
+  @if (newsSession.tervinheta == 'True')
+    <div class="scroll-container">
+      @if (newsSession.importarnoticias == "True")
+      <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length + 15 * group.news.length}}s">
+      @else
+      <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length}}s">
       @end
-    </div>
-    <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length}}s" aria-hidden="true">
-      @each((news, idx) in newsSession.news)
-        <span>
-          {{ news.message }}
-        </span>
+        @each((news, idx) in newsSession.news)
+          <span>
+            {{ news.message }}
+          </span>
+        @end
+
+        @if (newsSession.importarnoticias == "True")
+        @each((news, idx) in group.news)
+          <span>
+            {{ news.message }}
+          </span>
+        @end
+        @end
+        
+      </div>
+      @if (newsSession.importarnoticias == "True")
+      <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length + 15 * group.news.length}}s">
+      @else
+      <div class="scroll-content" style="animation-duration: {{15 * newsSession.news.length}}s">
       @end
+        @each((news, idx) in newsSession.news)
+          <span>
+            {{ news.message }}
+          </span>
+        @end
+ 
+        @if (newsSession.importarnoticias == "True")
+        @each((news, idx) in group.news)
+          <span>
+            {{ news.message }}
+          </span>
+        @end
+        @end
+        
+      </div>
     </div>
-  </div>
+  @end
 </main>
 @end
