@@ -50,7 +50,7 @@ const databaseConfig: DatabaseConfig = {
         naturalSort: true,
       },
       useNullAsDefault: true,
-      healthCheck: true,
+      healthCheck: Env.get('DB_CONNECTION') === 'sqlite',
       debug: Application.inDev,
     },
 
@@ -77,7 +77,7 @@ const databaseConfig: DatabaseConfig = {
       migrations: {
         naturalSort: true,
       },
-      healthCheck: true,
+      healthCheck: Env.get('DB_CONNECTION') === 'mysql',
       debug: Application.inDev,
     },
   },
