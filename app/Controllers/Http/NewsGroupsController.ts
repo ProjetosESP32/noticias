@@ -1,16 +1,14 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import NewsGroup from 'App/Models/NewsGroup'
-import UserNewsGroup from 'App/Models/UserNewsGroup'
 import { getPaginationData } from 'App/Utils/request'
 import CreateNewsGroupValidator from 'App/Validators/CreateNewsGroupValidator'
 import UpdateNewsGroupValidator from 'App/Validators/UpdateNewsGroupValidator'
 
 export default class NewsGroupsController {
   public async index({ auth, request, view }: HttpContextContract) {
-    
     const user = auth.user!
 
-    const [page, perPage] = getPaginationData(request)
+    const [page, perPage] = getPaginationData(request.qs())
     if (user.isRoot) {
       const groups = await NewsGroup.query().paginate(page, perPage)
       groups.baseUrl('/groups')
@@ -19,7 +17,7 @@ export default class NewsGroupsController {
 
     const groups = await user.related('newsGroups').query().paginate(page, perPage)
     groups.baseUrl('/groups')
-    return view.render('pages/news_groups/index', { groups, auth})
+    return view.render('pages/news_groups/index', { groups, auth })
   }
 
   public async create({ bouncer, view }: HttpContextContract) {
@@ -43,14 +41,9 @@ export default class NewsGroupsController {
     response.redirect().toRoute('groups.index')
   }
 
-  public async show({ auth, request, response, view, params }: HttpContextContract) {
-    const user = auth.user!
-    const verify = await UserNewsGroup.query().where('user_id', user.id).where('news_group_id', params.id);
-    if (verify.length === 0 && user.username != "admin") {
-        return response.redirect().toPath("/groups")
-    }
+  public async show({ request, view, params }: HttpContextContract) {
     const group = await NewsGroup.findOrFail(params.id)
-    const [page, perPage] = getPaginationData(request)
+    const [page, perPage] = getPaginationData(request.qs())
     const sessions = await group.related('sessions').query().paginate(page, perPage)
     sessions.baseUrl(`/groups/${group.id}`)
 
@@ -58,8 +51,6 @@ export default class NewsGroupsController {
   }
 
   public async edit({ view, params }: HttpContextContract) {
-
-
     const group = await NewsGroup.findOrFail(params.id)
 
     return view.render('pages/news_groups/edit', { group })

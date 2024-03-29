@@ -16,10 +16,7 @@ export default class CreateNewsSessionValidator {
       rules.alphaNum({ allow: ['space'] }),
     ]),
     tersound: schema.string.optional(),
-    soundtrack: schema.string.optional({ trim: true }, [
-      rules.minLength(5),
-      rules.maxLength(100),
-    ]),
+    soundtrack: schema.string.optional({ trim: true }, [rules.minLength(5), rules.maxLength(100)]),
     tervinheta: schema.string.optional(),
     importarnoticias: schema.string.optional(),
   })

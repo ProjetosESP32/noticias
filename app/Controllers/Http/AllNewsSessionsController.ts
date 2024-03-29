@@ -4,7 +4,7 @@ import { getPaginationData } from 'App/Utils/request'
 
 export default class AllNewsSessionsController {
   public async index({ view, request }: HttpContextContract) {
-    const [page, perPage] = getPaginationData(request)
+    const [page, perPage] = getPaginationData(request.qs())
 
     const groups = await NewsGroup.query().preload('sessions').paginate(page, perPage)
     groups.baseUrl('/all-sessions')

@@ -11,7 +11,7 @@ import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
 export default class UsersController {
   public async index({ bouncer, view, request }: HttpContextContract) {
     await bouncer.authorize('root')
-    const [page, perPage] = getPaginationData(request)
+    const [page, perPage] = getPaginationData(request.qs())
 
     const users = await User.query().where('isRoot', false).preload('newsGroups').paginate(page, perPage)
     users.baseUrl('/users')

@@ -18,7 +18,7 @@ export default class NewsSession extends BaseModel {
 
   @column()
   public tersound: string
-  
+
   @column()
   public soundtrack: string
 

@@ -13,7 +13,7 @@ export default class extends BaseSchema {
 
       table.string('tersound', 25)
       table.string('soundtrack', 200)
-      
+
       table.string('tervinheta', 25)
       table.string('importarnoticias', 25)
 

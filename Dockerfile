@@ -1,4 +1,5 @@
-FROM node:lts-slim AS base
+FROM node:lts-alpine AS base
+RUN apk update && apk upgrade && apk add --no-cache ffmpeg
 RUN mkdir -p /home/node/app && chown node:node /home/node/app
 WORKDIR /home/node/app
 USER node
