@@ -52,8 +52,8 @@ const loadNews = async () => {
   Logger.debug('Getting news')
   const groups = await NewsGroup.query()
   await News.query().whereNotNull('automatic_generated').delete()
-  for (var grupo of groups) {
-    if (grupo.vinheta != null && grupo.vinheta != '') {
+  for (const grupo of groups) {
+    if (grupo.vinheta != null && grupo.vinheta !== '') {
       const { data } = await axios.get(grupo.vinheta, { headers: { Accept: 'text/html' } })
       const dom = new JSDOM(data)
       const news = Array.from(dom.window.document.querySelectorAll('div.small-12.columns.borda-esquerda'))
@@ -69,10 +69,10 @@ const loadNews = async () => {
           return pastDays >= -5
         })
         .map(({ news: n }) => n.trim())
-      var noticias = news.map(message => ({ message }))
+      const noticias = news.map(message => ({ message })) as any[]
       for (let n = 0; n < noticias.length; n++) {
-        noticias[n].news_group_id = grupo.id
-        noticias[n].automatic_generated = 'true'
+        noticias[n].newsGroupId = grupo.id
+        noticias[n].automaticGenerated = 'true'
       }
       await News.createMany(noticias)
 
