@@ -34,7 +34,7 @@ export default class PostFile extends BaseModel {
   @attachment({ preComputeUrl })
   public file: AttachmentContract
 
-  @column({ consume: v => JSON.parse(v) })
+  @column()
   public extra: Record<string, unknown>
 
   @column.dateTime({ autoCreate: true })
