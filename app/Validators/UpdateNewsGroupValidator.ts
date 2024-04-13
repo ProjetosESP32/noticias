@@ -16,6 +16,7 @@ export default class UpdateNewsGroupValidator {
       rules.alphaNum({ allow: ['space'] }),
     ]),
     instagramToken: schema.string.optional({}),
+    vinheta: schema.string({ trim: true }, []),
   })
 
   public messages: CustomMessages = {}

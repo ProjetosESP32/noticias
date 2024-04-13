@@ -48,6 +48,14 @@
       value: group.instagramToken,
     })
 
+    @!input({
+      label: 'Link para a vinheta',
+      hint: 'Link do site de onde serão tiradas as notícias',
+      name: 'vinheta',
+      type: 'text',
+      value: group.vinheta,
+    })
+
     @!button({ text: 'Atualizar', type: 'submit', class: 'w-full' })
   </form>
 </main>
