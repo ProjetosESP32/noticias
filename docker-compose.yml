@@ -1,0 +1,40 @@
+services:
+  postgres-db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    volumes:
+      - postgres_db_data:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  noticias-back:
+    build:
+      context: .
+      target: dependencies
+    image: noticias-dev
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=postgres-db
+    volumes:
+      - ./:/home/node/app
+    command: ["node", "ace", "serve", "-w"]
+
+volumes:
+  postgres_db_data:
