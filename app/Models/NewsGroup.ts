@@ -23,6 +23,9 @@ export default class NewsGroup extends BaseModel {
   @column()
   public vinheta: string
 
+  @column()
+  public noticiasDays: number
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

@@ -64,6 +64,14 @@
       value: group.vinheta,
     })
 
+    @!input({
+      label: 'Dias desde a publicação das noticias',
+      name: 'noticiasDays',
+      type: 'number',
+      hint: 'Quantidade máxima de dias desde que as noticias foram publicados',
+      value: group.noticiasDays,
+    })
+
     @!button({ text: 'Atualizar', type: 'submit', class: 'w-full' })
   </form>
 </main>

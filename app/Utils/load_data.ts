@@ -66,7 +66,7 @@ const loadNews = async () => {
           const trimmedDate = datePart.trim()
           const pastDays = DateTime.fromFormat(trimmedDate, 'dd MMM', { locale: 'pt-br' }).diffNow().as('days')
 
-          return pastDays >= -5
+          return pastDays >= -grupo.noticiasDays
         })
         .map(({ news: n }) => n.trim())
       const noticias = news.map(message => ({ message })) as any[]

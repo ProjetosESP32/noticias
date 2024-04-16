@@ -60,6 +60,14 @@
       type: 'text',
     })
 
+    @!input({
+      label: 'Dias desde a publicação das notícias',
+      name: 'noticiasDays',
+      value: '5',
+      type: 'number',
+      hint: 'Quantidade máxima de dias desde que as notícias foram publicados, tem o valor padrão de 5 dias.'
+    })
+
     @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })
   </form>
 </main>
