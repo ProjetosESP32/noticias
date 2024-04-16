@@ -17,6 +17,7 @@ export default class UpdateNewsGroupValidator {
     ]),
     instagramToken: schema.string.optional({}),
     vinheta: schema.string({ trim: true }, []),
+    instagramDays: schema.number(),
   })
 
   public messages: CustomMessages = {}

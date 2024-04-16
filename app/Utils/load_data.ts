@@ -94,7 +94,7 @@ const loadInstagramPosts = async () => {
         p =>
           DateTime.fromISO(p.extra.timestamp as string)
             .diffNow()
-            .as('days') < -5,
+            .as('days') < -group.instagramDays,
       )
 
     await Promise.all(instagramPostsToDelete.map(async p => p.delete()))
@@ -107,7 +107,7 @@ const loadInstagramPosts = async () => {
       params: {
         access_token: group.instagramToken,
         fields: ['media_url', 'media_type', 'id', 'timestamp'].join(','),
-        since: DateTime.now().minus({ days: 5 }).toISO(),
+        since: DateTime.now().minus({ days: group.instagramDays }).toISO(),
       },
     })
 

@@ -11,6 +11,7 @@ export default class extends BaseSchema {
       table.string('description', 100)
       table.string('vinheta')
       table.string('instagram_token').nullable()
+      table.integer('instagram_days').nullable()
 
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
