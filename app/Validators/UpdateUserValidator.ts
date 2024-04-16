@@ -6,10 +6,11 @@ export default class UpdateUserValidator {
 
   public schema = schema.create({
     username: schema.string({ trim: true }, [
-      rules.minLength(8),
+      rules.minLength(5),
       rules.maxLength(255),
       rules.unique({ column: 'username', table: 'users', whereNot: { id: this.ctx.params.id } }),
     ]),
+    groups: schema.array().members(schema.number([rules.exists({ table: 'news_groups', column: 'id' })])),
   })
 
   public messages: CustomMessages = {}
