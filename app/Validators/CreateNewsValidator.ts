@@ -8,7 +8,6 @@ export default class CreateNewsValidator {
     message: schema.string({ trim: true, escape: true }, [
       rules.minLength(5),
       rules.maxLength(255),
-      rules.alphaNum({ allow: ['space'] }),
     ]),
   })
 
