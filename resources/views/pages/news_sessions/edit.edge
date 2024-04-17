@@ -80,6 +80,14 @@
     })
     @end
 
+    @!input({
+      label: 'Tempo entre os posts',
+      hint: 'Intervalo de tempo entre cada post',
+      name: 'postinterval',
+      type: 'number',
+      value: newsSession.postinterval
+    })
+
     <div class="flex justify-end">
       @!button({ text: 'Atualizar', type: 'submit' })
     </div>
