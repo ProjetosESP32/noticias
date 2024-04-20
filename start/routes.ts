@@ -6,7 +6,7 @@ Route.get('health', async ({ response }) => {
   const report = await HealthCheck.getReport()
 
   if (report.healthy) response.ok(report)
-  else response.badRequest(report)
+  else response.internalServerError(report)
 })
 
 Route.group(() => {
@@ -15,22 +15,20 @@ Route.group(() => {
 
 Route.get('all-sessions', 'AllNewsSessionsController.index')
 
-Route.get('posts', async ({response, session}) => {
-  loadData()
+Route.get('posts', async ({ response, session }) => {
+  await loadData()
   response.redirect('/groups')
   session.flash('toast', {
-      title: 'Atualizando as noticias e posts do instagram!',
-      description: ``,
-      type: 'success',
-    })
+    title: 'Atualizando as noticias e posts do instagram!',
+    description: ``,
+    type: 'success',
+  })
 })
 
 Route.group(() => {
   Route.get('/', ({ response }) => {
     response.redirect('/groups')
   })
-
-  
 
   Route.delete('auth/logout', 'UserSessionsController.destroy')
   Route.resource('groups', 'NewsGroupsController')
