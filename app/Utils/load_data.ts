@@ -66,7 +66,7 @@ const loadNews = async () => {
           const trimmedDate = datePart.trim()
           const pastDays = DateTime.fromFormat(trimmedDate, 'dd MMM', { locale: 'pt-br' }).diffNow().as('days')
 
-          return pastDays >= -5
+          return pastDays >= -grupo.noticiasDays
         })
         .map(({ news: n }) => n.trim())
       const noticias = news.map(message => ({ message })) as any[]
@@ -94,7 +94,7 @@ const loadInstagramPosts = async () => {
         p =>
           DateTime.fromISO(p.extra.timestamp as string)
             .diffNow()
-            .as('days') < -5,
+            .as('days') < -group.instagramDays,
       )
 
     await Promise.all(instagramPostsToDelete.map(async p => p.delete()))
@@ -107,7 +107,7 @@ const loadInstagramPosts = async () => {
       params: {
         access_token: group.instagramToken,
         fields: ['media_url', 'media_type', 'id', 'timestamp'].join(','),
-        since: DateTime.now().minus({ days: 5 }).toISO(),
+        since: DateTime.now().minus({ days: group.instagramDays }).toISO(),
       },
     })
 

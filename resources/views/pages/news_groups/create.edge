@@ -46,10 +46,26 @@
     })
 
     @!input({
+      label: 'Dias desde a publicação dos posts',
+      name: 'instagramDays',
+      value: '5',
+      type: 'number',
+      hint: 'Quantidade máxima de dias desde que os posts foram publicados, tem o valor padrão de 5 dias.'
+    })
+
+    @!input({
       label: 'Link para a vinheta',
       hint: 'Link do site de onde serão tiradas as notícias',
       name: 'vinheta',
       type: 'text',
+    })
+
+    @!input({
+      label: 'Dias desde a publicação das notícias',
+      name: 'noticiasDays',
+      value: '5',
+      type: 'number',
+      hint: 'Quantidade máxima de dias desde que as notícias foram publicados, tem o valor padrão de 5 dias.'
     })
 
     @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })

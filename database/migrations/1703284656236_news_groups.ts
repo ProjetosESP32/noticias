@@ -9,8 +9,10 @@ export default class extends BaseSchema {
 
       table.string('name', 25)
       table.string('description', 100)
-      table.string('vinheta')
+      table.string('vinheta').nullable()
+      table.integer('noticias_days').nullable()
       table.string('instagram_token').nullable()
+      table.integer('instagram_days').nullable()
 
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })

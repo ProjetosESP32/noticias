@@ -9,6 +9,7 @@
 @end
 
 @section('body')
+<input id="postinterval" type="number" value="{{newsSession.postinterval}}" class="hidden">
 <main class="block w-full h-screen overflow-hidden bg-black">
   @if (newsSession.tersound == 'True')
     @if (soundtracktype === 'youtube')

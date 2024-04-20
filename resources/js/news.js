@@ -12,6 +12,8 @@ const sessionPostsPanel = Array.from(document.querySelector('[data-js="session-p
   indexFilter,
 )
 
+const postinterval = Number(document.querySelector("#postinterval").value) * 1000
+
 let isPlaying = false
 
 const hide = el => {
@@ -59,7 +61,7 @@ const changePost = gen => {
     setTimeout(() => {
       hide(el)
       changePost(gen)
-    }, 10_000)
+    }, postinterval)
   }
 
   el.classList.remove('hidden')

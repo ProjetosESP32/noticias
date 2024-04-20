@@ -61,6 +61,8 @@ const worker = async ({
       'ultrafast',
       '-threads',
       '1',
+      '-crf',
+      '34',
       ...(audioEnabled ? AAC_AUDIO_CONFIG : NO_AUDIO_CONFIG),
       mp4OutputFilePath,
     ])

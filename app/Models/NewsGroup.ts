@@ -18,7 +18,13 @@ export default class NewsGroup extends BaseModel {
   public instagramToken: string
 
   @column()
+  public instagramDays: number
+
+  @column()
   public vinheta: string
+
+  @column()
+  public noticiasDays: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

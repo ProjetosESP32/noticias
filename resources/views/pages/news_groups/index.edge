@@ -58,6 +58,15 @@
                     type: 'submit'
                   })
                 </form>
+
+                <form method="GET" action="{{ route('/posts', [group.id, session.id], { qs: { _method: 'GET' } }) }}">
+                {{ csrfField() }}
+                @!button({
+                  text: 'Atualizar noticias/instagram',
+                  class: 'bg-yellow-600',
+                  type: 'submit'
+                })
+                </form>
               @end
             </td>
           </tr>

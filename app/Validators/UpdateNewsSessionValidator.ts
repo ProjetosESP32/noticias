@@ -19,6 +19,7 @@ export default class UpdateNewsSessionValidator {
     soundtrack: schema.string({ trim: true }, [rules.minLength(5), rules.maxLength(100)]),
     tervinheta: schema.string({ trim: true }, []),
     importarnoticias: schema.string({ trim: true }, []),
+    postinterval: schema.number(),
   })
 
   public messages: CustomMessages = {}

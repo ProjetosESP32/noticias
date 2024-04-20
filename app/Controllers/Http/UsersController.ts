@@ -3,6 +3,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { Role } from 'App/Enums/Role'
 import NewsGroup from 'App/Models/NewsGroup'
 import User from 'App/Models/User'
+import UserNewsGroup from 'App/Models/UserNewsGroup'
 import { generatePassword } from 'App/Utils/generate_password'
 import { getPaginationData } from 'App/Utils/request'
 import CreateUserValidator from 'App/Validators/CreateUserValidator'
@@ -58,8 +59,15 @@ export default class UsersController {
   public async update({ bouncer, request, response, params }: HttpContextContract) {
     await bouncer.authorize('root')
     const user = await User.findOrFail(params.id)
-    const data = await request.validate(UpdateUserValidator)
+    const { groups, ...data } = await request.validate(UpdateUserValidator)
+    await UserNewsGroup
+    .query()
+    .where("user_id", params.id)
+    .delete()
 
+    await Database.insertQuery()
+      .table('users_news_groups')
+      .multiInsert(groups.map(id => ({ news_group_id: id, user_id: user.id, role: Role.ADMIN })))
     user.merge(data)
     await user.save()
 

@@ -66,6 +66,13 @@
       name: 'importarnoticias',
       options: [{ label: 'Não', value: 'False' }, { label: 'Sim', value: 'True' }]
     })
+
+    @!input({
+      label: 'Tempo entre os posts',
+      hint: 'Intervalo de tempo entre cada post',
+      name: 'postinterval',
+      type: 'number',
+    })
     
 
     @!button({ text: 'Enviar', type: 'submit', class: 'w-full' })

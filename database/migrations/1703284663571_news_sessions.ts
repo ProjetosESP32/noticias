@@ -17,6 +17,8 @@ export default class extends BaseSchema {
       table.string('tervinheta', 25)
       table.string('importarnoticias', 25)
 
+      table.integer('postinterval')
+
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

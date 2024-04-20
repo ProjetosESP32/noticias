@@ -8,17 +8,16 @@ export default class CreateNewsSessionValidator {
     name: schema.string({ trim: true }, [
       rules.minLength(5),
       rules.maxLength(25),
-      rules.alphaNum({ allow: ['space'] }),
     ]),
     description: schema.string({ trim: true }, [
       rules.minLength(5),
       rules.maxLength(100),
-      rules.alphaNum({ allow: ['space'] }),
     ]),
     tersound: schema.string.optional(),
     soundtrack: schema.string.optional({ trim: true }, [rules.minLength(5), rules.maxLength(100)]),
     tervinheta: schema.string.optional(),
     importarnoticias: schema.string.optional(),
+    postinterval: schema.number(),
   })
 
   public messages: CustomMessages = {}

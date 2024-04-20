@@ -8,14 +8,15 @@ export default class UpdateNewsGroupValidator {
     name: schema.string.optional({ trim: true }, [
       rules.minLength(5),
       rules.maxLength(25),
-      rules.alphaNum({ allow: ['space'] }),
     ]),
     description: schema.string.optional({ trim: true }, [
       rules.minLength(5),
       rules.maxLength(100),
-      rules.alphaNum({ allow: ['space'] }),
     ]),
-    instagramToken: schema.string.optional({}),
+    instagramToken: schema.string.optional(),
+    vinheta: schema.string.optional({ trim: true }, []),
+    instagramDays: schema.number(),
+    noticiasDays: schema.number(),
   })
 
   public messages: CustomMessages = {}

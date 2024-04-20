@@ -1,5 +1,6 @@
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
 import Route from '@ioc:Adonis/Core/Route'
+import { loadData } from 'App/Utils/load_data'
 
 Route.get('health', async ({ response }) => {
   const report = await HealthCheck.getReport()
@@ -14,10 +15,22 @@ Route.group(() => {
 
 Route.get('all-sessions', 'AllNewsSessionsController.index')
 
+Route.get('posts', async ({response, session}) => {
+  loadData()
+  response.redirect('/groups')
+  session.flash('toast', {
+      title: 'Atualizando as noticias e posts do instagram!',
+      description: ``,
+      type: 'success',
+    })
+})
+
 Route.group(() => {
   Route.get('/', ({ response }) => {
     response.redirect('/groups')
   })
+
+  
 
   Route.delete('auth/logout', 'UserSessionsController.destroy')
   Route.resource('groups', 'NewsGroupsController')
