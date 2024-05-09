@@ -48,6 +48,7 @@
     "eslint": "^8.57.0",
     "pino-pretty": "^11.0.0",
     "prettier": "^3.2.5",
+    "sass": "^1.75.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3",
     "vite": "^5.2.6"
@@ -68,7 +69,9 @@
     "luxon": "^3.4.4",
     "pg": "^8.11.5",
     "react": "^18.2.0",
+    "react-aria-components": "^1.2.0",
     "react-dom": "^18.2.0",
+    "react-feather": "^2.0.10",
     "reflect-metadata": "^0.2.1"
   },
   "eslintConfig": {

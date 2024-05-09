@@ -1,0 +1,28 @@
+.container {
+  width: 100%;
+
+  hr {
+    margin: 0 0 1em 0;
+  }
+}
+
+.header {
+  height: 4em;
+  padding: 0 2em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  span {
+    margin-right: 1em;
+  }
+
+  button {
+    $exitColor: rgb(255, 70, 70);
+    background-color: $exitColor;
+    border: 1px solid darken($color: $exitColor, $amount: 5%);
+    border-radius: 6px;
+    padding: .5em 1em;
+  }
+}

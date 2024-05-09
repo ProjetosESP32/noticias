@@ -1,0 +1,18 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+
+  > div {
+    max-width: 340px;
+  }
+
+  h1 {
+    text-align: center;
+  }
+  
+  button {
+    width: 100%;
+  }
+}

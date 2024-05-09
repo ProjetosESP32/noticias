@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit&display=swap');
+
+.container {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: black;
+}
+
+.filesContainer {
+  width: 100%;
+  height: 90vh;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  img {
+    object-fit: contain;
+  }
+
+  img,
+  video {
+    width: 100%;
+    height: 90vh;
+    object-position: center;
+  }
+
+  &[data-full="true"] {
+    height: 100vh;
+
+    img,
+    video {
+      height: 100vh;
+    }
+  }
+}
+
+$gap: 5vw;
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - $gap));
+  }
+}
+
+.scrollContainer {
+  height: 10vh;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+  user-select: none;
+  background-color: rgb(22, 101, 52);
+  gap: $gap;
+  font-family: Outfit;
+}
+
+.scrollContent {
+  min-width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  justify-content: space-around;
+  font-size: 7vh;
+  text-transform: uppercase;
+  color: white;
+  gap: $gap;
+  animation: scroll 15s linear infinite;
+}

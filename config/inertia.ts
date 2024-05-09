@@ -10,7 +10,8 @@ export default defineConfig({
    * Data that should be shared with all rendered pages
    */
   sharedData: {
-    errors: (ctx) => ctx.session?.flashMessages.get('errors'),
+    errors: ({ session }) => session?.flashMessages.get('errors'),
+    loggedUser: ({ auth }) => auth.user,
   },
 
   /**

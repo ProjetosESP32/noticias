@@ -10,13 +10,7 @@ services:
     expose:
       - 5432
     volumes:
-      - postgres_db_data:/var/lib/postgresql/data:rw
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1m30s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
+      - postgres_db_data:/var/lib/postgresql/data
 
   noticias-back:
     build:
@@ -24,17 +18,19 @@ services:
       target: dependencies
     image: noticias-dev
     depends_on:
-      postgres-db:
-        condition: service_healthy
+      - postgres-db
     ports:
       - ${PORT}:${PORT}
+      - 24678:24678
+    expose:
+      - ${PORT}
     env_file:
       - .env
     environment:
       - DB_HOST=postgres-db
     volumes:
       - ./:/home/node/app
-    command: ["node", "ace", "serve", "-w"]
+    command: ["node", "ace", "serve", "--watch", "--poll"]
 
 volumes:
   postgres_db_data:

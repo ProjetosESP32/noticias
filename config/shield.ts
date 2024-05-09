@@ -1,3 +1,4 @@
+import app from '@adonisjs/core/services/app'
 import { defineConfig } from '@adonisjs/shield'
 
 const shieldConfig = defineConfig({
@@ -7,8 +8,13 @@ const shieldConfig = defineConfig({
    */
   csp: {
     enabled: false,
-    directives: {},
-    reportOnly: false,
+    directives: {
+      defaultSrc: ["'self'", '@nonce', '@viteDevUrl'],
+      connectSrc: ['@viteHmrUrl'],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      frameAncestors: ["'none'"],
+    },
+    reportOnly: app.inDev,
   },
 
   /**
