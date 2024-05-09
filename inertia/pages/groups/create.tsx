@@ -49,7 +49,7 @@ const Create = () => {
               isDisabled={processing}
               maxLength={100}
             >
-              <Label>Descrição</Label>
+              <Label>Descrição*</Label>
               <Input />
               <FieldError />
             </TextField>
@@ -81,7 +81,10 @@ const Create = () => {
             >
               <Label>Seletor de fonte das notícias</Label>
               <Input />
-              <Text slot="description">Seletor do DOM para pegar os textos das notícias</Text>
+              <Text slot="description">
+                Seletor do DOM para pegar os textos das notícias (o algorítmo usa{' '}
+                <code>querySelectorAll</code> e pega o conteúdo pelo <code>textContent</code>)
+              </Text>
               <FieldError />
             </TextField>
             <Button type="submit" isDisabled={!isDirty || processing}>

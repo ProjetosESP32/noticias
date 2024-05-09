@@ -5,7 +5,7 @@ import { BackLink } from '~/components/back_link'
 import { Dashboard } from '~/components/dashboard'
 import type { Group } from '~/type/group'
 import { withComponent } from '~/utils/hoc'
-import type { DefaultProps } from '~/utils/props'
+import type { DefaultProps } from '~/type/props'
 
 import styles from './create.module.scss'
 
@@ -55,7 +55,7 @@ const Edit = ({ group }: DefaultProps<EditProps>) => {
               isDisabled={processing}
               maxLength={100}
             >
-              <Label>Descrição</Label>
+              <Label>Descrição*</Label>
               <Input />
               <FieldError />
             </TextField>
@@ -87,7 +87,10 @@ const Edit = ({ group }: DefaultProps<EditProps>) => {
             >
               <Label>Seletor de fonte das notícias</Label>
               <Input />
-              <Text slot="description">Seletor do DOM para pegar os textos das notícias</Text>
+              <Text slot="description">
+                Seletor do DOM para pegar os textos das notícias (o algorítmo usa{' '}
+                <code>querySelectorAll</code> e pega o conteúdo pelo <code>textContent</code>)
+              </Text>
               <FieldError />
             </TextField>
             <Button type="submit" isDisabled={!isDirty || processing}>

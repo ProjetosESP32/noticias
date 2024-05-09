@@ -2,35 +2,35 @@ import { Head, Link } from '@inertiajs/react'
 import { Cell, Table, TableBody } from 'react-aria-components'
 import { BackLink } from '~/components/back_link'
 import { Dashboard } from '~/components/dashboard'
+import { Pagination } from '~/components/pagination'
 import { Column, Row, TableHeader } from '~/components/table'
-import type { Client } from '~/type/client'
-import type { FullGroup } from '~/type/group'
-import { withComponent } from '~/utils/hoc'
+import type { Paginated } from '~/type/paginated'
 import type { DefaultProps } from '~/type/props'
+import type { User } from '~/type/user'
+import { withComponent } from '~/utils/hoc'
 
 import styles from './index.module.scss'
 
-interface ShowProps {
-  group: FullGroup
+interface IndexProps {
+  users: Paginated<User>
 }
 
 interface ColumnDesc {
-  id: keyof Client | 'actions'
+  id: keyof User | 'actions'
   name: string
   isRowHeader?: boolean
 }
 
 const columns: ColumnDesc[] = [
   { id: 'id', name: 'ID', isRowHeader: true },
-  { id: 'name', name: 'Nome' },
-  { id: 'description', name: 'Descrição' },
+  { id: 'username', name: 'Nome' },
   { id: 'actions', name: 'Ações' },
 ]
 
-const Show = ({ group }: DefaultProps<ShowProps>) => {
-  const makeRenderDataCell = (item: Client) => (column: ColumnDesc) => {
+const Index = ({ users }: DefaultProps<IndexProps>) => {
+  const makeRenderDataCell = (item: User) => (column: ColumnDesc) => {
     if (column.id === 'actions') {
-      const itemLink = `/groups/${group.id}/clients/${item.id}`
+      const itemLink = `/groups/${item.id}`
       const editItemLink = `${itemLink}/edit`
 
       return (
@@ -48,26 +48,27 @@ const Show = ({ group }: DefaultProps<ShowProps>) => {
 
   return (
     <>
-      <Head title={group.name} />
+      <Head title="Usuários" />
       <main className={styles.container}>
         <div className={styles.content}>
+          <h2>Usuários</h2>
           <BackLink href="/" />
-          <h2>Clientes do grupo {group.name}</h2>
           <div className={styles.links}>
-            <Link href={`/groups/${group.id}/clients/create`}>Criar cliente</Link>
+            <Link href="/users/create">Criar usuário</Link>
           </div>
-          <Table aria-label="Grupos de sessões">
+          <Table aria-label="Usuários de sessões">
             <TableHeader columns={columns}>
               {(column) => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
             </TableHeader>
-            <TableBody items={group.clients}>
+            <TableBody items={users.data}>
               {(item) => <Row columns={columns}>{makeRenderDataCell(item)}</Row>}
             </TableBody>
           </Table>
+          <Pagination baseUrl="/" metadata={users.meta} />
         </div>
       </main>
     </>
   )
 }
 
-export default withComponent(Show, Dashboard)
+export default withComponent(Index, Dashboard)

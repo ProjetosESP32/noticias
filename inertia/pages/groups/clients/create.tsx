@@ -6,7 +6,7 @@ import { Dashboard } from '~/components/dashboard'
 import { Switch } from '~/components/switch'
 import type { Group } from '~/type/group'
 import { withComponent } from '~/utils/hoc'
-import type { DefaultProps } from '~/utils/props'
+import type { DefaultProps } from '~/type/props'
 
 import styles from '../create.module.scss'
 

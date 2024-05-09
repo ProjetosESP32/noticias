@@ -1,28 +1,30 @@
 import { Head, useForm } from '@inertiajs/react'
 import { type FormEvent } from 'react'
 import { Button, FieldError, Form, Input, Label, TextField } from 'react-aria-components'
-import { Switch } from '~/components/switch'
+import { BackLink } from '~/components/back_link'
+import { Dashboard } from '~/components/dashboard'
+import { withComponent } from '~/utils/hoc'
 
-import styles from './login.module.scss'
+import styles from './create.module.scss'
 
-const Login = () => {
-  const { data, setData, post, processing, errors } = useForm({
+const Create = () => {
+  const { data, setData, post, processing, errors, isDirty } = useForm({
     username: '',
     password: '',
-    rememberMe: true,
   })
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    post('/auth')
+    post('/users')
   }
 
   return (
     <>
-      <Head title="Login" />
+      <Head title="Criar Usuário" />
       <main className={styles.container}>
         <div>
-          <h1>Login</h1>
+          <BackLink href="/" />
+          <h1>Criar usuário</h1>
           <Form onSubmit={handleSubmit} validationErrors={errors}>
             <TextField
               name="username"
@@ -30,8 +32,9 @@ const Login = () => {
               onChange={(v) => setData('username', v)}
               isRequired
               isDisabled={processing}
+              maxLength={55}
             >
-              <Label>Nome de usuário*</Label>
+              <Label>Nome do usuário*</Label>
               <Input autoComplete="username" />
               <FieldError />
             </TextField>
@@ -44,18 +47,12 @@ const Login = () => {
               isDisabled={processing}
             >
               <Label>Senha*</Label>
-              <Input autoComplete="current-password" />
+              <Input autoComplete="new-password" />
               <FieldError />
             </TextField>
-            <Switch
-              name="rememberMe"
-              isSelected={data.rememberMe}
-              onChange={(v) => setData('rememberMe', v)}
-              isDisabled={processing}
-            >
-              Lembrar-me
-            </Switch>
-            <Button type="submit">Enviar</Button>
+            <Button type="submit" isDisabled={!isDirty || processing}>
+              Enviar
+            </Button>
           </Form>
         </div>
       </main>
@@ -63,4 +60,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default withComponent(Create, Dashboard)

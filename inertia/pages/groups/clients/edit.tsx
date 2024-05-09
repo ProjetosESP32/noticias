@@ -22,7 +22,7 @@ import type { FullClient } from '~/type/client'
 import type { FileAttachment } from '~/type/file'
 import type { News } from '~/type/news'
 import { withComponent } from '~/utils/hoc'
-import type { DefaultProps } from '~/utils/props'
+import type { DefaultProps } from '~/type/props'
 
 import styles from './edit.module.scss'
 

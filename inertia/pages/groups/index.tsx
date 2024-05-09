@@ -6,7 +6,7 @@ import { Column, Row, TableHeader } from '~/components/table'
 import type { Group } from '~/type/group'
 import type { Paginated } from '~/type/paginated'
 import { withComponent } from '~/utils/hoc'
-import type { DefaultProps } from '~/utils/props'
+import type { DefaultProps } from '~/type/props'
 
 import styles from './index.module.scss'
 
@@ -54,6 +54,7 @@ const GroupIndex = ({ groups }: DefaultProps<GroupIndexProps>) => {
         <div className={styles.content}>
           <h2>Grupos</h2>
           <div className={styles.links}>
+            <Link href="/users">Usuários</Link>
             <Link href="/clients">Clientes</Link>
             <Link href="/groups/create">Criar grupo</Link>
           </div>

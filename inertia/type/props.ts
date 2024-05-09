@@ -1,3 +1,3 @@
-import { User } from '~/type/user'
+import { User } from './user'
 
 export type DefaultProps<P = object> = { loggedUser: User } & P

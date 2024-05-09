@@ -1,6 +1,7 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
+const UsersController = () => import('#controllers/users_controller')
 const UploadsController = () => import('#controllers/uploads_controller')
 const ClientsController = () => import('#controllers/clients_controller')
 const ClientNewsController = () => import('#controllers/client_news_controller')
@@ -21,6 +22,7 @@ router
       .resource('groups.clients.news', ClientNewsController)
       .only(['store', 'update', 'destroy'])
     router.resource('groups.clients.files', ClientFilesController).only(['store', 'destroy'])
+    router.resource('users', UsersController).except(['show'])
   })
   .use(middleware.auth())
 
