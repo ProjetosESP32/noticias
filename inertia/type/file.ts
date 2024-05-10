@@ -5,6 +5,7 @@ export interface FileAttachment {
   provider: string
   file: string
   mime: string
+  isImported: boolean
   createdAt: string
   updatedAt: string
 }

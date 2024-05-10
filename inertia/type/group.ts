@@ -1,6 +1,6 @@
-import { Client } from './client'
-import { FileAttachment } from './file'
-import { News } from './news'
+import type { Client } from './client'
+import type { FileAttachment } from './file'
+import type { News } from './news'
 
 export interface Group {
   id: number

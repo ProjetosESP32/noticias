@@ -1,6 +1,6 @@
-import { FileAttachment } from './file'
-import { RelatedGroup } from './group'
-import { News } from './news'
+import type { FileAttachment } from './file'
+import type { RelatedGroup } from './group'
+import type { News } from './news'
 
 export interface Client {
   id: number
@@ -8,6 +8,7 @@ export interface Client {
   name: string
   description: string
   hasSound: boolean
+  audioUrl: string | null
   showNews: boolean
   showGroupNews: boolean
 }

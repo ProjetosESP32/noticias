@@ -1,24 +1,45 @@
-import { Head } from '@inertiajs/react'
+import { Head, router } from '@inertiajs/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FullClient } from '~/type/client'
 import type { FileAttachment } from '~/type/file'
+import type { News } from '~/type/news'
 
 import styles from './show.module.scss'
-import { News } from '~/type/news'
 
 interface ShowProps {
   client: FullClient
 }
 
 const Show = ({ client }: ShowProps) => {
-  const files = [...client.files, ...client.relatedGroup.files]
+  const instagramFiles = client.relatedGroup.files.filter((f) => f.isImported)
+  const nonInstagramFiles = client.relatedGroup.files.filter((f) => !f.isImported)
+  const files = [...client.files, ...nonInstagramFiles]
   const news = [...client.news, ...(client.showGroupNews ? client.relatedGroup.news : [])]
+
+  useEffect(() => {
+    const tiemoutId = setTimeout(
+      () => {
+        router.reload()
+      },
+      60 * 60 * 1000 // 1 hour
+    )
+
+    return () => {
+      clearTimeout(tiemoutId)
+    }
+  }, [])
 
   return (
     <>
       <Head title={client.name} />
+      {client.audioUrl ? <audio hidden src={client.audioUrl} autoPlay /> : null}
       <main className={styles.container}>
-        <FilesViewer files={files} full={!client.showNews} muted={!client.hasSound} />
+        <FilesViewer
+          instagramFiles={instagramFiles}
+          localFiles={files}
+          full={!client.showNews}
+          muted={!client.hasSound}
+        />
         {client.showNews ? <NewsVignette news={news} /> : null}
       </main>
     </>
@@ -26,40 +47,47 @@ const Show = ({ client }: ShowProps) => {
 }
 
 interface FilesViewerProps {
-  files: FileAttachment[]
+  instagramFiles: FileAttachment[]
+  localFiles: FileAttachment[]
   full?: boolean
   muted?: boolean
 }
 
 const noop = () => {}
 
-const FilesViewer = ({ files, full, muted }: FilesViewerProps) => {
-  const posRef = useRef(1)
-  const [fileIndexes, setFileIndexes] = useState<[number, number]>([0, 1])
-  const firstFile = files[fileIndexes[0]]
-  const secondFile = files[fileIndexes[1]]
+const FilesViewer = ({ instagramFiles, localFiles, full, muted }: FilesViewerProps) => {
+  const instagramPosRef = useRef(0)
+  const localPosRef = useRef(0)
+  const [instagramFile, setInstagramFile] = useState<FileAttachment>(instagramFiles[0])
+  const [localFile, setLocalFile] = useState<FileAttachment>(localFiles[0])
 
-  const getNextIndex = () => {
-    posRef.current = (posRef.current + 1) % files.length
-    return posRef.current
-  }
-
-  const makeEnded = (panelIndex: 0 | 1) => {
+  const makeEnded = (
+    files: FileAttachment[],
+    ref: React.MutableRefObject<number>,
+    update: React.Dispatch<React.SetStateAction<FileAttachment>>
+  ) => {
     if (files.length <= 2) {
       return noop
     }
 
     return () => {
-      const newFileIndexes = structuredClone<[number, number]>(fileIndexes)
-      newFileIndexes[panelIndex] = getNextIndex()
-      setFileIndexes(newFileIndexes)
+      ref.current = (ref.current + 1) % files.length
+      update(files[ref.current])
     }
   }
 
   return (
     <div className={styles.filesContainer} data-full={full}>
-      <FileItem file={firstFile} muted={muted} onEnded={makeEnded(0)} />
-      <FileItem file={secondFile} muted={muted} onEnded={makeEnded(1)} />
+      <FileItem
+        file={instagramFile}
+        muted
+        onEnded={makeEnded(instagramFiles, instagramPosRef, setInstagramFile)}
+      />
+      <FileItem
+        file={localFile}
+        muted={muted}
+        onEnded={makeEnded(localFiles, localPosRef, setLocalFile)}
+      />
     </div>
   )
 }
@@ -110,6 +138,7 @@ const Video = ({ src, mime, muted, onEnded }: VideoProps) => {
     isPlaying.current = false
     if (timeoutId.current !== null) {
       clearTimeout(timeoutId.current)
+      timeoutId.current = null
     }
 
     timeoutId.current = setTimeout(() => {
@@ -125,6 +154,7 @@ const Video = ({ src, mime, muted, onEnded }: VideoProps) => {
     return () => {
       if (timeoutId.current !== null) {
         clearInterval(timeoutId.current)
+        timeoutId.current = null
       }
     }
   }, [playVideo])

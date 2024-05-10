@@ -8,9 +8,10 @@ export default class extends BaseSchema {
       table.increments('id')
       table.integer('group_id').unsigned().references('id').inTable('groups').onDelete('CASCADE')
 
-      table.string('name', 25).unique()
+      table.string('name', 25)
       table.string('description', 100)
-      table.boolean('has_sound').defaultTo(true)
+      table.boolean('has_sound').defaultTo(false)
+      table.string('audio_url').nullable()
       table.boolean('show_news').defaultTo(true)
       table.boolean('show_group_news').defaultTo(true)
 

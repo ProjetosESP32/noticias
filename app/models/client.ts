@@ -1,9 +1,9 @@
-import { DateTime } from 'luxon'
 import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { DateTime } from 'luxon'
+import File from './file.js'
 import Group from './group.js'
 import News from './news.js'
-import File from './file.js'
 
 export default class Client extends BaseModel {
   @column({ isPrimary: true })
@@ -20,6 +20,9 @@ export default class Client extends BaseModel {
 
   @column()
   declare hasSound: boolean
+
+  @column()
+  declare audioUrl: string | null
 
   @column()
   declare showNews: boolean

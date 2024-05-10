@@ -1,8 +1,8 @@
-import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
+import { DateTime } from 'luxon'
 import Client from './client.js'
 import File from './file.js'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
 import News from './news.js'
 
 export default class Group extends BaseModel {
