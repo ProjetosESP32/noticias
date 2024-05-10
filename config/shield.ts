@@ -7,7 +7,7 @@ const shieldConfig = defineConfig({
    * to learn more
    */
   csp: {
-    enabled: false,
+    enabled: true,
     directives: {
       defaultSrc: ["'self'", '@nonce', '@viteDevUrl'],
       connectSrc: ['@viteHmrUrl'],

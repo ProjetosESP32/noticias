@@ -20,6 +20,9 @@ export default class File extends BaseModel {
   @column()
   declare mime: string
 
+  @column()
+  declare isImported: boolean
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

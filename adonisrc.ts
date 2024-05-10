@@ -38,6 +38,7 @@ export default defineConfig({
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/inertia/inertia_provider'),
+    { file: () => import('#providers/cron_provider'), environment: ['web'] },
   ],
 
   /*

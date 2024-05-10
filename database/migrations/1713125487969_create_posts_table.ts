@@ -12,6 +12,7 @@ export default class extends BaseSchema {
       table.string('provider')
       table.string('file')
       table.string('mime')
+      table.boolean('is_imported').defaultTo(false)
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
