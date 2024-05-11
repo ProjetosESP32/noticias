@@ -1,16 +1,26 @@
 import { Head, useForm } from '@inertiajs/react'
 import { type FormEvent } from 'react'
-import { Button, FieldError, Form, Input, Label, Text, TextField } from 'react-aria-components'
+import {
+  Button,
+  FieldError,
+  Form,
+  Group,
+  Input,
+  Label,
+  NumberField,
+  Text,
+  TextField,
+} from 'react-aria-components'
 import { BackLink } from '~/components/back_link'
 import { Dashboard } from '~/components/dashboard'
-import type { Group } from '~/type/group'
-import { withComponent } from '~/utils/hoc'
 import type { DefaultProps } from '~/type/props'
+import { withComponent } from '~/utils/hoc'
+import { Group as GroupData } from '~/type/group'
 
 import styles from './create.module.scss'
 
 interface EditProps {
-  group: Group
+  group: GroupData
 }
 
 const Edit = ({ group }: DefaultProps<EditProps>) => {
@@ -18,6 +28,7 @@ const Edit = ({ group }: DefaultProps<EditProps>) => {
     name: group.name,
     description: group.description,
     instagramToken: group.instagramToken ?? '',
+    instagramSyncDays: group.instagramSyncDays ?? 5,
     newsSource: group.newsSource ?? '',
     newsSourceSelector: group.newsSourceSelector ?? '',
   })
@@ -33,7 +44,7 @@ const Edit = ({ group }: DefaultProps<EditProps>) => {
       <main className={styles.container}>
         <div>
           <BackLink href="/" />
-          <h1>Editar grupo</h1>
+          <h2>Editar grupo</h2>
           <Form onSubmit={handleSubmit} validationErrors={errors}>
             <TextField
               name="name"
@@ -69,6 +80,22 @@ const Edit = ({ group }: DefaultProps<EditProps>) => {
               <Input />
               <FieldError />
             </TextField>
+            <NumberField
+              name="instagramSyncDays"
+              value={data.instagramSyncDays}
+              onChange={(v) => setData('instagramSyncDays', v)}
+              minValue={1}
+              maxValue={30}
+            >
+              <Label>Posts até</Label>
+              <Group>
+                <Button slot="decrement">-</Button>
+                <Input />
+                <Button slot="increment">+</Button>
+              </Group>
+              <Text slot="description">Sincronizar posts de até x dias atrás.</Text>
+              <FieldError />
+            </NumberField>
             <TextField
               name="newsSource"
               value={data.newsSource}

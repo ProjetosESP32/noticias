@@ -2,6 +2,7 @@ import Client from '#models/client'
 import Group from '#models/group'
 import { createClientValidator, updateClientValidator } from '#validators/client'
 import type { HttpContext } from '@adonisjs/core/http'
+import db from '@adonisjs/lucid/services/db'
 import { getPaginationData } from '../utils/request.js'
 
 export default class ClientsController {
@@ -11,9 +12,20 @@ export default class ClientsController {
 
   async index({ inertia, request }: HttpContext) {
     const [page, perPage] = getPaginationData(request.qs())
-    const clients = await Client.query().paginate(page, perPage)
+    const clients = await db
+      .query()
+      .select({
+        id: 'clients.id',
+        name: 'clients.name',
+        description: 'clients.description',
+        groupName: 'groups.name',
+      })
+      .from('clients')
+      .innerJoin('groups', 'groups.id', 'clients.group_id')
+      .orderBy('clients.group_id', 'asc')
+      .paginate(page, perPage)
 
-    return inertia.render('clients/index', { clients: clients.serialize() })
+    return inertia.render('clients/index', { clients: clients.toJSON() })
   }
 
   async create({ inertia, params }: HttpContext) {

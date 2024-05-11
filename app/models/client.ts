@@ -19,6 +19,9 @@ export default class Client extends BaseModel {
   declare description: string
 
   @column()
+  declare postTime: number
+
+  @column()
   declare hasSound: boolean
 
   @column()

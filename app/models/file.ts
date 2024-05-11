@@ -23,6 +23,12 @@ export default class File extends BaseModel {
   @column()
   declare isImported: boolean
 
+  @column()
+  declare hasAudio: boolean
+
+  @column()
+  declare hasPriority: boolean
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

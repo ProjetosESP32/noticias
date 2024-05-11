@@ -12,7 +12,9 @@ export default class extends BaseSchema {
       table.string('provider')
       table.string('file')
       table.string('mime')
+      table.boolean('has_audio').defaultTo(false)
       table.boolean('is_imported').defaultTo(false)
+      table.boolean('has_priority').defaultTo(false)
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

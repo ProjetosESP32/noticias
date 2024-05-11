@@ -6,6 +6,8 @@ export interface FileAttachment {
   file: string
   mime: string
   isImported: boolean
+  hasAudio: boolean
+  hasPriority: boolean
   createdAt: string
   updatedAt: string
 }

@@ -11,7 +11,7 @@ export const loginValidator = vine.compile(
           .where('username', v)
           .count('username', 'usernameCount')
           .first()
-        return BigInt(result.usernameCount) > 0n
+        return BigInt(result.usernameCount) === 1n
       }),
     password: vine.string().minLength(8),
     rememberMe: vine.boolean(),

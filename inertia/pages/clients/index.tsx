@@ -2,30 +2,38 @@ import { Head, Link } from '@inertiajs/react'
 import { Cell, Table, TableBody } from 'react-aria-components'
 import { Pagination } from '~/components/pagination'
 import { Column, Row, TableHeader } from '~/components/table'
-import type { Client } from '~/type/client'
 import type { Paginated } from '~/type/paginated'
 
 import styles from './index.module.scss'
+import { BackLink } from '~/components/back_link'
+
+interface SimpleClient {
+  id: string
+  name: string
+  description: string
+  groupName: string
+}
 
 interface IndexProps {
-  clients: Paginated<Client>
+  clients: Paginated<SimpleClient>
 }
 
 interface ColumnDesc {
-  id: keyof Client | 'actions'
+  id: keyof SimpleClient | 'actions'
   name: string
   isRowHeader?: boolean
 }
 
 const columns: ColumnDesc[] = [
   { id: 'id', name: 'ID', isRowHeader: true },
+  { id: 'groupName', name: 'Grupo' },
   { id: 'name', name: 'Nome' },
   { id: 'description', name: 'Descrição' },
   { id: 'actions', name: 'Ações' },
 ]
 
 const Index = ({ clients }: IndexProps) => {
-  const makeRenderDataCell = (item: Client) => (column: ColumnDesc) => {
+  const makeRenderDataCell = (item: SimpleClient) => (column: ColumnDesc) => {
     if (column.id === 'actions') {
       const itemLink = `/clients/${item.id}`
 
@@ -44,6 +52,7 @@ const Index = ({ clients }: IndexProps) => {
       <Head title="Clientes" />
       <main className={styles.container}>
         <div>
+          <BackLink href="/" />
           <h2>Clientes</h2>
           <p>Selecione um cliente para a tela de visualização</p>
           <Table aria-label="Clientes">

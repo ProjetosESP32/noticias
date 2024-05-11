@@ -10,6 +10,7 @@ export default class extends BaseSchema {
       table.string('name', 25).unique()
       table.string('description', 100)
       table.string('instagram_token').nullable()
+      table.integer('instagram_sync_days').nullable()
       table.string('news_source').nullable()
       table.string('news_source_selector').nullable()
 

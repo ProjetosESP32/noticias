@@ -106,7 +106,7 @@ export default class LoadData implements CronTask<null, null> {
         searchParams: {
           access_token: group.instagramToken!,
           fields: ['media_url', 'media_type'].join(','),
-          since: DateTime.now().minus({ days: 5 }).toISO(),
+          since: DateTime.now().minus({ days: group.instagramSyncDays! }).toISO(),
         },
       }).json<InstagramAPIResponse>()
 

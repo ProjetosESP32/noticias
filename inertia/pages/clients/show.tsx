@@ -11,13 +11,14 @@ interface ShowProps {
 }
 
 const Show = ({ client }: ShowProps) => {
+  console.log(client)
   const instagramFiles = client.relatedGroup.files.filter((f) => f.isImported)
   const nonInstagramFiles = client.relatedGroup.files.filter((f) => !f.isImported)
   const files = [...client.files, ...nonInstagramFiles]
   const news = [...client.news, ...(client.showGroupNews ? client.relatedGroup.news : [])]
 
   useEffect(() => {
-    const tiemoutId = setTimeout(
+    const tiemoutId = setInterval(
       () => {
         router.reload()
       },
@@ -25,7 +26,7 @@ const Show = ({ client }: ShowProps) => {
     )
 
     return () => {
-      clearTimeout(tiemoutId)
+      clearInterval(tiemoutId)
     }
   }, [])
 
@@ -39,6 +40,7 @@ const Show = ({ client }: ShowProps) => {
           localFiles={files}
           full={!client.showNews}
           muted={!client.hasSound}
+          time={client.postTime}
         />
         {client.showNews ? <NewsVignette news={news} /> : null}
       </main>
@@ -51,11 +53,12 @@ interface FilesViewerProps {
   localFiles: FileAttachment[]
   full?: boolean
   muted?: boolean
+  time?: number
 }
 
 const noop = () => {}
 
-const FilesViewer = ({ instagramFiles, localFiles, full, muted }: FilesViewerProps) => {
+const FilesViewer = ({ instagramFiles, localFiles, full, muted, time }: FilesViewerProps) => {
   const instagramPosRef = useRef(0)
   const localPosRef = useRef(0)
   const [instagramFile, setInstagramFile] = useState<FileAttachment>(instagramFiles[0])
@@ -78,16 +81,26 @@ const FilesViewer = ({ instagramFiles, localFiles, full, muted }: FilesViewerPro
 
   return (
     <div className={styles.filesContainer} data-full={full}>
-      <FileItem
-        file={instagramFile}
-        muted
-        onEnded={makeEnded(instagramFiles, instagramPosRef, setInstagramFile)}
-      />
-      <FileItem
-        file={localFile}
-        muted={muted}
-        onEnded={makeEnded(localFiles, localPosRef, setLocalFile)}
-      />
+      {instagramFile ? (
+        <FileItem
+          file={instagramFile}
+          muted
+          onEnded={makeEnded(instagramFiles, instagramPosRef, setInstagramFile)}
+          imageTime={time}
+        />
+      ) : (
+        <div />
+      )}
+      {localFile ? (
+        <FileItem
+          file={localFile}
+          muted={muted}
+          onEnded={makeEnded(localFiles, localPosRef, setLocalFile)}
+          imageTime={time}
+        />
+      ) : (
+        <div />
+      )}
     </div>
   )
 }
@@ -173,14 +186,16 @@ interface ImageProps {
   time?: number
 }
 
-const Image = ({ id, src, onEnded, time = 30000 }: ImageProps) => {
+const Image = ({ id, src, onEnded, time = 30 }: ImageProps) => {
+  const timeoutTime = time * 1000
+
   useEffect(() => {
-    const timeoutId = setTimeout(onEnded, time)
+    const timeoutId = setTimeout(onEnded, timeoutTime)
 
     return () => {
       clearTimeout(timeoutId)
     }
-  }, [onEnded, time])
+  }, [onEnded, timeoutTime])
 
   return <img src={src} alt={`Imagem de exibição id ${id}`} />
 }

@@ -1,6 +1,16 @@
 import { Head, useForm } from '@inertiajs/react'
 import { type FormEvent } from 'react'
-import { Button, FieldError, Form, Input, Label, Text, TextField } from 'react-aria-components'
+import {
+  Button,
+  FieldError,
+  Form,
+  Group,
+  Input,
+  Label,
+  NumberField,
+  Text,
+  TextField,
+} from 'react-aria-components'
 import { BackLink } from '~/components/back_link'
 import { Dashboard } from '~/components/dashboard'
 import { withComponent } from '~/utils/hoc'
@@ -12,6 +22,7 @@ const Create = () => {
     name: '',
     description: '',
     instagramToken: '',
+    instagramSyncDays: 5,
     newsSource: '',
     newsSourceSelector: '',
   })
@@ -27,7 +38,7 @@ const Create = () => {
       <main className={styles.container}>
         <div>
           <BackLink href="/" />
-          <h1>Criar grupo</h1>
+          <h2>Criar grupo</h2>
           <Form onSubmit={handleSubmit} validationErrors={errors}>
             <TextField
               name="name"
@@ -63,6 +74,22 @@ const Create = () => {
               <Input />
               <FieldError />
             </TextField>
+            <NumberField
+              name="instagramSyncDays"
+              value={data.instagramSyncDays}
+              onChange={(v) => setData('instagramSyncDays', v)}
+              minValue={1}
+              maxValue={30}
+            >
+              <Label>Posts até</Label>
+              <Group>
+                <Button slot="decrement">-</Button>
+                <Input />
+                <Button slot="increment">+</Button>
+              </Group>
+              <Text slot="description">Sincronizar posts de até x dias atrás.</Text>
+              <FieldError />
+            </NumberField>
             <TextField
               name="newsSource"
               value={data.newsSource}

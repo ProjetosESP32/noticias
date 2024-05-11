@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react'
+import { Head, Link, useForm } from '@inertiajs/react'
 import { type FormEvent } from 'react'
 import { Button, FieldError, Form, Input, Label, TextField } from 'react-aria-components'
 import { Switch } from '~/components/switch'
@@ -57,6 +57,8 @@ const Login = () => {
             </Switch>
             <Button type="submit">Enviar</Button>
           </Form>
+          <p>Não é isso que deseja?</p>
+          <Link href="/clients">Selecionar cliente de exibição.</Link>
         </div>
       </main>
     </>

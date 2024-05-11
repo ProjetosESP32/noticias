@@ -19,6 +19,9 @@ export default class Group extends BaseModel {
   declare instagramToken: string | null
 
   @column()
+  declare instagramSyncDays: number | null
+
+  @column()
   declare newsSource: string | null
 
   @column()

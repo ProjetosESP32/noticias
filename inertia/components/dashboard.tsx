@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react'
-import type { DefaultProps } from '~/utils/props'
+import type { DefaultProps } from '~/type/props'
 
 import styles from './dashboard.module.scss'
 

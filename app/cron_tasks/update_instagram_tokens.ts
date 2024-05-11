@@ -38,7 +38,7 @@ export default class UpdateInstagramTokens implements CronTask<null, null> {
         }
       ).json<InstagramAPIUpdateTokenResponse>()
 
-      group.merge({ instagramToken: acessToken })
+      group.instagramToken = acessToken
       await group.save()
     })
 

@@ -5,15 +5,8 @@ import { type MultipartFile } from '@adonisjs/core/bodyparser'
 import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
+import { contentType } from 'mime-types'
 import { unlink } from 'node:fs/promises'
-
-const getMimeByExt = (extname: string) => {
-  if (extname.includes('mp4')) return 'video/mp4'
-  if (extname.includes('png')) return 'image/png'
-  if (extname.includes('jpg') || extname.includes('jpeg')) return 'image/jpg'
-
-  return 'unknown'
-}
 
 export default class ClientFilesController {
   async store({ params, request, response }: HttpContext) {
@@ -21,7 +14,7 @@ export default class ClientFilesController {
       .where('id', params.client_id)
       .where('groupId', params.group_id)
       .firstOrFail()
-    const { files } = await request.validateUsing(createFilesValidator)
+    const { files, hasAudio, hasPriority } = await request.validateUsing(createFilesValidator)
 
     const settled = await Promise.allSettled(
       files.map(async (file) => {
@@ -44,12 +37,17 @@ export default class ClientFilesController {
     }
 
     await client.related('files').createMany(
-      resolved.map(({ value: file }) => ({
-        groupId: client.groupId,
-        file: file.fileName,
-        mime: getMimeByExt(file.extname!),
-        provider: 'local',
-      }))
+      resolved.map(({ value: file }) => {
+        const isVideo = file.extname!.includes('mp4')
+        return {
+          groupId: client.groupId,
+          file: file.fileName,
+          mime: contentType(file.extname!) || 'application/octet-stream',
+          provider: 'local',
+          hasAudio: isVideo && hasAudio,
+          hasPriority: hasPriority,
+        }
+      })
     )
 
     response.redirect().toRoute('groups.clients.edit', [params.group_id, params.client_id])

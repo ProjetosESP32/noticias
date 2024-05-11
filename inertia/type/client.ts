@@ -7,6 +7,7 @@ export interface Client {
   groupId: number
   name: string
   description: string
+  postTime: number
   hasSound: boolean
   audioUrl: string | null
   showNews: boolean

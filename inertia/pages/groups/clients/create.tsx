@@ -1,23 +1,35 @@
 import { Head, useForm } from '@inertiajs/react'
 import { type FormEvent } from 'react'
-import { Button, FieldError, Form, Input, Label, Text, TextField } from 'react-aria-components'
+import {
+  Button,
+  FieldError,
+  Form,
+  Group,
+  Input,
+  Label,
+  NumberField,
+  Text,
+  TextField,
+} from 'react-aria-components'
 import { BackLink } from '~/components/back_link'
 import { Dashboard } from '~/components/dashboard'
 import { Switch } from '~/components/switch'
-import type { Group } from '~/type/group'
-import { withComponent } from '~/utils/hoc'
 import type { DefaultProps } from '~/type/props'
+import { withComponent } from '~/utils/hoc'
+import { Group as GroupData } from '~/type/group'
 
 import styles from '../create.module.scss'
 
 interface CreateProps {
-  group: Group
+  group: GroupData
 }
 
 const Create = ({ group }: DefaultProps<CreateProps>) => {
   const { data, setData, post, processing, errors, isDirty } = useForm({
     name: '',
     description: '',
+    postTime: 30,
+    audioUrl: '',
     hasSound: false,
     showNews: false,
     showGroupNews: false,
@@ -34,7 +46,7 @@ const Create = ({ group }: DefaultProps<CreateProps>) => {
       <main className={styles.container}>
         <div>
           <BackLink href="/" />
-          <h1>Criar cliente para o grupo {group.name}</h1>
+          <h2>Criar cliente para o grupo {group.name}</h2>
           <Form onSubmit={handleSubmit} validationErrors={errors}>
             <TextField
               name="name"
@@ -57,9 +69,35 @@ const Create = ({ group }: DefaultProps<CreateProps>) => {
               isDisabled={processing}
               maxLength={100}
             >
-              <Label>Descrição</Label>
+              <Label>Descrição*</Label>
               <Input />
               <Text slot="description">Ex: TV do departamento x.</Text>
+              <FieldError />
+            </TextField>
+            <NumberField
+              name="postTime"
+              value={data.postTime}
+              onChange={(v) => setData('postTime', v)}
+              minValue={1}
+              maxValue={300}
+            >
+              <Label>Posts até</Label>
+              <Group>
+                <Button slot="decrement">-</Button>
+                <Input />
+                <Button slot="increment">+</Button>
+              </Group>
+              <Text slot="description">Tempo das imagens na exibição em segundos.</Text>
+              <FieldError />
+            </NumberField>
+            <TextField
+              name="audioUrl"
+              value={data.audioUrl}
+              onChange={(v) => setData('audioUrl', v)}
+              isDisabled={processing}
+            >
+              <Label>URL do áudio</Label>
+              <Input />
               <FieldError />
             </TextField>
             <Switch

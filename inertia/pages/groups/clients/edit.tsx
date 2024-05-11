@@ -7,10 +7,12 @@ import {
   FieldError,
   FileTrigger,
   Form,
+  Group,
   Heading,
   Input,
   Label,
   Modal,
+  NumberField,
   Text,
   TextField,
 } from 'react-aria-components'
@@ -37,7 +39,7 @@ const Edit = ({ client }: DefaultProps<EditProps>) => (
       <div className={styles.content}>
         <BackLink href={`/groups/${client.groupId}`} />
         <h2>Atualizar o cliente {client.name}</h2>
-        <p>Grupo: {client.relatedGroup.name}</p>
+        <h3>Grupo: {client.relatedGroup.name}</h3>
         <ClientForm client={client} />
 
         {client.showNews ? (
@@ -68,6 +70,8 @@ const ClientForm = ({ client }: EditProps) => {
   const { data, setData, put, processing, errors, isDirty } = useForm({
     name: client.name,
     description: client.description,
+    postTime: client.postTime,
+    audioUrl: client.audioUrl ?? '',
     hasSound: client.hasSound,
     showNews: client.showNews,
     showGroupNews: client.showGroupNews,
@@ -101,9 +105,35 @@ const ClientForm = ({ client }: EditProps) => {
         isDisabled={processing}
         maxLength={100}
       >
-        <Label>Descrição</Label>
+        <Label>Descrição*</Label>
         <Input />
         <Text slot="description">Ex: TV do departamento x.</Text>
+        <FieldError />
+      </TextField>
+      <NumberField
+        name="postTime"
+        value={data.postTime}
+        onChange={(v) => setData('postTime', v)}
+        minValue={1}
+        maxValue={300}
+      >
+        <Label>Posts até</Label>
+        <Group>
+          <Button slot="decrement">-</Button>
+          <Input />
+          <Button slot="increment">+</Button>
+        </Group>
+        <Text slot="description">Tempo das imagens na exibição em segundos.</Text>
+        <FieldError />
+      </NumberField>
+      <TextField
+        name="audioUrl"
+        value={data.audioUrl}
+        onChange={(v) => setData('audioUrl', v)}
+        isDisabled={processing}
+      >
+        <Label>URL do áudio</Label>
+        <Input />
         <FieldError />
       </TextField>
       <Switch
@@ -202,7 +232,11 @@ const FileItem = ({ file }: { file: FileAttachment }) => {
   if (isImage) {
     return (
       <li>
-        <img src={fileSource} alt={`arquivo de imagem com id ${file.id}`} />
+        <img
+          src={fileSource}
+          alt={`arquivo de imagem com id ${file.id}`}
+          data-priority={file.hasPriority}
+        />
         {removeButton}
       </li>
     )
@@ -210,7 +244,7 @@ const FileItem = ({ file }: { file: FileAttachment }) => {
 
   return (
     <li>
-      <video controls>
+      <video controls muted={!file.hasAudio} data-priority={file.hasPriority}>
         <source src={fileSource} type={file.mime} />
       </video>
       {removeButton}
@@ -233,6 +267,7 @@ interface FileFormProps {
 }
 
 const FileForm = ({ clientId, groupId, onSend }: FileFormProps) => {
+  const [data, setData] = useState({ hasAudio: false, hasPriority: false })
   const [files, setFiles] = useState<File[]>([])
 
   const send = () => {
@@ -245,6 +280,7 @@ const FileForm = ({ clientId, groupId, onSend }: FileFormProps) => {
     files.forEach((file) => {
       formData.append('files[]', file)
     })
+    Object.entries(data).forEach(([k, v]) => formData.append(k, String(v)))
 
     router.post(`/groups/${groupId}/clients/${clientId}/files`, formData, { onFinish: onSend })
   }
@@ -267,6 +303,20 @@ const FileForm = ({ clientId, groupId, onSend }: FileFormProps) => {
           <li key={file.name}>{file.name}</li>
         ))}
       </ol>
+      <Switch
+        name="hasAudio"
+        isSelected={data.hasAudio}
+        onChange={(v) => setData({ ...data, hasAudio: v })}
+      >
+        Se vídeo, terá audio.
+      </Switch>
+      <Switch
+        name="hasPriority"
+        isSelected={data.hasPriority}
+        onChange={(v) => setData({ ...data, hasPriority: v })}
+      >
+        Arquivos terão prioridade.
+      </Switch>
       <Button type="button" onPress={send}>
         Enviar
       </Button>

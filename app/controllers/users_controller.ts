@@ -37,13 +37,13 @@ export default class UsersController {
     )
 
     if (username) {
-      user.merge({ username })
+      user.username = username
     }
 
     if (newPassword && oldPassword) {
       await User.verifyCredentials(user.username, oldPassword)
 
-      user.merge({ password: newPassword })
+      user.password = newPassword
     }
 
     if (user.$isDirty) {

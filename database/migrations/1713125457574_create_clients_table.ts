@@ -10,6 +10,7 @@ export default class extends BaseSchema {
 
       table.string('name', 25)
       table.string('description', 100)
+      table.integer('post_time')
       table.boolean('has_sound').defaultTo(false)
       table.string('audio_url').nullable()
       table.boolean('show_news').defaultTo(true)

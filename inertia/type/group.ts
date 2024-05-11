@@ -7,6 +7,7 @@ export interface Group {
   name: string
   description: string
   instagramToken: string | null
+  instagramSyncDays: number | null
   newsSource: string | null
   newsSourceSelector: string | null
   createdAt: string

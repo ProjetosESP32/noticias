@@ -36,13 +36,13 @@
     img,
     video {
       width: 100%;
-      // border: 2px solid blue;
+      border: 2px solid rgb(99, 102, 241);
       aspect-ratio: 1;
       background-color: black;
 
-      /* &[data-priority="true"] {
-        border-color: red;
-      } */
+      &[data-priority="true"] {
+        border-color: rgb(239, 68, 68);
+      }
     }
 
     img {

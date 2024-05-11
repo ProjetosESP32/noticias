@@ -51,8 +51,8 @@ const Index = ({ users }: DefaultProps<IndexProps>) => {
       <Head title="Usuários" />
       <main className={styles.container}>
         <div className={styles.content}>
-          <h2>Usuários</h2>
           <BackLink href="/" />
+          <h2>Usuários</h2>
           <div className={styles.links}>
             <Link href="/users/create">Criar usuário</Link>
           </div>
