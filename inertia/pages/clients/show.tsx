@@ -11,7 +11,6 @@ interface ShowProps {
 }
 
 const Show = ({ client }: ShowProps) => {
-  console.log(client)
   const instagramFiles = client.relatedGroup.files.filter((f) => f.isImported)
   const nonInstagramFiles = client.relatedGroup.files.filter((f) => !f.isImported)
   const files = [...client.files, ...nonInstagramFiles]
