@@ -1,6 +1,6 @@
 import vine from '@vinejs/vine'
 
-export const createMessageValidator = vine.compile(
+export const createNewsValidator = vine.compile(
   vine.object({
     data: vine.string(),
   })

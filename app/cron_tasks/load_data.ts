@@ -4,7 +4,6 @@ import News from '#models/news'
 import type { CronTask } from '#services/cron_service'
 import { cuid } from '@adonisjs/core/helpers'
 import app from '@adonisjs/core/services/app'
-import logger from '@adonisjs/core/services/logger'
 import { JSDOM } from 'jsdom'
 import ky from 'ky'
 import { DateTime } from 'luxon'
@@ -42,13 +41,13 @@ export default class LoadData implements CronTask<null, null> {
   timeZone = 'America/Cuiaba'
 
   onTick() {
-    logger.info('running load data cron task')
+    console.info('running load data cron task')
     this.load()
       .then(() => {
-        logger.info('load data cron task returned successfully')
+        console.info('load data cron task returned successfully')
       })
       .catch((e) => {
-        logger.warn(e, 'Error ocurred in load data cron task')
+        console.warn('Error ocurred in load data cron task', e)
       })
   }
 
@@ -95,7 +94,7 @@ export default class LoadData implements CronTask<null, null> {
         try {
           await unlink(app.makePath('uploads', file.file))
         } catch (error) {
-          logger.warn(error, 'file cannot be removed')
+          console.warn(error, 'file cannot be removed')
         }
         await file.delete()
       })

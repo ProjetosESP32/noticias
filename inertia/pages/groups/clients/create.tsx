@@ -81,7 +81,7 @@ const Create = ({ group }: DefaultProps<CreateProps>) => {
               minValue={1}
               maxValue={300}
             >
-              <Label>Posts até</Label>
+              <Label>Tempo das imagens</Label>
               <Group>
                 <Button slot="decrement">-</Button>
                 <Input />

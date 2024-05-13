@@ -4,12 +4,10 @@ WORKDIR /home/node/app
 USER node
 RUN mkdir tmp
 
-FROM base AS dependencies
+FROM base AS build
 COPY --chown=node:node ./package*.json ./
 RUN npm i
 COPY . .
-
-FROM dependencies AS build
 RUN node ace build
 
 FROM base AS production

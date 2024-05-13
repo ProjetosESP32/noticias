@@ -21,9 +21,11 @@ export default class CronProvider {
     const service = await this.app.container.make(CronService)
     const itens = await fsImportAll(new URL('../app/cron_tasks', import.meta.url))
     const classes = Object.values(itens) as Class<CronTask<any, any>>[]
-    classes.forEach((mod) => {
-      service.registerTask(new mod())
-    })
+    for (const clas of classes) {
+      const instance = await this.app.container.make(clas)
+      instance.onTick = (instance.onTick as Function).bind(instance)
+      service.registerTask(instance)
+    }
   }
 
   /**

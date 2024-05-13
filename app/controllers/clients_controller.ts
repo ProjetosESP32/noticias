@@ -45,19 +45,26 @@ export default class ClientsController {
 
   async show({ params, inertia }: HttpContext) {
     const client = await Client.findOrFail(params.id)
-    await client.load('news')
-    await client.load('files')
-    await client.load('relatedGroup', (loader) => {
-      loader.preload('news', (nLoader) => {
-        nLoader.whereNull('client_id')
+    const news = await db
+      .query()
+      .select('id', 'data')
+      .from('news')
+      .where('group_id', client.groupId)
+    const files = await db
+      .query()
+      .select('id', 'provider', 'file', 'mime')
+      .select({
+        is_imported: 'isImported',
+        has_audio: 'hasAudio',
+        has_priority: 'hasPriority',
       })
-      loader.preload('files', (fLoader) => {
-        fLoader.whereNull('client_id')
-      })
-    })
+      .from('files')
+      .where('group_id', client.groupId)
 
     return inertia.render('clients/show', {
       client: client.serialize(),
+      news,
+      files,
     })
   }
 

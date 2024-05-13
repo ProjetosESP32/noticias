@@ -1,5 +1,4 @@
-import { Head, Link, router, useForm } from '@inertiajs/react'
-import { useState, type FormEvent } from 'react'
+import { Head, Link, useForm } from '@inertiajs/react'
 import {
   Button,
   Dialog,
@@ -23,8 +22,8 @@ import { Switch } from '~/components/switch'
 import type { FullClient } from '~/type/client'
 import type { FileAttachment } from '~/type/file'
 import type { News } from '~/type/news'
-import { withComponent } from '~/utils/hoc'
 import type { DefaultProps } from '~/type/props'
+import { withComponent } from '~/utils/hoc'
 
 import styles from './edit.module.scss'
 
@@ -77,7 +76,7 @@ const ClientForm = ({ client }: EditProps) => {
     showGroupNews: client.showGroupNews,
   })
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     put(`/groups/${client.groupId}/clients/${client.id}`)
   }
@@ -117,7 +116,7 @@ const ClientForm = ({ client }: EditProps) => {
         minValue={1}
         maxValue={300}
       >
-        <Label>Posts até</Label>
+        <Label>Tempo das imagens</Label>
         <Group>
           <Button slot="decrement">-</Button>
           <Input />
@@ -184,7 +183,7 @@ const NewsForm = ({ clientId, groupId }: { groupId: number; clientId: number }) 
     data: '',
   })
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     post(`/groups/${groupId}/clients/${clientId}/news`, {
       onSuccess: () => {
@@ -266,61 +265,65 @@ interface FileFormProps {
   clientId: number
 }
 
+interface FileFormState {
+  file: File | null
+  hasAudio: boolean
+  hasPriority: boolean
+}
+
 const FileForm = ({ clientId, groupId, onSend }: FileFormProps) => {
-  const [data, setData] = useState({ hasAudio: false, hasPriority: false })
-  const [files, setFiles] = useState<File[]>([])
+  const { data, setData, post, errors, processing, isDirty } = useForm<FileFormState>({
+    file: null,
+    hasAudio: false,
+    hasPriority: false,
+  })
 
-  const send = () => {
-    if (files.length === 0) {
-      return
-    }
-
-    const formData = new FormData()
-
-    files.forEach((file) => {
-      formData.append('files[]', file)
-    })
-    Object.entries(data).forEach(([k, v]) => formData.append(k, String(v)))
-
-    router.post(`/groups/${groupId}/clients/${clientId}/files`, formData, { onFinish: onSend })
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    post(`/groups/${groupId}/clients/${clientId}/files`, { forceFormData: true, onFinish: onSend })
   }
 
   return (
-    <div>
+    <Form onSubmit={handleSubmit} validationErrors={errors}>
       <FileTrigger
-        allowsMultiple
         acceptedFileTypes={['image/png', 'image/jpg', 'image/jpeg', 'video/mp4']}
         onSelect={(fileList) => {
           if (fileList) {
-            setFiles(Array.from(fileList))
+            const file = fileList.item(0)
+            if (file) {
+              setData('file', file)
+            }
           }
         }}
       >
         <Button>Selecionar arquivos</Button>
       </FileTrigger>
-      <ol>
-        {files.map((file) => (
-          <li key={file.name}>{file.name}</li>
-        ))}
-      </ol>
+      {data.file !== null ? (
+        <>
+          <p>Arquivo selecionado: {data.file.name}</p>
+          <p>{data.file.size} bytes</p>
+        </>
+      ) : null}
       <Switch
         name="hasAudio"
         isSelected={data.hasAudio}
-        onChange={(v) => setData({ ...data, hasAudio: v })}
+        isDisabled={processing}
+        onChange={(v) => setData('hasAudio', v)}
       >
         Se vídeo, terá audio.
       </Switch>
       <Switch
         name="hasPriority"
         isSelected={data.hasPriority}
-        onChange={(v) => setData({ ...data, hasPriority: v })}
+        isDisabled={processing}
+        onChange={(v) => setData('hasPriority', v)}
       >
-        Arquivos terão prioridade.
+        Arquivo terá prioridade.
       </Switch>
-      <Button type="button" onPress={send}>
+      <Button type="submit" isDisabled={!isDirty || processing}>
         Enviar
       </Button>
-    </div>
+    </Form>
   )
 }
 

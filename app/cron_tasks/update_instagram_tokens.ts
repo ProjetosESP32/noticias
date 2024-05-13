@@ -1,7 +1,6 @@
 import Group from '#models/group'
 import type { CronTask } from '#services/cron_service'
 import app from '@adonisjs/core/services/app'
-import logger from '@adonisjs/core/services/logger'
 import ky from 'ky'
 import { throwIfHasRejected } from '../utils/promise.js'
 
@@ -17,13 +16,13 @@ export default class UpdateInstagramTokens implements CronTask<null, null> {
   timeZone = 'America/Cuiaba'
 
   onTick() {
-    logger.info('running update instagram tokens cron task')
+    console.info('running update instagram tokens cron task')
     this.updateTokens()
       .then(() => {
-        logger.info('update instagram tokens cron task returned successfully')
+        console.info('update instagram tokens cron task returned successfully')
       })
       .catch((e) => {
-        logger.warn(e, 'Error ocurred in update instagram tokens cron task')
+        console.warn(e, 'Error ocurred in update instagram tokens cron task')
       })
   }
 

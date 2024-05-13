@@ -1,6 +1,7 @@
 services:
   postgres-db:
     image: postgres:alpine
+    container_name: noticias-database
     environment:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USER}
@@ -15,8 +16,9 @@ services:
   noticias-back:
     build:
       context: .
-      target: dependencies
+      target: base
     image: noticias-dev
+    container_name: noticias-backend
     depends_on:
       - postgres-db
     ports:
@@ -30,7 +32,10 @@ services:
       - DB_HOST=postgres-db
     volumes:
       - ./:/home/node/app
-    command: ["node", "ace", "serve", "--watch", "--poll"]
+    entrypoint: >
+      sh -c 
+      "npm i &&
+      node ace serve --watch --poll"
 
 volumes:
   postgres_db_data:

@@ -1,6 +1,8 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
+const GroupFilesController = () => import('#controllers/group_files_controller')
+const GroupNewsController = () => import('#controllers/group_news_controller')
 const UsersController = () => import('#controllers/users_controller')
 const UploadsController = () => import('#controllers/uploads_controller')
 const ClientsController = () => import('#controllers/clients_controller')
@@ -18,9 +20,9 @@ router
     router.get('/', [GroupsController, 'index']).as('groups.index')
     router.resource('groups', GroupsController).except(['index'])
     router.resource('groups.clients', ClientsController).except(['index', 'show'])
-    router
-      .resource('groups.clients.news', ClientNewsController)
-      .only(['store', 'update', 'destroy'])
+    router.resource('groups.news', GroupNewsController).only(['store', 'destroy'])
+    router.resource('groups.files', GroupFilesController).only(['store', 'destroy'])
+    router.resource('groups.clients.news', ClientNewsController).only(['store', 'destroy'])
     router.resource('groups.clients.files', ClientFilesController).only(['store', 'destroy'])
     router.resource('users', UsersController).except(['show'])
   })

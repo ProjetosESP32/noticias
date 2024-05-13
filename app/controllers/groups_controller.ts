@@ -33,6 +33,12 @@ export default class GroupsController {
   async edit({ params, inertia }: HttpContext) {
     const group = await Group.findOrFail(params.id)
     await group.load('clients')
+    await group.load('files', (loader) => {
+      loader.whereNull('clientId').where('isImported', false)
+    })
+    await group.load('news', (loader) => {
+      loader.whereNull('clientId').where('isImported', false)
+    })
 
     return inertia.render('groups/edit', { group: group.serialize() })
   }

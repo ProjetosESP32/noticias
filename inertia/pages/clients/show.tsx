@@ -1,20 +1,24 @@
 import { Head, router } from '@inertiajs/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { FullClient } from '~/type/client'
+import type { Client } from '~/type/client'
 import type { FileAttachment } from '~/type/file'
-import type { News } from '~/type/news'
 
 import styles from './show.module.scss'
 
-interface ShowProps {
-  client: FullClient
+interface NewsData {
+  id: number
+  data: string
 }
 
-const Show = ({ client }: ShowProps) => {
-  const instagramFiles = client.relatedGroup.files.filter((f) => f.isImported)
-  const nonInstagramFiles = client.relatedGroup.files.filter((f) => !f.isImported)
-  const files = [...client.files, ...nonInstagramFiles]
-  const news = [...client.news, ...(client.showGroupNews ? client.relatedGroup.news : [])]
+interface ShowProps {
+  client: Client
+  news: NewsData[]
+  files: Omit<FileAttachment, 'groupId' | 'clientId' | 'createdAt' | 'updatedAt'>[]
+}
+
+const Show = ({ client, files, news }: ShowProps) => {
+  const instagramFiles = files.filter((f) => f.isImported)
+  const localFiles = files.filter((f) => !f.isImported)
 
   useEffect(() => {
     const tiemoutId = setInterval(
@@ -36,7 +40,7 @@ const Show = ({ client }: ShowProps) => {
       <main className={styles.container}>
         <FilesViewer
           instagramFiles={instagramFiles}
-          localFiles={files}
+          localFiles={localFiles}
           full={!client.showNews}
           muted={!client.hasSound}
           time={client.postTime}
@@ -48,8 +52,8 @@ const Show = ({ client }: ShowProps) => {
 }
 
 interface FilesViewerProps {
-  instagramFiles: FileAttachment[]
-  localFiles: FileAttachment[]
+  instagramFiles: FileData[]
+  localFiles: FileData[]
   full?: boolean
   muted?: boolean
   time?: number
@@ -60,13 +64,13 @@ const noop = () => {}
 const FilesViewer = ({ instagramFiles, localFiles, full, muted, time }: FilesViewerProps) => {
   const instagramPosRef = useRef(0)
   const localPosRef = useRef(0)
-  const [instagramFile, setInstagramFile] = useState<FileAttachment>(instagramFiles[0])
-  const [localFile, setLocalFile] = useState<FileAttachment>(localFiles[0])
+  const [instagramFile, setInstagramFile] = useState<FileData>(instagramFiles[0])
+  const [localFile, setLocalFile] = useState<FileData>(localFiles[0])
 
   const makeEnded = (
-    files: FileAttachment[],
+    files: FileData[],
     ref: React.MutableRefObject<number>,
-    update: React.Dispatch<React.SetStateAction<FileAttachment>>
+    update: React.Dispatch<React.SetStateAction<FileData>>
   ) => {
     if (files.length <= 2) {
       return noop
@@ -104,7 +108,7 @@ const FilesViewer = ({ instagramFiles, localFiles, full, muted, time }: FilesVie
   )
 }
 
-const NewsVignette = ({ news }: { news: News[] }) => {
+const NewsVignette = ({ news }: { news: NewsData[] }) => {
   const makeContent = (tag: string) => (
     <div className={styles.scrollContent} style={{ animationDuration: `${15 * news.length}s` }}>
       {news.map(({ id, data }) => (
@@ -199,8 +203,14 @@ const Image = ({ id, src, onEnded, time = 30 }: ImageProps) => {
   return <img src={src} alt={`Imagem de exibição id ${id}`} />
 }
 
+interface FileData {
+  id: number
+  mime: string
+  file: string
+}
+
 interface FileItemProps {
-  file: FileAttachment
+  file: FileData
   muted?: boolean
   onEnded: () => void
   imageTime?: number

@@ -1,8 +1,8 @@
 import vine from '@vinejs/vine'
 
-export const createFilesValidator = vine.compile(
+export const createFileValidator = vine.compile(
   vine.object({
-    files: vine.array(vine.file({ extnames: ['png', 'jpg', 'jpeg', 'mp4'] })),
+    file: vine.file({ extnames: ['png', 'jpg', 'jpeg', 'mp4'] }),
     hasAudio: vine.boolean(),
     hasPriority: vine.boolean(),
   })

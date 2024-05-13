@@ -9,9 +9,9 @@ const shieldConfig = defineConfig({
   csp: {
     enabled: true,
     directives: {
-      defaultSrc: ["'self'", '@nonce', '@viteDevUrl'],
-      connectSrc: ['@viteHmrUrl'],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      defaultSrc: ["'self'", '@nonce'],
+      styleSrc: ["'self'", 'fonts.googleapis.com'],
+      fontSrc: ["'self'", 'fonts.gstatic.com'],
       frameAncestors: ["'none'"],
     },
     reportOnly: app.inDev,
