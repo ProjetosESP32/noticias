@@ -17,6 +17,14 @@ const dbConfig = defineConfig({
         naturalSort: true,
         paths: ['database/migrations'],
       },
+      pool: {
+        afterCreate(conn, done) {
+          conn
+            .query(`SET search_path TO ${env.get('DB_SCHEMA', 'public')};`)
+            .then(() => done())
+            .catch(done)
+        },
+      },
     },
   },
 })
