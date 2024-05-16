@@ -1,0 +1,12 @@
+services:
+  noticias-back:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: noticias:latest
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
+    volumes:
+      - /var/noticias/uploads:/home/node/app/uploads
