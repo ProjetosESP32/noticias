@@ -1,70 +1,62 @@
 import { Head, Link } from '@inertiajs/react'
-import { Cell, Table, TableBody } from 'react-aria-components'
-import { BackLink } from '~/components/back_link'
+import { Cell } from 'react-aria-components'
+import { Edit2, Trash2 } from 'react-feather'
 import { Dashboard } from '~/components/dashboard'
-import { Column, Row, TableHeader } from '~/components/table'
-import type { Client } from '~/type/client'
+import { TableView } from '~/components/table_view'
 import type { FullGroup } from '~/type/group'
-import { withComponent } from '~/utils/hoc'
 import type { DefaultProps } from '~/type/props'
-
-import styles from './index.module.scss'
+import { withComponent } from '~/utils/hoc'
 
 interface ShowProps {
   group: FullGroup
 }
 
-interface ColumnDesc {
-  id: keyof Client | 'actions'
-  name: string
-  isRowHeader?: boolean
-}
-
-const columns: ColumnDesc[] = [
-  { id: 'id', name: 'ID', isRowHeader: true },
-  { id: 'name', name: 'Nome' },
-  { id: 'description', name: 'Descrição' },
-  { id: 'actions', name: 'Ações' },
-]
-
 const Show = ({ group }: DefaultProps<ShowProps>) => {
-  const makeRenderDataCell = (item: Client) => (column: ColumnDesc) => {
-    if (column.id === 'actions') {
-      const itemLink = `/groups/${group.id}/clients/${item.id}`
-      const editItemLink = `${itemLink}/edit`
-
-      return (
-        <Cell className={styles.actions}>
-          <Link href={editItemLink}>Editar</Link>
-          <Link href={itemLink} method="delete" as="button">
-            Excluir
-          </Link>
-        </Cell>
-      )
-    }
-
-    return <Cell>{item[column.id]}</Cell>
-  }
+  const title = `Clientes do grupo: ${group.name}`
 
   return (
     <>
       <Head title={group.name} />
-      <main className={styles.container}>
-        <div className={styles.content}>
-          <BackLink href="/" />
-          <h2>Clientes do grupo {group.name}</h2>
-          <div className={styles.links}>
-            <Link href={`/groups/${group.id}/clients/create`}>Criar cliente</Link>
-          </div>
-          <Table aria-label="Grupos de sessões">
-            <TableHeader columns={columns}>
-              {(column) => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={group.clients}>
-              {(item) => <Row columns={columns}>{makeRenderDataCell(item)}</Row>}
-            </TableBody>
-          </Table>
-        </div>
+      <main className="full">
+        <TableView
+          backTo="/"
+          data={group.clients}
+          tableLabel={title}
+          title={title}
+          links={[{ href: `/groups/${group.id}/clients/create`, children: 'Criar cliente' }]}
+          columns={[
+            { id: 'id', name: 'ID', isRowHeader: true },
+            { id: 'name', name: 'Nome' },
+            { id: 'description', name: 'Descrição' },
+            { id: 'actions', name: 'Ações' },
+          ]}
+          renderCell={(item, column) => {
+            if (column === 'actions') {
+              const itemLink = `/groups/${group.id}/clients/${item.id}`
+              const editItemLink = `${itemLink}/edit`
+
+              return (
+                <Cell className="default-action-cell">
+                  <Link title="Editar" href={editItemLink}>
+                    <Edit2 size={20} />
+                  </Link>
+                  <Link
+                    title="Excluir"
+                    href={itemLink}
+                    method="delete"
+                    as="button"
+                    type="button"
+                    className="danger"
+                  >
+                    <Trash2 size={20} />
+                  </Link>
+                </Cell>
+              )
+            }
+
+            return <Cell>{item[column]}</Cell>
+          }}
+        />
       </main>
     </>
   )

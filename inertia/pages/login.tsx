@@ -21,45 +21,43 @@ const Login = () => {
     <>
       <Head title="Login" />
       <main className={styles.container}>
-        <div>
+        <Form onSubmit={handleSubmit} validationErrors={errors}>
           <h1>Login</h1>
-          <Form onSubmit={handleSubmit} validationErrors={errors}>
-            <TextField
-              name="username"
-              value={data.username}
-              onChange={(v) => setData('username', v)}
-              isRequired
-              isDisabled={processing}
-            >
-              <Label>Nome de usuário*</Label>
-              <Input autoComplete="username" />
-              <FieldError />
-            </TextField>
-            <TextField
-              name="password"
-              type="password"
-              value={data.password}
-              onChange={(v) => setData('password', v)}
-              isRequired
-              isDisabled={processing}
-            >
-              <Label>Senha*</Label>
-              <Input autoComplete="current-password" />
-              <FieldError />
-            </TextField>
-            <Switch
-              name="rememberMe"
-              isSelected={data.rememberMe}
-              onChange={(v) => setData('rememberMe', v)}
-              isDisabled={processing}
-            >
-              Lembrar-me
-            </Switch>
-            <Button type="submit">Enviar</Button>
-          </Form>
+          <TextField
+            name="username"
+            value={data.username}
+            onChange={(v) => setData('username', v)}
+            isRequired
+            isDisabled={processing}
+          >
+            <Label>Nome de usuário*</Label>
+            <Input autoComplete="username" />
+            <FieldError />
+          </TextField>
+          <TextField
+            name="password"
+            type="password"
+            value={data.password}
+            onChange={(v) => setData('password', v)}
+            isRequired
+            isDisabled={processing}
+          >
+            <Label>Senha*</Label>
+            <Input autoComplete="current-password" />
+            <FieldError />
+          </TextField>
+          <Switch
+            name="rememberMe"
+            isSelected={data.rememberMe}
+            onChange={(v) => setData('rememberMe', v)}
+            isDisabled={processing}
+          >
+            Lembrar-me
+          </Switch>
+          <Button type="submit">Enviar</Button>
           <p>Não é isso que deseja?</p>
           <Link href="/clients">Selecionar cliente de exibição.</Link>
-        </div>
+        </Form>
       </main>
     </>
   )

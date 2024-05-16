@@ -1,8 +1,4 @@
 .container {
-  width: 100%;
-}
-
-.content {
   max-width: 1280px;
   margin: 0 auto;
   display: flex;
@@ -30,13 +26,4 @@
       background-color: darken($color: $backgroundColor, $amount: 10%);
     }
   }
-}
-
-.actions {
-  width: 100%;
-  display: inline-flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: .5em;
-  padding: 0 .25em;
 }

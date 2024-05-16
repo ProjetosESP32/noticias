@@ -54,9 +54,9 @@ export default class ClientsController {
       .query()
       .select('id', 'provider', 'file', 'mime')
       .select({
-        is_imported: 'isImported',
-        has_audio: 'hasAudio',
-        has_priority: 'hasPriority',
+        isImported: 'is_imported',
+        hasAudio: 'has_audio',
+        hasPriority: 'has_priority',
       })
       .from('files')
       .where('group_id', client.groupId)

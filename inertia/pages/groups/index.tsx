@@ -1,76 +1,69 @@
 import { Head, Link } from '@inertiajs/react'
-import { Cell, Table, TableBody } from 'react-aria-components'
+import { Cell } from 'react-aria-components'
+import { Edit, Eye, Trash2 } from 'react-feather'
 import { Dashboard } from '~/components/dashboard'
-import { Pagination } from '~/components/pagination'
-import { Column, Row, TableHeader } from '~/components/table'
+import { TableView } from '~/components/table_view'
 import type { Group } from '~/type/group'
 import type { Paginated } from '~/type/paginated'
-import { withComponent } from '~/utils/hoc'
 import type { DefaultProps } from '~/type/props'
-
-import styles from './index.module.scss'
+import { withComponent } from '~/utils/hoc'
 
 interface GroupIndexProps {
   groups: Paginated<Group>
 }
 
-interface ColumnDesc {
-  id: keyof Group | 'actions'
-  name: string
-  isRowHeader?: boolean
-}
+const GroupIndex = ({ groups }: DefaultProps<GroupIndexProps>) => (
+  <>
+    <Head title="Grupos" />
+    <main className="full">
+      <TableView
+        data={groups.data}
+        pagination={{ meta: groups.meta, baseUrl: '/' }}
+        tableLabel="Grupos de sessões"
+        title="Grupos"
+        links={[
+          { href: '/users', children: 'Usuários' },
+          { href: '/clients', children: 'Clientes' },
+          { href: '/groups/create', children: 'Criar grupo' },
+        ]}
+        columns={[
+          { id: 'id', name: 'ID', isRowHeader: true },
+          { id: 'name', name: 'Nome' },
+          { id: 'description', name: 'Descrição' },
+          { id: 'actions', name: 'Ações' },
+        ]}
+        renderCell={(item, column) => {
+          if (column === 'actions') {
+            const itemLink = `/groups/${item.id}`
+            const editItemLink = `${itemLink}/edit`
 
-const columns: ColumnDesc[] = [
-  { id: 'id', name: 'ID', isRowHeader: true },
-  { id: 'name', name: 'Nome' },
-  { id: 'description', name: 'Descrição' },
-  { id: 'actions', name: 'Ações' },
-]
+            return (
+              <Cell className="default-action-cell">
+                <Link title="Ver" href={itemLink}>
+                  <Eye size={20} />
+                </Link>
+                <Link title="Editar" href={editItemLink}>
+                  <Edit size={20} />
+                </Link>
+                <Link
+                  title="Excluir"
+                  href={itemLink}
+                  method="delete"
+                  as="button"
+                  type="button"
+                  className="danger"
+                >
+                  <Trash2 size={20} />
+                </Link>
+              </Cell>
+            )
+          }
 
-const GroupIndex = ({ groups }: DefaultProps<GroupIndexProps>) => {
-  const makeRenderDataCell = (item: Group) => (column: ColumnDesc) => {
-    if (column.id === 'actions') {
-      const itemLink = `/groups/${item.id}`
-      const editItemLink = `${itemLink}/edit`
-
-      return (
-        <Cell className={styles.actions}>
-          <Link href={itemLink}>Ver</Link>
-          <Link href={editItemLink}>Editar</Link>
-          <Link href={itemLink} method="delete" as="button">
-            Excluir
-          </Link>
-        </Cell>
-      )
-    }
-
-    return <Cell>{item[column.id]}</Cell>
-  }
-
-  return (
-    <>
-      <Head title="Grupos" />
-      <main className={styles.container}>
-        <div className={styles.content}>
-          <h2>Grupos</h2>
-          <div className={styles.links}>
-            <Link href="/users">Usuários</Link>
-            <Link href="/clients">Clientes</Link>
-            <Link href="/groups/create">Criar grupo</Link>
-          </div>
-          <Table aria-label="Grupos de sessões">
-            <TableHeader columns={columns}>
-              {(column) => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={groups.data}>
-              {(item) => <Row columns={columns}>{makeRenderDataCell(item)}</Row>}
-            </TableBody>
-          </Table>
-          <Pagination baseUrl="/" metadata={groups.meta} />
-        </div>
-      </main>
-    </>
-  )
-}
+          return <Cell>{item[column]}</Cell>
+        }}
+      />
+    </main>
+  </>
+)
 
 export default withComponent(GroupIndex, Dashboard)

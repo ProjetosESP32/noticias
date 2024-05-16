@@ -1,0 +1,32 @@
+.form {
+  max-width: 576px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: .75em;
+}
+
+.newsList {
+  list-style: decimal;
+  font-size: 1em;
+  line-height: 1.25em;
+
+  li {
+    span {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      gap: .25em;
+    }
+
+    button {
+      width: 18px;
+      height: 18px;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      background-color: transparent;
+      color: var(--red-400);
+    }
+  }
+}

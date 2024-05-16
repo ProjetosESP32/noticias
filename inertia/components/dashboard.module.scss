@@ -19,12 +19,15 @@
   }
 
   button {
-    $exitColor: rgb(255, 70, 70);
-    background-color: $exitColor;
-    border: 1px solid darken($color: $exitColor, $amount: 5%);
+    background-color: var(--red-300);
+    border: 1px solid var(--red-400);
     border-radius: 6px;
     padding: .5em 1em;
     color: white;
     font-weight: 600;
+
+    &:hover {
+      background-color: var(--red-400);
+    }
   }
 }

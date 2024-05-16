@@ -1,27 +1,21 @@
-import { Head, Link, useForm } from '@inertiajs/react'
+import { Head, useForm } from '@inertiajs/react'
 import {
   Button,
-  Dialog,
-  DialogTrigger,
   FieldError,
-  FileTrigger,
   Form,
   Group,
-  Heading,
   Input,
   Label,
-  Modal,
   NumberField,
   Text,
   TextField,
 } from 'react-aria-components'
-import { Trash2 } from 'react-feather'
 import { BackLink } from '~/components/back_link'
 import { Dashboard } from '~/components/dashboard'
+import { FileDialog, FileList } from '~/components/file'
+import { NewsForm, NewsList } from '~/components/news'
 import { Switch } from '~/components/switch'
 import type { FullClient } from '~/type/client'
-import type { FileAttachment } from '~/type/file'
-import type { News } from '~/type/news'
 import type { DefaultProps } from '~/type/props'
 import { withComponent } from '~/utils/hoc'
 
@@ -34,31 +28,40 @@ interface EditProps {
 const Edit = ({ client }: DefaultProps<EditProps>) => (
   <>
     <Head title={`Editar ${client.name}`} />
-    <main className={styles.container}>
+    <main className="full">
       <div className={styles.content}>
         <BackLink href={`/groups/${client.groupId}`} />
         <h2>Atualizar o cliente {client.name}</h2>
-        <h3>Grupo: {client.relatedGroup.name}</h3>
+        <p>Grupo: {client.relatedGroup.name}</p>
         <ClientForm client={client} />
 
         {client.showNews ? (
-          <article>
+          <article className={styles.newsArticle}>
             <h3>Notícias para este cliente</h3>
-            <NewsList news={client.news} />
+            <NewsList
+              news={client.news}
+              getDeleteHref={(newsItem) =>
+                `/groups/${newsItem.groupId}/clients/${newsItem.clientId}/news/${newsItem.id}`
+              }
+            />
             <section>
               <h4>Adicionar notícia</h4>
-              <NewsForm clientId={client.id} groupId={client.groupId} />
+              <NewsForm postHref={`/groups/${client.groupId}/clients/${client.id}/news`} />
             </section>
           </article>
         ) : null}
 
-        <article>
+        <article className={styles.fileArticle}>
           <h3>Arquivos deste cliente</h3>
           <section>
-            <h4>Adicionar arquivos</h4>
-            <FileDialog clientId={client.id} groupId={client.groupId} />
+            <FileDialog postHref={`/groups/${client.groupId}/clients/${client.id}/files`} />
           </section>
-          <FileList files={client.files} />
+          <FileList
+            files={client.files}
+            getDeleteHref={(file) =>
+              `/groups/${file.groupId}/clients/${file.clientId}/files/${file.id}`
+            }
+          />
         </article>
       </div>
     </main>
@@ -167,182 +170,6 @@ const ClientForm = ({ client }: EditProps) => {
         Atualizar dados do cliente
       </Button>
     </Form>
-  )
-}
-
-const NewsList = ({ news }: { news: News[] }) => (
-  <ol>
-    {news.map((newsItem) => (
-      <li key={newsItem.id}>{newsItem.data}</li>
-    ))}
-  </ol>
-)
-
-const NewsForm = ({ clientId, groupId }: { groupId: number; clientId: number }) => {
-  const { data, setData, post, processing, errors, isDirty } = useForm({
-    data: '',
-  })
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    post(`/groups/${groupId}/clients/${clientId}/news`, {
-      onSuccess: () => {
-        setData('data', '')
-      },
-    })
-  }
-
-  return (
-    <Form className={styles.form} onSubmit={handleSubmit} validationErrors={errors}>
-      <TextField
-        name="name"
-        value={data.data}
-        onChange={(v) => setData('data', v)}
-        isRequired
-        isDisabled={processing}
-      >
-        <Label>Texto da notícia*</Label>
-        <Input />
-        <FieldError />
-      </TextField>
-      <Button type="submit" isDisabled={!isDirty || processing}>
-        Adicionar notícia
-      </Button>
-    </Form>
-  )
-}
-
-const FileItem = ({ file }: { file: FileAttachment }) => {
-  const isImage = file.mime.includes('image')
-  const removeButton = (
-    <Link
-      href={`/groups/${file.groupId}/clients/${file.clientId}/files/${file.id}`}
-      method="delete"
-      as="button"
-      type="button"
-      title={`Remover ${isImage ? 'imagem' : 'vídeo'}`}
-    >
-      <Trash2 size={16} />
-    </Link>
-  )
-
-  const fileSource = `/uploads/${file.file}`
-
-  if (isImage) {
-    return (
-      <li>
-        <img
-          src={fileSource}
-          alt={`arquivo de imagem com id ${file.id}`}
-          data-priority={file.hasPriority}
-        />
-        {removeButton}
-      </li>
-    )
-  }
-
-  return (
-    <li>
-      <video controls muted={!file.hasAudio} data-priority={file.hasPriority}>
-        <source src={fileSource} type={file.mime} />
-      </video>
-      {removeButton}
-    </li>
-  )
-}
-
-const FileList = ({ files }: { files: FileAttachment[] }) => (
-  <ul className={styles.fileList}>
-    {files.map((file) => (
-      <FileItem key={file.id} file={file} />
-    ))}
-  </ul>
-)
-
-interface FileFormProps {
-  onSend: () => void
-  groupId: number
-  clientId: number
-}
-
-interface FileFormState {
-  file: File | null
-  hasAudio: boolean
-  hasPriority: boolean
-}
-
-const FileForm = ({ clientId, groupId, onSend }: FileFormProps) => {
-  const { data, setData, post, errors, processing, isDirty } = useForm<FileFormState>({
-    file: null,
-    hasAudio: false,
-    hasPriority: false,
-  })
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    post(`/groups/${groupId}/clients/${clientId}/files`, { forceFormData: true, onFinish: onSend })
-  }
-
-  return (
-    <Form onSubmit={handleSubmit} validationErrors={errors}>
-      <FileTrigger
-        acceptedFileTypes={['image/png', 'image/jpg', 'image/jpeg', 'video/mp4']}
-        onSelect={(fileList) => {
-          if (fileList) {
-            const file = fileList.item(0)
-            if (file) {
-              setData('file', file)
-            }
-          }
-        }}
-      >
-        <Button>Selecionar arquivos</Button>
-      </FileTrigger>
-      {data.file !== null ? (
-        <>
-          <p>Arquivo selecionado: {data.file.name}</p>
-          <p>{data.file.size} bytes</p>
-        </>
-      ) : null}
-      <Switch
-        name="hasAudio"
-        isSelected={data.hasAudio}
-        isDisabled={processing}
-        onChange={(v) => setData('hasAudio', v)}
-      >
-        Se vídeo, terá audio.
-      </Switch>
-      <Switch
-        name="hasPriority"
-        isSelected={data.hasPriority}
-        isDisabled={processing}
-        onChange={(v) => setData('hasPriority', v)}
-      >
-        Arquivo terá prioridade.
-      </Switch>
-      <Button type="submit" isDisabled={!isDirty || processing}>
-        Enviar
-      </Button>
-    </Form>
-  )
-}
-
-const FileDialog = ({ clientId, groupId }: Omit<FileFormProps, 'onSend'>) => {
-  return (
-    <DialogTrigger>
-      <Button>Adicionar arquivos</Button>
-      <Modal>
-        <Dialog>
-          {({ close }) => (
-            <div>
-              <Heading slot="title">Adicione os arquivos</Heading>
-              <FileForm clientId={clientId} groupId={groupId} onSend={close} />
-              <Button onPress={close}>Fechar</Button>
-            </div>
-          )}
-        </Dialog>
-      </Modal>
-    </DialogTrigger>
   )
 }
 

@@ -10,7 +10,7 @@ const shieldConfig = defineConfig({
     enabled: true,
     directives: {
       defaultSrc: ["'self'", '@nonce'],
-      styleSrc: ["'self'", 'fonts.googleapis.com'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
       fontSrc: ["'self'", 'fonts.gstatic.com'],
       frameAncestors: ["'none'"],
     },

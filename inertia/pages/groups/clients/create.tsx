@@ -45,7 +45,7 @@ const Create = ({ group }: DefaultProps<CreateProps>) => {
       <Head title="Criar Client" />
       <main className={styles.container}>
         <div>
-          <BackLink href="/" />
+          <BackLink href={`/groups/${group.id}`} />
           <h2>Criar cliente para o grupo {group.name}</h2>
           <Form onSubmit={handleSubmit} validationErrors={errors}>
             <TextField

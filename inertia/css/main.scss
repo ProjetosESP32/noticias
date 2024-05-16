@@ -48,9 +48,46 @@ h6 {
 
 button {
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
 }
 
 .hidden,
 [hidden] {
   display: none;
+}
+
+.full {
+  width: 100%;
+}
+
+.default-action-cell {
+  width: 100%;
+  display: inline-flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: .5em;
+  padding: 0 .25em;
+
+  a,
+  button {
+    width: 30px;
+    height: 30px;
+    color: white;
+    border-radius: 6px;
+    background-color: var(--purple-400);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.danger {
+      background-color: var(--red-400);
+    }
+  }
+
+  button {
+    border: 0;
+  }
 }

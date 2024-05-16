@@ -1,74 +1,62 @@
 import { Head, Link } from '@inertiajs/react'
-import { Cell, Table, TableBody } from 'react-aria-components'
-import { BackLink } from '~/components/back_link'
+import { Cell } from 'react-aria-components'
+import { Edit2, Trash2 } from 'react-feather'
 import { Dashboard } from '~/components/dashboard'
-import { Pagination } from '~/components/pagination'
-import { Column, Row, TableHeader } from '~/components/table'
+import { TableView } from '~/components/table_view'
 import type { Paginated } from '~/type/paginated'
 import type { DefaultProps } from '~/type/props'
 import type { User } from '~/type/user'
 import { withComponent } from '~/utils/hoc'
 
-import styles from './index.module.scss'
-
 interface IndexProps {
   users: Paginated<User>
 }
 
-interface ColumnDesc {
-  id: keyof User | 'actions'
-  name: string
-  isRowHeader?: boolean
-}
+const Index = ({ users }: DefaultProps<IndexProps>) => (
+  <>
+    <Head title="Usuários" />
+    <main className="full">
+      <TableView
+        backTo="/"
+        data={users.data}
+        pagination={{ meta: users.meta, baseUrl: '/users' }}
+        tableLabel="Usuários"
+        title="Usuários"
+        links={[{ href: '/users/create', children: 'Criar usuário' }]}
+        columns={[
+          { id: 'id', name: 'ID', isRowHeader: true },
+          { id: 'username', name: 'Nome' },
+          { id: 'actions', name: 'Ações' },
+        ]}
+        renderCell={(item, column) => {
+          if (column === 'actions') {
+            const itemLink = `/users/${item.id}`
+            const editItemLink = `${itemLink}/edit`
 
-const columns: ColumnDesc[] = [
-  { id: 'id', name: 'ID', isRowHeader: true },
-  { id: 'username', name: 'Nome' },
-  { id: 'actions', name: 'Ações' },
-]
+            return (
+              <Cell className="default-action-cell">
+                <Link title="Editar" href={editItemLink}>
+                  <Edit2 size={20} />
+                </Link>
+                <Link
+                  title="Excluir"
+                  href={itemLink}
+                  method="delete"
+                  as="button"
+                  type="button"
+                  className="danger"
+                >
+                  <Trash2 size={20} />
+                </Link>
+              </Cell>
+            )
+          }
 
-const Index = ({ users }: DefaultProps<IndexProps>) => {
-  const makeRenderDataCell = (item: User) => (column: ColumnDesc) => {
-    if (column.id === 'actions') {
-      const itemLink = `/groups/${item.id}`
-      const editItemLink = `${itemLink}/edit`
-
-      return (
-        <Cell className={styles.actions}>
-          <Link href={editItemLink}>Editar</Link>
-          <Link href={itemLink} method="delete" as="button">
-            Excluir
-          </Link>
-        </Cell>
-      )
-    }
-
-    return <Cell>{item[column.id]}</Cell>
-  }
-
-  return (
-    <>
-      <Head title="Usuários" />
-      <main className={styles.container}>
-        <div className={styles.content}>
-          <BackLink href="/" />
-          <h2>Usuários</h2>
-          <div className={styles.links}>
-            <Link href="/users/create">Criar usuário</Link>
-          </div>
-          <Table aria-label="Usuários de sessões">
-            <TableHeader columns={columns}>
-              {(column) => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={users.data}>
-              {(item) => <Row columns={columns}>{makeRenderDataCell(item)}</Row>}
-            </TableBody>
-          </Table>
-          <Pagination baseUrl="/" metadata={users.meta} />
-        </div>
-      </main>
-    </>
-  )
-}
+          return <Cell>{item[column]}</Cell>
+        }}
+      />
+    </main>
+  </>
+)
 
 export default withComponent(Index, Dashboard)

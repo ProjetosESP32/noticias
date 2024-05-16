@@ -4,15 +4,19 @@
   display: grid;
   place-items: center;
 
-  >div {
+  form {
     max-width: 340px;
-  }
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
 
-  h1 {
-    text-align: center;
-  }
+    h1 {
+      width: 100%;
+      text-align: center;
+    }
 
-  button {
-    width: 100%;
+    button {
+      width: 100%;
+    }
   }
 }
