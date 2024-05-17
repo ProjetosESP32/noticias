@@ -11,7 +11,7 @@ export default defineConfig({
    */
   sharedData: {
     errors: ({ session }) => session?.flashMessages.get('errors'),
-    loggedUser: ({ auth }) => auth.user,
+    loggedUser: ({ auth }) => auth?.user,
   },
 
   /**
