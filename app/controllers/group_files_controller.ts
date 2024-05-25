@@ -5,6 +5,7 @@ import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
 import { contentType } from 'mime-types'
+import { unlink } from 'node:fs/promises'
 
 export default class GroupFilesController {
   async store({ params, request, response }: HttpContext) {
@@ -29,6 +30,13 @@ export default class GroupFilesController {
       .where('group_id', params.group_id)
       .where('id', params.id)
       .firstOrFail()
+
+    try {
+      await unlink(app.makePath('uploads', file.file))
+    } catch (error) {
+      response.internalServerError()
+      return
+    }
 
     await file.delete()
 

@@ -20,6 +20,8 @@ const Show = ({ client, files, news }: ShowProps) => {
   const instagramFiles = files.filter((f) => f.isImported)
   const localFiles = files.filter((f) => !f.isImported)
 
+  const showNews = client.showNews && news.length > 0
+
   useEffect(() => {
     const tiemoutId = setInterval(
       () => {
@@ -36,16 +38,15 @@ const Show = ({ client, files, news }: ShowProps) => {
   return (
     <>
       <Head title={client.name} />
-      {client.audioUrl ? <audio hidden src={client.audioUrl} autoPlay /> : null}
+      {client.hasSound && client.audioUrl ? <audio hidden src={client.audioUrl} autoPlay /> : null}
       <main className={styles.container}>
         <FilesViewer
           instagramFiles={instagramFiles}
           localFiles={localFiles}
-          full={!client.showNews}
-          muted={!client.hasSound}
+          full={!showNews}
           time={client.postTime}
         />
-        {client.showNews ? <NewsVignette news={news} /> : null}
+        {showNews ? <NewsVignette news={news} /> : null}
       </main>
     </>
   )
@@ -55,13 +56,12 @@ interface FilesViewerProps {
   instagramFiles: FileData[]
   localFiles: FileData[]
   full?: boolean
-  muted?: boolean
   time?: number
 }
 
 const noop = () => {}
 
-const FilesViewer = ({ instagramFiles, localFiles, full, muted, time }: FilesViewerProps) => {
+const FilesViewer = ({ instagramFiles, localFiles, full, time }: FilesViewerProps) => {
   const instagramPosRef = useRef(0)
   const localPosRef = useRef(0)
   const [instagramFile, setInstagramFile] = useState<FileData>(instagramFiles[0])
@@ -70,9 +70,9 @@ const FilesViewer = ({ instagramFiles, localFiles, full, muted, time }: FilesVie
   const makeEnded = (
     files: FileData[],
     ref: React.MutableRefObject<number>,
-    update: React.Dispatch<React.SetStateAction<FileData>>
+    update: (data: FileData) => void
   ) => {
-    if (files.length <= 2) {
+    if (files.length <= 1) {
       return noop
     }
 
@@ -97,7 +97,6 @@ const FilesViewer = ({ instagramFiles, localFiles, full, muted, time }: FilesVie
       {localFile ? (
         <FileItem
           file={localFile}
-          muted={muted}
           onEnded={makeEnded(localFiles, localPosRef, setLocalFile)}
           imageTime={time}
         />

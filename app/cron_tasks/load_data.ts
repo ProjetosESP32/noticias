@@ -117,11 +117,12 @@ export default class LoadData implements CronTask<null, null> {
           const mime = mediaResp.headers.get('Content-Type')
           const extname = (mime && extension(mime)) || ''
 
-          const path = app.makePath('uploads', `${cuid()}.${extname}`)
+          const filename = `${cuid()}.${extname}`
+          const path = app.makePath('uploads', filename)
           await writeFile(path, mediaResp.body! as any) // I grant, this is a stream
           group
             .related('files')
-            .create({ file: path, isImported: true, mime: mime ?? '', provider: 'local' })
+            .create({ file: filename, isImported: true, mime: mime ?? '', provider: 'local' })
         })
       const saveSettled = await Promise.allSettled(savePromises)
       throwIfHasRejected(saveSettled)

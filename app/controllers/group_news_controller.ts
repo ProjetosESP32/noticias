@@ -14,7 +14,10 @@ export default class GroupNewsController {
   }
 
   async destroy({ params, response }: HttpContext) {
-    const news = await News.query().where('id', params.id).where(params.group_id).firstOrFail()
+    const news = await News.query()
+      .where('id', params.id)
+      .where('groupId', params.group_id)
+      .firstOrFail()
 
     await news.delete()
 

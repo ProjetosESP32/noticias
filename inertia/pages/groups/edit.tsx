@@ -35,7 +35,7 @@ const Edit = ({ group }: DefaultProps<EditProps>) => (
         <GroupForm group={group} />
 
         <article className={styles.newsArticle}>
-          <h3>Notícias para este groupe</h3>
+          <h3>Notícias para este grupo</h3>
           <NewsList
             news={group.news}
             getDeleteHref={(newsItem) => `/groups/${newsItem.groupId}/news/${newsItem.id}`}

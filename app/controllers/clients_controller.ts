@@ -60,6 +60,7 @@ export default class ClientsController {
       })
       .from('files')
       .where('group_id', client.groupId)
+      .where('client_id', client.id)
 
     return inertia.render('clients/show', {
       client: client.serialize(),
