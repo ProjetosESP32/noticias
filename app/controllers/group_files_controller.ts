@@ -9,7 +9,7 @@ import { unlink } from 'node:fs/promises'
 
 export default class GroupFilesController {
   async store({ params, request, response }: HttpContext) {
-    const group = await Group.findOrFail(params.client_id)
+    const group = await Group.findOrFail(params.group_id)
     const { file, hasAudio, hasPriority } = await request.validateUsing(createFileValidator)
 
     await file.move(app.makePath('uploads'), { name: `${cuid()}.${file.extname}` })
