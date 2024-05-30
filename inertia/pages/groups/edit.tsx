@@ -53,7 +53,7 @@ const Edit = ({ group }: DefaultProps<EditProps>) => (
           </section>
           <FileList
             files={group.files}
-            getDeleteHref={(file) => `/groups/${file.groupId}/news/${file.id}`}
+            getDeleteHref={(file) => `/groups/${file.groupId}/files/${file.id}`}
           />
         </article>
       </div>
