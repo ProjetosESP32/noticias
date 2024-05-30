@@ -45,27 +45,22 @@ export default class ClientsController {
 
   async show({ params, inertia }: HttpContext) {
     const client = await Client.findOrFail(params.id)
-    const news = await db
-      .query()
-      .select('id', 'data')
-      .from('news')
-      .where('group_id', client.groupId)
-    const files = await db
-      .query()
-      .select('id', 'provider', 'file', 'mime')
-      .select({
-        isImported: 'is_imported',
-        hasAudio: 'has_audio',
-        hasPriority: 'has_priority',
-      })
-      .from('files')
-      .where('group_id', client.groupId)
-      .where('client_id', client.id)
+    const defaultOptions = { mode: 'read' } as const
+    const news = await db.rawQuery(
+      'SELECT id, data FROM news WHERE group_id = ? AND (client_id IS NULL OR client_id = ?)',
+      [client.groupId, client.id],
+      defaultOptions
+    )
+    const files = await db.rawQuery(
+      'SELECT id, provider, file, mime, is_imported AS "isImported", has_audio AS "hasAudio", has_priority AS "hasPriority" FROM files WHERE group_id = ? AND (client_id IS NULL OR client_id = ?);',
+      [client.groupId, client.id],
+      defaultOptions
+    )
 
     return inertia.render('clients/show', {
       client: client.serialize(),
-      news,
-      files,
+      news: news.rows,
+      files: files.rows,
     })
   }
 

@@ -1,3 +1,7 @@
 import type { User } from './user'
 
-export type DefaultProps<P = object> = { loggedUser: User } & P
+interface Default {
+  loggedUser: User
+}
+
+export type DefaultProps<P = object> = Default & P

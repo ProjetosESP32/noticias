@@ -1,12 +1,13 @@
 services:
-  noticias-back:
+  backend:
+    container_name: noticias_backend
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
     image: noticias:latest
-    ports:
-      - ${PORT}:${PORT}
     env_file:
       - .env
+    network_mode: host
     volumes:
       - /var/noticias/uploads:/home/node/app/uploads
