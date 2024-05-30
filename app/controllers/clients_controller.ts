@@ -4,6 +4,7 @@ import { createClientValidator, updateClientValidator } from '#validators/client
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import { getPaginationData } from '../utils/request.js'
+import transmit from '@adonisjs/transmit/services/main'
 
 export default class ClientsController {
   private async findClient(id: number, groupId: number) {
@@ -80,12 +81,15 @@ export default class ClientsController {
     client.merge(data)
     await client.save()
 
+    transmit.broadcast(`clients/${client.id}`, 'reload')
+
     response.redirect().toRoute('groups.clients.edit', [params.group_id, params.id])
   }
 
   async destroy({ params, response }: HttpContext) {
     const client = await this.findClient(params.id, params.group_id)
 
+    transmit.broadcast(`clients/${client.id}`, 'back')
     await client.delete()
 
     response.redirect().toRoute('groups.show', [params.group_id])

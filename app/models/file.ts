@@ -1,5 +1,7 @@
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import app from '@adonisjs/core/services/app'
+import { BaseModel, beforeDelete, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
+import { unlink } from 'node:fs/promises'
 
 export default class File extends BaseModel {
   @column({ isPrimary: true })
@@ -34,4 +36,13 @@ export default class File extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @beforeDelete()
+  static async deleteStorageFile(file: File) {
+    try {
+      await unlink(app.makePath('uploads', file.file))
+    } catch (error) {
+      console.warn('Cannot remove file', error)
+    }
+  }
 }

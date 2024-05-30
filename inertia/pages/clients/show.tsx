@@ -1,5 +1,6 @@
 import { Head, router } from '@inertiajs/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Transmit } from '@adonisjs/transmit-client'
 import type { Client } from '~/type/client'
 import type { FileAttachment } from '~/type/file'
 import type { DefaultProps } from '~/type/props'
@@ -19,7 +20,7 @@ interface ShowProps {
   files: FileAttachmentData[]
 }
 
-const Show = ({ client, files, news, nonce }: DefaultProps<ShowProps>) => {
+const Show = ({ client, files, news }: DefaultProps<ShowProps>) => {
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const instagramFiles = files.filter((f) => f.isImported)
@@ -33,22 +34,38 @@ const Show = ({ client, files, news, nonce }: DefaultProps<ShowProps>) => {
     }
   }
 
-  const onVideoEnd = () => {
-    if (audioRef.current) {
+  const onVideoEnd = (muted: boolean) => {
+    if (audioRef.current && !muted) {
       audioRef.current.volume = 1
     }
   }
 
   useEffect(() => {
-    const tiemoutId = setInterval(
-      () => {
+    const transmit = new Transmit({
+      baseUrl: location.origin,
+    })
+    const subscription = transmit.subscription(`clients/${client.id}`)
+
+    subscription.create()
+
+    const unsubscribe = subscription.onMessage((msg) => {
+      if (typeof msg !== 'string') {
+        return
+      }
+
+      if (msg === 'reload') {
         router.reload()
-      },
-      60 * 60 * 1000 // 1 hour
-    )
+        return
+      }
+
+      if (msg === 'back') {
+        router.visit('/clients')
+      }
+    })
 
     return () => {
-      clearInterval(tiemoutId)
+      unsubscribe()
+      subscription.delete()
     }
   }, [])
 
@@ -56,7 +73,7 @@ const Show = ({ client, files, news, nonce }: DefaultProps<ShowProps>) => {
     <>
       <Head title={client.name} />
       {client.hasSound && client.audioUrl ? (
-        <audio ref={audioRef} hidden src={client.audioUrl} autoPlay nonce={nonce} />
+        <audio ref={audioRef} hidden src={client.audioUrl} autoPlay />
       ) : null}
       <main className={styles.container}>
         <FilesViewer
@@ -79,7 +96,7 @@ interface FilesViewerProps {
   full?: boolean
   time?: number
   onPlayVideo?: (muted: boolean) => void
-  onVideoEnded?: () => void
+  onVideoEnded?: (muted: boolean) => void
 }
 
 const noop = () => {}
@@ -110,19 +127,28 @@ const FilesViewer = ({
     defaultUpdate(instagramPosRef, instagramFiles, setInstagramFile)
   }
 
-  const instagramVideoEnd = () => {
+  const instagramVideoEnd = (muted: boolean) => {
     instagramImageEnd()
-    onVideoEnded?.()
+    onVideoEnded?.(muted)
   }
 
   const localImageEnd = () => {
     defaultUpdate(localPosRef, localFiles, setLocalFile)
   }
 
-  const localVideoEnd = () => {
+  const localVideoEnd = (muted: boolean) => {
     localImageEnd()
-    onVideoEnded?.()
+    onVideoEnded?.(muted)
   }
+
+  useEffect(() => {
+    instagramPosRef.current = 0
+    setInstagramFile(instagramFiles[0])
+    localPosRef.current = 0
+    setLocalFile(localFiles[0])
+
+    onVideoEnded?.(false)
+  }, [instagramFiles, localFiles])
 
   return (
     <div className={styles.filesContainer} data-full={full}>
@@ -175,13 +201,14 @@ interface VideoProps {
   mime: string
   muted?: boolean
   onPlay?: (muted: boolean) => void
-  onEnded?: () => void
+  onEnded?: (muted: boolean) => void
 }
 
 const Video = ({ src, mime, muted, onPlay, onEnded }: VideoProps) => {
   const isPlaying = useRef(false)
   const timeoutId = useRef<number | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const bMuted = Boolean(muted)
 
   const playVideo = useCallback(() => {
     if (isPlaying.current) {
@@ -195,9 +222,9 @@ const Video = ({ src, mime, muted, onPlay, onEnded }: VideoProps) => {
       })
       .catch((e) => {
         console.warn('cannot play video', e)
-        onEnded?.()
+        onEnded?.(bMuted)
       })
-  }, [])
+  }, [bMuted])
 
   const onVideoEnd = () => {
     isPlaying.current = false
@@ -210,7 +237,7 @@ const Video = ({ src, mime, muted, onPlay, onEnded }: VideoProps) => {
       playVideo()
     }, 1000)
 
-    onEnded?.()
+    onEnded?.(bMuted)
   }
 
   useEffect(() => {
@@ -226,12 +253,7 @@ const Video = ({ src, mime, muted, onPlay, onEnded }: VideoProps) => {
   }, [src])
 
   return (
-    <video
-      ref={videoRef}
-      muted={muted}
-      onPlay={() => onPlay?.(Boolean(muted))}
-      onEnded={onVideoEnd}
-    >
+    <video ref={videoRef} muted={muted} onPlay={() => onPlay?.(bMuted)} onEnded={onVideoEnd}>
       <source src={src} type={mime} />
     </video>
   )
@@ -262,7 +284,7 @@ interface FileItemProps {
   file: FileAttachmentData
   muted?: boolean
   onPlayVideo?: (muted: boolean) => void
-  onVideoEnd?: () => void
+  onVideoEnd?: (muted: boolean) => void
   onImageEnd?: () => void
   imageTime?: number
 }

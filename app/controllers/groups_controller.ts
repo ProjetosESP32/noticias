@@ -2,6 +2,7 @@ import Group from '#models/group'
 import { createGroupValidator, updateGroupValidator } from '#validators/group'
 import type { HttpContext } from '@adonisjs/core/http'
 import { getPaginationData } from '../utils/request.js'
+import { broadcastClientsUpdate } from '../utils/sse.js'
 
 export default class GroupsController {
   async index({ inertia, request }: HttpContext) {
@@ -50,11 +51,15 @@ export default class GroupsController {
     group.merge(data)
     await group.save()
 
+    await broadcastClientsUpdate(group.id)
+
     response.redirect().toRoute('groups.index')
   }
 
   async destroy({ params, response }: HttpContext) {
     const group = await Group.findOrFail(params.id)
+
+    await broadcastClientsUpdate(group.id, 'back')
 
     await group.delete()
 

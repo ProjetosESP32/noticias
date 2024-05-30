@@ -31,15 +31,15 @@ export default class CronProvider {
   /**
    * The application has been booted
    */
-  async start() {
-    const service = await this.app.container.make(CronService)
-    service.startAll()
-  }
+  async start() {}
 
   /**
    * The process has been started
    */
-  async ready() {}
+  async ready() {
+    const service = await this.app.container.make(CronService)
+    service.startAll()
+  }
 
   /**
    * Preparing to shutdown the app

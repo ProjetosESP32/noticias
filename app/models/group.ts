@@ -1,4 +1,4 @@
-import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeDelete, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Client from './client.js'
@@ -41,4 +41,14 @@ export default class Group extends BaseModel {
 
   @hasMany(() => News)
   declare news: HasMany<typeof News>
+
+  @beforeDelete()
+  static async cleanup(group: Group) {
+    await group.load('files')
+    await group.load('clients')
+
+    const filePromises = group.files.map(async (file) => file.delete())
+    const clientPromises = group.clients.map(async (client) => client.delete())
+    await Promise.all([...filePromises, ...clientPromises])
+  }
 }

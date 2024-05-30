@@ -2,6 +2,7 @@ import Client from '#models/client'
 import News from '#models/news'
 import { createNewsValidator } from '#validators/message'
 import type { HttpContext } from '@adonisjs/core/http'
+import transmit from '@adonisjs/transmit/services/main'
 
 export default class ClientNewsController {
   private async findClient(id: number, groupId: number) {
@@ -22,6 +23,8 @@ export default class ClientNewsController {
 
     await client.related('news').create({ ...messageData, groupId: client.groupId })
 
+    transmit.broadcast(`clients/${client.id}`, 'reload')
+
     response.redirect().toRoute('groups.clients.edit', [params.group_id, params.client_id])
   }
 
@@ -29,6 +32,8 @@ export default class ClientNewsController {
     const news = await this.findNews(params.id, params.client_id, params.group_id)
 
     await news.delete()
+
+    transmit.broadcast(`clients/${params.client_id}`, 'reload')
 
     response.redirect().toRoute('groups.clients.edit', [params.group_id, params.client_id])
   }

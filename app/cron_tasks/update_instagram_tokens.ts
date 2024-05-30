@@ -2,7 +2,7 @@ import Group from '#models/group'
 import type { CronTask } from '#services/cron_service'
 import app from '@adonisjs/core/services/app'
 import ky from 'ky'
-import { throwIfHasRejected } from '../utils/promise.js'
+import { logRejected } from '../utils/promise.js'
 
 interface InstagramAPIUpdateTokenResponse {
   access_token: string
@@ -41,6 +41,6 @@ export default class UpdateInstagramTokens implements CronTask<null, null> {
       await group.save()
     })
 
-    throwIfHasRejected(await Promise.allSettled(promises))
+    logRejected(await Promise.allSettled(promises))
   }
 }

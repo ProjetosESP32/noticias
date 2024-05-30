@@ -1,4 +1,4 @@
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeDelete, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import File from './file.js'
@@ -47,4 +47,12 @@ export default class Client extends BaseModel {
 
   @hasMany(() => File)
   declare files: HasMany<typeof File>
+
+  @beforeDelete()
+  static async deleteFiles(client: Client) {
+    await client.load('files')
+
+    const promises = client.files.map(async (file) => file.delete())
+    await Promise.all(promises)
+  }
 }

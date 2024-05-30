@@ -6,7 +6,10 @@ export const createGroupValidator = vine.compile(
     description: vine.string().maxLength(100),
     instagramToken: vine.string().optional(),
     instagramSyncDays: vine.number().min(1).max(30).optional().requiredIfExists('instagramToken'),
-    newsSource: vine.string().optional(),
+    newsSource: vine
+      .string()
+      .url({ protocols: ['http', 'https'], require_protocol: true })
+      .optional(),
     newsSourceSelector: vine.string().optional().requiredIfExists('newsSource'),
   })
 )
@@ -17,7 +20,10 @@ export const updateGroupValidator = vine.compile(
     description: vine.string().maxLength(100).optional(),
     instagramToken: vine.string().optional(),
     instagramSyncDays: vine.number().min(1).max(30).optional().requiredIfExists('instagramToken'),
-    newsSource: vine.string().optional(),
+    newsSource: vine
+      .string()
+      .url({ protocols: ['http', 'https'], require_protocol: true })
+      .optional(),
     newsSourceSelector: vine.string().optional().requiredIfExists('newsSource'),
   })
 )

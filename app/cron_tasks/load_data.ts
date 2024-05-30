@@ -8,8 +8,9 @@ import { JSDOM } from 'jsdom'
 import ky from 'ky'
 import { DateTime } from 'luxon'
 import { extension } from 'mime-types'
-import { unlink, writeFile } from 'node:fs/promises'
-import { throwIfHasRejected } from '../utils/promise.js'
+import { writeFile } from 'node:fs/promises'
+import { logRejected } from '../utils/promise.js'
+import { broadcastClientsUpdate } from '../utils/sse.js'
 
 enum InstagramMedia {
   IMAGE = 'IMAGE',
@@ -52,7 +53,16 @@ export default class LoadData implements CronTask<null, null> {
   }
 
   private async load() {
-    throwIfHasRejected(await Promise.allSettled([this.loadNews(), this.loadInstagramPosts()]))
+    const settled = await Promise.allSettled([this.loadNews(), this.loadInstagramPosts()])
+    logRejected(settled)
+
+    const numbers = (
+      settled.filter(({ status }) => status === 'fulfilled') as PromiseFulfilledResult<number[]>[]
+    ).flatMap(({ value }) => value)
+    const groupIds = new Set(numbers)
+
+    const broadcastPromises = [...groupIds].map(async (groupId) => broadcastClientsUpdate(groupId))
+    logRejected(await Promise.allSettled(broadcastPromises))
   }
 
   private async loadNews() {
@@ -75,10 +85,15 @@ export default class LoadData implements CronTask<null, null> {
         .map((text) => text!.trim())
 
       await group.related('news').createMany(news.map((text) => ({ isImported: true, data: text })))
+      return group.id
     })
 
     const settled = await Promise.allSettled(promises)
-    throwIfHasRejected(settled)
+    logRejected(settled)
+
+    return (
+      settled.filter(({ status }) => status === 'fulfilled') as PromiseFulfilledResult<number>[]
+    ).map(({ value }) => value)
   }
 
   private async loadInstagramPosts() {
@@ -90,16 +105,9 @@ export default class LoadData implements CronTask<null, null> {
         .where('isImported', true)
         .whereNull('clientId')
 
-      const deletionPromises = files.map(async (file) => {
-        try {
-          await unlink(app.makePath('uploads', file.file))
-        } catch (error) {
-          console.warn(error, 'file cannot be removed')
-        }
-        await file.delete()
-      })
-      const deletionSettled = await Promise.allSettled(deletionPromises)
-      throwIfHasRejected(deletionSettled)
+      const deleteFilePromises = files.map(async (file) => file.delete())
+      const deleteFileSettled = await Promise.allSettled(deleteFilePromises)
+      logRejected(deleteFileSettled)
 
       const { data } = await ky('https://graph.instagram.com/me/media', {
         searchParams: {
@@ -124,11 +132,18 @@ export default class LoadData implements CronTask<null, null> {
             .related('files')
             .create({ file: filename, isImported: true, mime: mime ?? '', provider: 'local' })
         })
+
       const saveSettled = await Promise.allSettled(savePromises)
-      throwIfHasRejected(saveSettled)
+      logRejected(saveSettled)
+
+      return group.id
     })
 
     const settled = await Promise.allSettled(promises)
-    throwIfHasRejected(settled)
+    logRejected(settled)
+
+    return (
+      settled.filter(({ status }) => status === 'fulfilled') as PromiseFulfilledResult<number>[]
+    ).map(({ value }) => value)
   }
 }

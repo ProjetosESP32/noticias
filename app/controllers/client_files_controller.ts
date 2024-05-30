@@ -4,8 +4,8 @@ import { createFileValidator } from '#validators/file'
 import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
+import transmit from '@adonisjs/transmit/services/main'
 import { contentType } from 'mime-types'
-import { unlink } from 'node:fs/promises'
 
 export default class ClientFilesController {
   async store({ params, request, response }: HttpContext) {
@@ -26,6 +26,8 @@ export default class ClientFilesController {
       hasPriority,
     })
 
+    transmit.broadcast(`clients/${client.id}`, 'reload')
+
     response.redirect().toRoute('groups.clients.edit', [params.group_id, params.client_id])
   }
 
@@ -36,14 +38,9 @@ export default class ClientFilesController {
       .where('groupId', params.group_id)
       .firstOrFail()
 
-    try {
-      await unlink(app.makePath('uploads', file.file))
-    } catch (error) {
-      response.internalServerError()
-      return
-    }
-
     await file.delete()
+
+    transmit.broadcast(`clients/${file.clientId}`, 'reload')
 
     response.redirect().toRoute('groups.clients.edit', [params.client_id, params.group_id])
   }
