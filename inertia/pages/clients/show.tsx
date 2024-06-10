@@ -1,9 +1,9 @@
 import { Head, router } from '@inertiajs/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Transmit } from '@adonisjs/transmit-client'
 import type { Client } from '~/type/client'
 import type { FileAttachment } from '~/type/file'
 import type { DefaultProps } from '~/type/props'
+import { getTransmit } from '~/utils/sse'
 
 import styles from './show.module.scss'
 
@@ -41,33 +41,35 @@ const Show = ({ client, files, news }: DefaultProps<ShowProps>) => {
   }
 
   useEffect(() => {
-    const transmit = new Transmit({
-      baseUrl: location.origin,
-    })
+    const transmit = getTransmit()
     const subscription = transmit.subscription(`clients/${client.id}`)
 
-    subscription.create()
+    let unsubscribe = noop
 
-    const unsubscribe = subscription.onMessage((msg) => {
-      if (typeof msg !== 'string') {
-        return
-      }
+    void (async () => {
+      await subscription.create()
 
-      if (msg === 'reload') {
-        router.reload()
-        return
-      }
+      unsubscribe = subscription.onMessage((msg) => {
+        if (typeof msg !== 'string') {
+          return
+        }
 
-      if (msg === 'back') {
-        router.visit('/clients')
-      }
-    })
+        if (msg === 'reload') {
+          router.reload()
+          return
+        }
+
+        if (msg === 'back') {
+          router.visit('/clients')
+        }
+      })
+    })().catch(console.warn)
 
     return () => {
       unsubscribe()
-      subscription.delete()
+      subscription.delete().catch(console.warn)
     }
-  }, [])
+  }, [client.id])
 
   return (
     <>
