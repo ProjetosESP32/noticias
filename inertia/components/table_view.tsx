@@ -1,11 +1,11 @@
 import { type InertiaLinkProps, Link } from '@inertiajs/react'
 import { Table, TableBody } from 'react-aria-components'
-import { Column, Row, TableHeader } from './table'
+import type { Paginated } from '~/type/paginated'
+import { BackLink } from './back_link'
 import { Pagination } from './pagination'
-import { Paginated } from '~/type/paginated'
+import { Column, Row, TableHeader } from './table'
 
 import styles from './table_view.module.scss'
-import { BackLink } from './back_link'
 
 interface TableViewProps<T extends object, K extends keyof T | string> {
   data: T[]
