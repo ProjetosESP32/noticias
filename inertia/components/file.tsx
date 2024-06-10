@@ -107,7 +107,7 @@ const FileForm = ({ onSend, postHref }: FileFormProps) => {
           }
         }}
       >
-        <Button>Selecionar arquivos</Button>
+        <Button>Selecionar arquivo</Button>
       </FileTrigger>
       {data.file !== null ? (
         <div className={styles.fileData}>
